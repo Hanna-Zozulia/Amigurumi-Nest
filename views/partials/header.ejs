@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="./css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+      <div class="container">
+
+        <!-- Логотип-картинка -->
+        <a class="navbar-brand" href="/">
+          <img src="/img/logo.png" alt="Amigurumi Nest">
+        </a>
+
+        <!-- Кнопка гамбургер для мобильных -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Меню -->
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav ms-auto align-items-center">
+
+            <!-- Основное меню -->
+            <li class="nav-item">
+              <a class="nav-link" href="/">Главная</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/catalog">Каталог</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/top3">Топ 3</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/history">Наша история</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/info">Инфо</a>
+            </li>
+
+            <!-- Кнопки справа -->
+            <li class="nav-item ms-3">
+              <a class="btn btn-outline-primary btn-sm" href="/login">Регистрация</a>
+            </li>
+            <li class="nav-item ms-2 position-relative">
+              <a href="/cart" class="text-dark fs-5">
+                <i class="bi bi-cart3"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">
+                  0
+                </span>
+              </a>
+            </li>
+
+          </ul>
+        </div>
+    </div>
+  </nav>
+    <main class="container my-4">
+

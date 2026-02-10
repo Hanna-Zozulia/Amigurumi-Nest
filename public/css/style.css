@@ -1,0 +1,146 @@
+/* * {
+    background-color: #FFF8F0;
+} */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+body {
+    background-color: #3f5f3b;
+    width: 100%;
+    font-family: "Playfair Display", serif;
+    font-family: "Nunito", sans-serif;
+    font-weight: 300;
+}
+
+/* ===== Navbar ===== */
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.navbar {
+  padding: 1rem 2rem;
+  background-color: #20311e;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand img {
+  height: 50px; /* размер логотипа */
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+  transform: scale(1.05);
+}
+
+.navbar-nav .nav-link {
+  color: #efeeee; /* уютный кофейный цвет */
+  font-weight: 500;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #e3815e; /* акцентный коралл при наведении */
+}
+
+.navbar-nav .btn-outline-primary {
+  border-color: #e3815e;
+  color: #e3815e;
+  transition: all 0.3s;
+}
+
+.navbar-nav .btn-outline-primary:hover {
+  background-color: #e3815e;
+  color: #efeeee;
+}
+
+/* ===== Корзина ===== */
+.navbar-nav .bi-cart3 {
+  font-size: 1.25rem;
+  transition: color 0.3s;
+   color: #efeeee;
+}
+
+.navbar-nav .bi-cart3:hover {
+  color: #e3815e;
+}
+
+#cart-count {
+  font-size: 0.7rem;
+}
+
+/* ===== Главная страница ===== */
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Hero / первый экран */
+.block {
+  padding: 4rem 0;
+}
+
+.block h1 {
+  font-size: 2.5rem;
+  color: #5A3E36;
+  margin-bottom: 2rem;
+}
+
+/* Слайдер карточек мастер-классов */
+.masterclass-item {
+  background-color: #FFF0E1; /* мягкий фон для карточек */
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 0.5rem;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.masterclass-item:hover {
+  transform: translateY(-5px);
+}
+
+.masterclass-item img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Trending now */
+.masterclasses-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Отзывы */
+.reviews-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.review-item {
+  background-color: #FFF0E1;
+  padding: 1rem;
+  border-radius: 10px;
+  flex: 1 1 calc(50% - 1rem);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.review-item p {
+  margin: 0;
+}
+
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+  .navbar-nav .nav-link {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .masterclasses-row, .reviews-grid {
+    flex-direction: column;
+  }
+}
