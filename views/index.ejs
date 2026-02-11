@@ -1,44 +1,87 @@
-<!-- <%- include('partials/header', { title: 'Products' }) %>
+<%- include('partials/header', { title: 'Amigurumi Nest' }) %>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3 m-0">Products</h1>
-  <% if (currentUser && currentUser.rule === 'admin') { %>
-    <a href="/products/new" class="btn btn-success">Add product</a>
-  <% } %>
- </div>
-<div class="row g-3">
-  <% products.forEach(p => { %>
-    <div class="col-12 col-sm-6 col-lg-4">
-      <div class="card h-100 shadow-sm">
-        <img src="<%= p.pic %>" class="card-img-top object-fit-cover" style="height: 180px" alt="pic" />
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title"><%= p.name %></h5>
-          <p class="card-text small text-muted flex-grow-1"><%= p.desc %></p>
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="fw-bold">$<%= Number(p.price).toFixed(2) %></span>
-            <% if (currentUser && currentUser.rule === 'admin') { %>
-              <div class="btn-group">
-                <a class="btn btn-outline-primary btn-sm" href="/products/<%= p.id %>/edit">Edit</a>
-                <form action="/products/<%= p.id %>/delete" method="post">
-                  <button class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete product?')">Delete</button>
-                </form>
-              </div>
-            <% } %>
-          </div>
+<div class="container">
+
+  <!-- Блок 1: Hero + вертикальный слайдер -->
+  <div class="row block">
+    <div class="col-md-6 h1">
+      <h1>Amigurumi Nest — это мир мягких вязаных чудес.­­</h1>
+    </div>
+    <div class="col-md-6 h2">
+      <div class="vertical-slider">
+        <div class="slider-track">
+          <% const masterClasses = [
+                { title: 'Bunny Amigurumi', description: 'Learn to make a soft bunny toy', image: 'img/pic.png'},
+                { title: 'Bear Amigurumi', description: 'Make a cute bear', image: 'img/pic.png' },
+                { title: 'Cat Amigurumi', description: 'Craft your own cat', image: 'img/pic.png' }
+          ]; %>
+          <% masterClasses.forEach(function(mc) { %>
+            <div class="toys-item">
+              <img src="<%= mc.image %>" alt="<%= mc.title %>">
+            </div>
+          <% }) %>
         </div>
       </div>
     </div>
-  <% }) %>
- </div>
-<%- include('partials/footer') %> -->
+  </div>
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Главная страница</title>
-</head>
-<body>
-    <h1>Добро пожаловать на главную страницу!</h1>
-</body>
-</html>
+  <!-- Блок 2: Что включено -->
+  <div class="row block_2">
+    <div class="col-md-6 h2">
+      <h2>Почему выбирают наши игрушки?</h2>
+    </div>
+    <div class="col-md-6 block_ul">
+      <ul>
+        <li>Каждая игрушка уникальная и сделана с любовью.</li>
+        <li>Мы используем только гипоаллергенную пряжу и безопасные наполнители.</li>
+        <li>Игрушки помогают развивать мелкую моторику и создают ощущение тепла и уюта.</li>
+        <li>Подходят для подарка детям и взрослым.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Блок 3: Trending now -->
+  <div class="row block_3">
+    <h2>Тренды сейчас</h2>
+    <div class="block_3 toy-row">
+      <% const popularClasses = [
+            { title: 'Fox Amigurumi', image: 'img/pic.png' },
+            { title: 'Dog Amigurumi', image: 'img/pic.png' },
+            { title: 'Penguin Amigurumi', image: 'img/pic.png'},
+            { title: 'Penguin Amigurumi', image: 'img/pic.png'},
+            { title: 'Penguin Amigurumi', image: 'img/pic.png'},
+            { title: 'Penguin Amigurumi', image: 'img/pic.png'}
+      ]; %>
+      <% popularClasses.forEach(function(pc) { %>
+        <div class="toy-item">
+          <img src="<%= pc.image %>" alt="<%= pc.title %>" class="img-fluid mb-2">
+          <p><%= pc.title %></p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Блок 4: Отзывы -->
+  <div class="row block_4">
+    <h2>Ваши отзывы</h2>
+    <div class="reviews-grid">
+      <% const reviews = [
+            { name: 'Anna', comment: 'Loved this class!', date: '2026-01-01'},
+            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' },
+            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' },
+            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' },
+            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' }
+      ]; %>
+      <% reviews.forEach(function(rv) { %>
+        <div class="review-item">
+          <h4><strong><%= rv.name %></strong></h4>
+          <p><%= rv.comment %></p>
+          <p class="date"><%= rv.date %></p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>
