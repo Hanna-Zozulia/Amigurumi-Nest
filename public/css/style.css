@@ -4,11 +4,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 body {
-    background-color: #3f5f3b;
-    width: 100%;
-    font-family: "Playfair Display", serif;
-    font-family: "Nunito", sans-serif;
-    font-weight: 300;
+  background-color: #3f5f3b;
+  width: 100%;
+  font-family: "Playfair Display", serif;
+  font-family: "Nunito", sans-serif;
+  font-weight: 300;
+  padding-top: 4.3rem;
+  color: #efeeee;
 }
 
 /* ===== Navbar ===== */
@@ -164,15 +166,6 @@ h1, h2, h3 {
   margin: 0 auto;
 }
 
-/* ===== Анимация слайдера ===== */
-/* @keyframes slide-vertical {
-  0% { transform: translateY(0); }
-  25% { transform: translateY(-100%); }
-  50% { transform: translateY(-200%); }
-  75% { transform: translateY(-100%); }
-  100% { transform: translateY(0); }
-} */
-
 /* ===== Блок 2: Что включено ===== */
 .block_2 {
   display: flex;
@@ -239,6 +232,8 @@ h1, h2, h3 {
   margin: 10px;
   margin-bottom: 50px;
   background: #dedcdc;
+  border-radius: 12px;
+  padding: 0.5rem;
 }
 
 .toy-item:hover {
@@ -258,6 +253,7 @@ h1, h2, h3 {
   font-size: 1.5rem;
   text-align: center;
   margin-top: 2.5rem;
+  color: #222;
   /* background-color: #bebbbb; */
 
 }
@@ -305,20 +301,155 @@ h1, h2, h3 {
 .review-item h4 {
   /* background-color: #864774; */
   padding-left: 2rem;
+  color: #222;
 }
 
 .review-item p {
   margin: 0;
   line-height: 1.5;
+  color: #222;
 }
 
 .review-item .date {
   font-size: 13px;
   margin-top: 20px;
   text-align: right;
+  color: #222;
   /* background-color: #975897; */
 }
 
+/* ===== Страница Info ===== */
+.info {
+  padding: 3rem 1rem;
+  line-height: 1.8;
+}
+
+.info h1 {
+  margin-bottom: 1rem;
+  border-left: 4px solid #e3815e;
+  padding-left: 0.8rem;
+
+}
+
+.info h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.info p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.info ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.info ul li {
+  margin-bottom: 0.6rem;
+  list-style: disc;
+  font-size: 1rem;
+}
+
+.info i.bi {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
+
+.info .mb-5 {
+  padding: 2rem 1rem;
+  margin-bottom: 2.5rem;
+  border-left: 3px solid #e3815e;
+}
+
+/* ===== Соцсети в блоке Контакты ===== */
+.info .list-unstyled {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 350px);
+  justify-content: center;
+  gap: 20px;
+  padding: 0; 
+  list-style: none;
+  margin: 20px 0 0 0;
+  color: #e3815e;
+}
+
+.info .list-unstyled li {
+  border: 2px solid #e3815e;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.info .list-unstyled li:hover {
+  background-color: #e3815e;
+  transform: translateY(-4px);
+}
+
+.info .list-unstyled li a {
+ color: #e3815e;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.info .list-unstyled li a:hover {
+  color: #efeeee;
+}
+
+/* Иконки */
+.info .list-unstyled li a i.bi {
+  font-size: 1.5rem;
+}
+
+/* Мобильная адаптивность */
+@media (max-width: 576px) {
+  .info .list-unstyled {
+    grid-template-columns: 1fr; /* колонки в одну линию на телефоне */
+    gap: 15px;
+  }
+
+  .info .list-unstyled li {
+    height: 50px;
+  }
+
+  .info .list-unstyled li a {
+    font-size: 0.95rem;
+  }
+
+  .info .list-unstyled li a i.bi {
+    font-size: 1.3rem;
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .info {
+        padding: 2rem 1rem;
+    }
+    .info h1 {
+        font-size: 1.8rem;
+    }
+    .info h3 {
+        font-size: 1.3rem;
+    }
+    .info p, .info ul li {
+        font-size: 0.95rem;
+    }
+    .info ul.list-unstyled li a {
+        font-size: 1rem;
+    }
+}
 
 /* ===== Мобильная адаптивность ===== */
 @media (max-width: 992px) {
@@ -335,7 +466,7 @@ h1, h2, h3 {
     margin-bottom: 0.5rem;
   }
 
-  .masterclasses-row, .reviews-grid {
+  .toys-row, .reviews-grid {
     flex-direction: column;
   }
 }
