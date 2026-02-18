@@ -16,12 +16,15 @@ router.get('/', (req, res) => {
     // Если шаблон index.ejs есть
     res.render('index'); 
 });
+
 router.get('/info', (req, res) => {
     // Если шаблон info.ejs есть
     res.render('info'); 
+});
 
-    // Или просто текст без шаблона:
-    // res.send('Главная страница');
+router.get('/history', (req, res) => {
+    // Если шаблон history.ejs есть
+    res.render('history'); 
 });
 
 module.exports = router;
