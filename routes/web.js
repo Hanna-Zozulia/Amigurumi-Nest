@@ -18,13 +18,18 @@ router.get('/', (req, res) => {
 });
 
 router.get('/info', (req, res) => {
-    // Если шаблон info.ejs есть
+    // info.ejs 
     res.render('info'); 
 });
 
 router.get('/history', (req, res) => {
-    // Если шаблон history.ejs есть
+    // history.ejs
     res.render('history'); 
+});
+
+router.get('/top3', (req, res) => {
+    // top3.ejs 
+    res.render('top3'); 
 });
 
 module.exports = router;

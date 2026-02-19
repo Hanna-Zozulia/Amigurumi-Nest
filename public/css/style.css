@@ -9,7 +9,7 @@ body {
   font-family: "Playfair Display", serif;
   font-family: "Nunito", sans-serif;
   font-weight: 300;
-  padding-top: 4.3rem;
+  padding-top: 2.7rem;
   color: #efeeee;
 }
 
@@ -25,13 +25,13 @@ body {
   left: 0;
   width: 100%;
   z-index: 1000;
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   background-color: #20311e;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
 }
 
 .navbar-brand img {
-  height: 50px; /* размер логотипа */
+  height: 40px; /* размер логотипа */
   transition: transform 0.3s ease;
 }
 
@@ -42,7 +42,7 @@ body {
 .navbar-nav .nav-link {
   color: #efeeee; /* уютный кофейный цвет */
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin-right: 1rem;
   transition: color 0.3s;
 }
@@ -465,6 +465,40 @@ h1, h2, h3 {
   padding: 10px 20px;
   line-height: 1.3;
   /* background-color: #d7da25; */
+}
+
+/* ===== Страница Top3 ===== */
+.top3 {
+  width: 30%;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 0px 20px;
+}
+
+.top3 img {
+  width: 100%;
+  height: 80%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.top3 h2 {
+  font-size: 1.5rem;
+  margin: 10px 0;
+  text-align: center;
+  color: #222;
+}
+
+.top3 p {
+  color: #222;
+  margin-top: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.top3 p:hover {
+  text-decoration: underline;
 }
 
 footer {
