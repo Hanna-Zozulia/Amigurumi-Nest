@@ -49,8 +49,15 @@
             </li>
 
             <!-- Кнопки справа -->
-            <li class="nav-item ms-3">
-              <a class="btn btn-outline-primary btn-sm" href="/login">Регистрация</a>
+              <li class="nav-item dropdown ms-3">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  Аккаунт
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
+                  <li><a class="dropdown-item" href="/login">Вход</a></li>
+                  <li><a class="dropdown-item" href="/register">Регистрация</a></li>
+                </ul>
+              </li>
             </li>
             <li class="nav-item ms-2 position-relative">
               <a href="/cart" class="text-dark fs-5">
