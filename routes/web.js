@@ -32,4 +32,9 @@ router.get('/top3', (req, res) => {
     res.render('top3'); 
 });
 
+router.get('/catalog', (req, res) => {
+    // cart.ejs 
+    res.render('catalog'); 
+});
+
 module.exports = router;
