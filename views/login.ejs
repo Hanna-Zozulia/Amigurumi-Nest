@@ -1,10 +1,10 @@
-<%- include('partials/header', { title: type === 'login' ? 'Sign In' : 'Register' }) %>
+<%- include('partials/header', { title: type === 'login' ? 'Вход' : 'Регистрация' }) %>
 
 <div class="row justify-content-center login-container">
   <div class="col-sm-10 col-md-6 col-lg-4 mb-4">
     <div class="card shadow-sm">
       <div class="card-body">
-        <h1 class="h4 mb-3 text-center"><%= type === 'login' ? 'Sign In' : 'Register' %></h1>
+        <h1 class="h4 mb-3 text-center"><%= type === 'login' ? 'Вход' : 'Регистрация' %></h1>
 
         <% if(type === 'login'){ %>
           <!-- Форма входа -->
@@ -14,19 +14,19 @@
               <input type="email" class="form-control" id="email" name="email" required />
             </div>
             <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
+              <label for="password" class="form-label">Пароль</label>
               <input type="password" class="form-control" id="password" name="password" required />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+            <button type="submit" class="btn btn-primary w-100">Вход</button>
           </form>
           <p class="text-center mt-3">
-            <a href="/register">Don't have an account? Register</a>
+            <a href="/register">Нет аккаунта? Зарегистрироваться</a>
           </p>
         <% } else { %>
           <!-- Форма регистрации -->
           <form action="/register" method="post">
             <div class="mb-3">
-              <label for="name" class="form-label">Name</label>
+              <label for="name" class="form-label">Имя</label>
               <input type="text" class="form-control" id="name" name="name" required />
             </div>
             <div class="mb-3">
@@ -34,17 +34,17 @@
               <input type="email" class="form-control" id="email-register" name="email" required />
             </div>
             <div class="mb-3">
-              <label for="password-register" class="form-label">Password</label>
+              <label for="password-register" class="form-label">Пароль</label>
               <input type="password" class="form-control" id="password-register" name="password" required />
             </div>
             <div class="mb-3">
-              <label for="confirm-password" class="form-label">Confirm Password</label>
+              <label for="confirm-password" class="form-label">Подтвердить пароль</label>
               <input type="password" class="form-control" id="confirm-password" name="confirm_password" required />
             </div>
-            <button type="submit" class="btn btn-success w-100">Register</button>
+            <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
           </form>
           <p class="text-center mt-3">
-            <a href="/login">Already have an account? Sign In</a>
+            <a href="/login">Уже есть аккаунт? Войти</a>
           </p>
         <% } %>
 
