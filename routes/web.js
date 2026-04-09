@@ -64,4 +64,9 @@ router.post('/register', (req, res) => {
     res.redirect('/login');
 });
 
+router.get('/product', (req, res) => {
+    // product.ejs 
+    res.render('product'); 
+});
+
 module.exports = router;
