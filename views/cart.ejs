@@ -1,0 +1,64 @@
+<%- include('partials/header', { title: 'Корзина' }) %>
+
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Ваша корзина</h1>
+    <a href="/catalog" class="btn btn-outline-primary btn-sm">Вернуться к покупкам</a>
+  </div>
+
+  <!-- Если корзина пустая -->
+  <div class="alert alert-info text-center">
+    Корзина пуста
+  </div>
+
+  <!-- Если есть товары -->
+  <!-- 
+  <div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Товар</th>
+          <th>Цена</th>
+          <th>Кол-во</th>
+          <th>Сумма</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <img src="/img/pic.jpg" alt="Мишка Тедди" style="width:60px; height:60px; object-fit:cover;" class="me-2 rounded">
+              <span>Мишка Тедди</span>
+            </div>
+          </td>
+          <td>25 €</td>
+          <td>
+            <div class="d-flex align-items-center">
+              <button class="btn btn-sm btn-danger me-1" style="width:30px; padding:0;">-</button>
+              <span class="px-2 fw-bold text-center" style="min-width:30px;">1</span>
+              <button class="btn btn-sm btn-success ms-1" style="width:30px; padding:0;">+</button>
+            </div>
+          </td>
+          <td>25 €</td>
+        </tr>
+      </tbody>
+      <tfoot class="table-light fw-bold">
+        <tr>
+          <td colspan="3" class="text-end">Итого:</td>
+          <td>25 €</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between mt-3">
+    <button class="btn btn-danger">Очистить корзину</button>
+    <a href="checkout.html" class="btn btn-success">Оформить заказ</a>
+  </div>
+  -->
+
+</div>
+
+<%- include('partials/footer') %>
+
