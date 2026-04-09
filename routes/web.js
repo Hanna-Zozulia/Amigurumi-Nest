@@ -74,4 +74,9 @@ router.get('/cart', (req, res) => {
     res.render('cart'); 
 });
 
+router.get('/checkout', (req, res) => {
+    // checkout.ejs 
+    res.render('checkout'); 
+});
+
 module.exports = router;
