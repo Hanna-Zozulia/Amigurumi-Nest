@@ -1,15 +1,16 @@
-//
+//Cart.js
 module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define("Cart", {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true
+    },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     }
   });
-
-  Cart.associate = models => {
-    Cart.hasMany(models.CartItem, { as: "items" });
-  };
 
   return Cart;
 };
