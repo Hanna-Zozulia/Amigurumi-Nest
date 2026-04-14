@@ -5,8 +5,14 @@ const { getModels } = require('../models');
 // GET /login
 async function getLogin(req, res) {
     if (req.session.user) return res.redirect('/');
+
     const showError = Boolean(req.query.error);
-    res.render('login', { title: 'Enter', showError });
+
+    res.render('login', {
+        title: 'Enter',
+        showError,
+        type: 'login'
+    });
 }
 
 // POST /login

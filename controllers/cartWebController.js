@@ -4,11 +4,22 @@ const { getModels } = require('../models');
 async function show(req, res) {
     const { Cart, CartItem, Product } = getModels();
 
-    const cart = await Cart.findOne({
-        where: { userId: req.session.user.id },
-        include: [{ model: CartItem, as: 'items', include: [Product] }]
-    });
+    const userId = req.session.user?.id;
+    let cart = null;
 
+    if (userId) {
+        cart = await Cart.findOne({
+            where: { userId },
+            include: [{ model: CartItem, as: 'items', include: [Product] }]
+        });
+    }
+
+    // если нет пользователя → показываем пустую корзину
+    if (!cart) {
+        cart = { items: [] };
+    }
+
+    
     res.render("cart", { cart });
 }
 

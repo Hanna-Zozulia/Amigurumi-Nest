@@ -31,10 +31,10 @@ router.get('/register', (req, res) => {
 });
 
 // ===== КОРЗИНА =====
-router.get('/cart', requireAuth, cartController.show);
-router.post('/cart/add', requireAuth, cartController.add);
-router.post('/cart/remove', requireAuth, cartController.removeOne);
-router.post('/cart/clear', requireAuth, cartController.clear);
+router.get('/cart', cartController.show);
+router.post('/cart/add', cartController.add);
+router.post('/cart/remove', cartController.removeOne);
+router.post('/cart/clear', cartController.clear);
 
 // ===== CHECKOUT =====
 router.get('/checkout', requireAuth, (req, res) => {
