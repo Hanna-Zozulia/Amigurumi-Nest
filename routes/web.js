@@ -1,82 +1,44 @@
-// const express = require('express');
-// const router = express.Router();
-
-// // const { requireAuth, requireAdmin } = require('../middleware/auth');
-// // const auth = require('../controllers/authController');
-// // const product = require('../controllers/productController');
-
-// //Главная страница
-// router.get('/', product.listPage);
-
 const express = require('express');
 const router = express.Router();
 
-// Главная страница
-router.get('/', (req, res) => {
-    // Если шаблон index.ejs есть
-    res.render('index'); 
-});
+const productController = require('../controllers/productController');
+const cartController = require('../controllers/cartWebController');
+const authController = require('../controllers/authController');
+const { requireAuth } = require('../middleware/auth');
 
-router.get('/info', (req, res) => {
-    // info.ejs 
-    res.render('info'); 
-});
+// ===== ГЛАВНАЯ =====
+router.get('/', productController.listPage);
 
-router.get('/history', (req, res) => {
-    // history.ejs
-    res.render('history'); 
-});
+// ===== СТАТИЧЕСКИЕ СТРАНИЦЫ =====
+router.get('/info', (req, res) => res.render('info'));
+router.get('/history', (req, res) => res.render('history'));
+router.get('/top3', (req, res) => res.render('top3'));
 
-router.get('/top3', (req, res) => {
-    // top3.ejs 
-    res.render('top3'); 
-});
+// ===== КАТАЛОГ =====
+router.get('/catalog', productController.listPage);
 
-router.get('/catalog', (req, res) => {
-    // catalog.ejs 
-    res.render('catalog'); 
-});
+// ===== ПРОДУКТ =====
+router.get('/product/:id', productController.showPage);
 
-// GET /login — показать форму входа
-router.get('/login', (req, res) => {
-    res.render('login', { type: 'login' });
-});
+// ===== AUTH =====
+router.get('/login', authController.getLogin);
+router.post('/login', authController.postLogin);
+router.post('/logout', authController.postLogout);
 
-// GET /register — показать форму регистрации
+// Регистрация (пока просто форма)
 router.get('/register', (req, res) => {
     res.render('login', { type: 'register' });
 });
 
-// POST /login — обработка формы входа
-router.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    // проверка пользователя
-    res.send(`Вход для ${email} пока заглушка`);
-});
+// ===== КОРЗИНА =====
+router.get('/cart', requireAuth, cartController.show);
+router.post('/cart/add', requireAuth, cartController.add);
+router.post('/cart/remove', requireAuth, cartController.removeOne);
+router.post('/cart/clear', requireAuth, cartController.clear);
 
-// POST /register — обработка формы регистрации
-router.post('/register', (req, res) => {
-    const { name, email, password, confirm_password } = req.body;
-    if (password !== confirm_password) {
-        return res.render('login', { type: 'register', error: 'Passwords do not match!' });
-    }
-    // здесь добавь код сохранения пользователя
-    res.redirect('/login');
-});
-
-router.get('/product', (req, res) => {
-    // product.ejs 
-    res.render('product'); 
-});
-
-router.get('/cart', (req, res) => {
-    // cart.ejs 
-    res.render('cart'); 
-});
-
-router.get('/checkout', (req, res) => {
-    // checkout.ejs 
-    res.render('checkout'); 
+// ===== CHECKOUT =====
+router.get('/checkout', requireAuth, (req, res) => {
+    res.render('checkout');
 });
 
 module.exports = router;
