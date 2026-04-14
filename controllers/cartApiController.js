@@ -5,12 +5,20 @@ const { getModels } = require('../models');
 async function getCart(req, res) {
     const { Cart, CartItem, Product } = getModels();
 
-    if (!req.session.user)
+    const userId = req.session.user?.id;
+
+    if (!userId)
         return res.status(401).json({ error: 'Not logged in' });
 
     const cart = await Cart.findOne({
-        where: { userId: req.session.user.id },
-        include: [{ model: CartItem, as: 'items', include: [Product] }]
+        where: { userId },
+        include: [
+            { 
+                model: CartItem, 
+                as: 'items', 
+                include: [Product] 
+            }
+        ]
     });
 
     res.json(cart || { items: [] });

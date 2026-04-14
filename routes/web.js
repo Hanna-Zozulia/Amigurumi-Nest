@@ -7,7 +7,7 @@ const authController = require('../controllers/authController');
 const { requireAuth } = require('../middleware/auth');
 
 // ===== ГЛАВНАЯ =====
-router.get('/', productController.listPage);
+router.get('/', productController.homePage);
 
 // ===== СТАТИЧЕСКИЕ СТРАНИЦЫ =====
 router.get('/info', (req, res) => res.render('info'));

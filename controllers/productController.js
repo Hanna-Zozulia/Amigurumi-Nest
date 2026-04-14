@@ -4,6 +4,18 @@ const { getModels } = require('../models');
 
 const categories = ['', 'Свечи для массажа', 'Ароматические', 'Декоративные', 'Подарочные наборы'];
 
+async function homePage(req, res) {
+    const { Product } = getModels();
+
+    const products = await Product.findAll();
+
+    res.render('index', {
+        title: 'Home',
+        products,
+        currentUser: req.session.user || null
+    });
+}
+
 async function listPage(req, res) {
     const { Product, Cart, CartItem } = getModels();
 
@@ -12,18 +24,23 @@ async function listPage(req, res) {
 
     const products = await Product.findAll({ where });
 
-    const cart = await Cart.findOne({
-        where: { userId: req.session.user?.id },
-        include: [{ model: CartItem, as: 'items', include: [Product] }]
-    });
+    let cart = null;
+    const userId = req.session.user?.id;
 
-    res.render('index', {
-        title: 'Soft Light Studio',
+    if (userId) {
+        cart = await Cart.findOne({
+            where: { userId },
+            include: [{ model: CartItem, as: 'items', include: [Product] }]
+        });
+    }
+
+    res.render('catalog', {
+        title: 'Catalog',
         products,
         categories,
         selectedCategory: categoryFilter,
         cart,
-        currentUser: req.session.user
+        currentUser: req.session.user || null
     });
 }
 
@@ -79,4 +96,4 @@ async function showPage(req, res) {
     });
 }
 
-module.exports = { listPage, newForm, create, editForm, update, remove, showPage };
+module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage };
