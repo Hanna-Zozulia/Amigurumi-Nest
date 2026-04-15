@@ -73,8 +73,8 @@
                     Привет, <b><%= currentUser.name %></b>
                   </span>
 
-                  <% if (currentUser.rule === 'admin') { %>
-                    <span class="badge bg-warning text-dark ms-2">admin</span>
+                  <% if (currentUser.role === 'admin') { %>
+                    <span class="badge bg-warning text-dark ms-2">Admin</span>
                   <% } %>
                 </li>
 
@@ -87,7 +87,7 @@
               <% } %>
 
               <li class="nav-item ms-2 position-relative"
-                  <% if (!currentUser || currentUser.rule === 'admin') { %>
+                  <% if (!currentUser || currentUser.role === 'admin') { %>
                     style="display:none"
                   <% } %>>
 

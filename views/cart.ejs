@@ -29,7 +29,7 @@
           <td>
             <div class="d-flex align-items-center">
               <% if (item.Product) { %>
-              <img src="<%= item.Product.pic %>" alt="<%= item.Product.name %>" style="width:60px; height:60px; object-fit:cover;" class="me-2 rounded">
+              <img src="<%= item.Product.image %>" alt="<%= item.Product.name %>" style="width:60px; height:60px; object-fit:cover;" class="me-2 rounded">
               <span><%= item.Product.name %></span>
               <% } else { %>
                 <span class="text-muted">Товар недоступен</span>

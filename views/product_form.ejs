@@ -11,9 +11,9 @@
     <div class="col-12">
       <label class="form-label" for="category">Category</label>
       <select class="form-select" id="category" name="category" required>
-        <% categories.forEach(cat => { %>
-            <option value="<%= cat %>" <%= product && product.category === cat ? 'selected' : '' %>>
-                <%= cat %>
+        <% categories.forEach(category => { %>
+            <option value="<%= category %>" <%= product && product.category === category ? 'selected' : '' %>>
+                <%= category %>
             </option>
         <% }) %>
       </select>
@@ -27,13 +27,13 @@
       <input class="form-control" id="price" name="price" type="number" min="0" step="0.01" required value="<%= product ? product.price : '' %>" />
     </div>
     <div class="col-12">
-      <label class="form-label" for="pic">Picture URL or path</label>
+      <label class="form-label" for="image">Image URL or path</label>
       <!-- Текстовое поле для адреса картинки. По умолчанию /img/pic.png -->
-      <input class="form-control" id="pic" name="pic" placeholder="" value="<%= product ? product.pic : '' %>" />
+      <input class="form-control" id="image" name="image" placeholder="" value="<%= product ? product.image : '' %>" />
       <div class="form-text">Stored as address in DB. Use absolute URL or app-relative path.</div>
       <!-- Превью картинки для удобства администратора -->
       <div class="d-flex align-items-center gap-3 mt-2">
-        <img id="picPreview" src="<%= product ? product.pic : '' %>" width="80" height="80" class="rounded object-fit-cover border" alt="pic" />
+        <img id="imagePreview" src="<%= product ? product.image : '' %>" width="80" height="80" class="rounded object-fit-cover border" alt="image" />
         <span class="text-muted small">Preview</span>
       </div>
     </div>
@@ -45,12 +45,12 @@
 </form>
 <script>
   // Обновляем превью при вводе адреса картинки
-  const picInput = document.getElementById('pic');
-  const picPreview = document.getElementById('picPreview');
-  if (picInput && picPreview) {
-    picInput.addEventListener('input', () => {
-      const v = picInput.value && picInput.value.trim() ? picInput.value.trim() : '';
-      picPreview.src = v;
+  const imageInput = document.getElementById('image');
+  const imagePreview = document.getElementById('imagePreview');
+  if (imageInput && imagePreview) {
+    imageInput.addEventListener('input', () => {
+      const value = imageInput.value && imageInput.value.trim() ? imageInput.value.trim() : '';
+      imagePreview.src = value;
     });
   }
 </script>

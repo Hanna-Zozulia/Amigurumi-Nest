@@ -44,6 +44,21 @@ async function listPage(req, res) {
     });
 }
 
+async function top3Page(req, res) {
+    const { Product } = getModels();
+
+    const products = await Product.findAll({
+        order: [['views', 'DESC']],
+        limit: 3
+    });
+
+    res.render('top3', {
+        title: 'Top 3',
+        products,
+        currentUser: req.session.user || null
+    });
+}
+
 async function newForm(req, res) {
     res.render('product_form', { title: 'New Product', product: null, categories });
 }
@@ -89,11 +104,13 @@ async function showPage(req, res) {
 
     if (!product) return res.status(404).render('404');
 
+    await product.increment('views');
+
     res.render('show', {
         title: product.name,
         product,
-        currentUser: req.session.user
+        currentUser: req.session.user || null
     });
 }
 
-module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage };
+module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage, top3Page };

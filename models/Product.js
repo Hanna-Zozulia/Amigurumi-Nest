@@ -9,8 +9,9 @@ module.exports = (sequelize) => {
             name: { type: DataTypes.STRING(255), allowNull: false },
             desc: { type: DataTypes.TEXT, allowNull: false },
             price: { type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0},
-            pic: { type: DataTypes.STRING(255), allowNull: false },
-            category: { type: DataTypes.STRING(255), allowNull: false}
+            image: { type: DataTypes.STRING(255), allowNull: false },
+            category: { type: DataTypes.STRING(255), allowNull: false},
+            views: { type: DataTypes.INTEGER, defaultValue: 0 }
         },
         {
             tableName: 'products',

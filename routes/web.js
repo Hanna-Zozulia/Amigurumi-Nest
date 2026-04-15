@@ -12,10 +12,10 @@ router.get('/', productController.homePage);
 // ===== СТАТИЧЕСКИЕ СТРАНИЦЫ =====
 router.get('/info', (req, res) => res.render('info'));
 router.get('/history', (req, res) => res.render('history'));
-router.get('/top3', (req, res) => res.render('top3'));
 
 // ===== КАТАЛОГ =====
 router.get('/catalog', productController.listPage);
+router.get('/top3', productController.top3Page);
 
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);

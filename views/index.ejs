@@ -12,9 +12,9 @@
       <div class="vertical-slider">
         <div class="slider-track">
 
-          <% (products || []).slice(0, 3).forEach(function(p) { %>
+          <% (products || []).slice(0, 3).forEach(function(product) { %>
             <div class="toys-item">
-              <img src="<%= p.pic %>" alt="<%= p.name %>">
+              <img src="<%= product.image %>" alt="<%= product.name %>">
             </div>
           <% }) %>
 
@@ -45,10 +45,10 @@
 
     <div class="block_3 toy-row">
 
-      <% (products || []).forEach(function(p) { %>
+      <% (products || []).forEach(function(product) { %>
         <div class="toy-item">
-          <img src="<%= p.pic %>" class="img-fluid mb-2">
-          <p><%= p.name %></p>
+          <img src="<%= product.image %>" class="img-fluid mb-2">
+          <p><%= product.name %></p>
         </div>
       <% }) %>
 

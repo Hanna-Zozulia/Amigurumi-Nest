@@ -5,11 +5,11 @@
 
     <div class="row">
 
-        <% (products || []).forEach(function(p) { %>
+        <% (products || []).forEach(function(product) { %>
             <div class="col-md-4 top3 mt-4">
-                <img src="<%= p.pic %>" alt="<%= p.name %>">
-                <h2><%= p.name %></h2>
-                <p>Просмотры: <%= p.views %></p>
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+                <h2><%= product.name %></h2>
+                <p>Просмотры: <%= product.views %></p>
             </div>
         <% }) %>
 
