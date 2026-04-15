@@ -30,7 +30,7 @@
         <!-- Меню -->
         <div class="collapse navbar-collapse" id="navbarContent">
           <ul class="navbar-nav ms-auto align-items-center">
-
+          
             <!-- Основное меню -->
             <li class="nav-item">
               <a class="nav-link" href="/">Главная</a>
@@ -49,28 +49,58 @@
             </li>
 
             <!-- Кнопки справа -->
-              <li class="nav-item dropdown ms-3">
-                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  Аккаунт
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
-                  <li><a class="dropdown-item" href="/login">Вход</a></li>
-                  <li><a class="dropdown-item" href="/register">Регистрация</a></li>
-                </ul>
-              </li>
-            </li>
-            <li class="nav-item ms-2 position-relative">
-              <a href="/cart" class="text-dark fs-5">
-                <i class="bi bi-cart3"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">
-                  0
-                </span>
-              </a>
-            </li>
+              <% if (!currentUser) { %>
+                  <!-- НЕАВТОРИЗОВАННЫЙ ПОЛЬЗОВАТЕЛЬ -->
+                <li class="nav-item dropdown ms-3">
+                  <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                    type="button"
+                    id="authDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Аккаунт
+                  </button>
 
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
+                    <li><a class="dropdown-item" href="/login">Вход</a></li>
+                    <li><a class="dropdown-item" href="/register">Регистрация</a></li>
+                  </ul>
+                </li>
+
+              <% } else { %>
+                <!-- АВТОРИЗОВАННЫЙ ПОЛЬЗОВАТЕЛЬ -->
+                <li class="nav-item ms-3 d-flex align-items-center">
+                  <span class="text-muted small">
+                    Привет, <b><%= currentUser.name %></b>
+                  </span>
+
+                  <% if (currentUser.rule === 'admin') { %>
+                    <span class="badge bg-warning text-dark ms-2">admin</span>
+                  <% } %>
+                </li>
+
+                <li class="nav-item ms-2">
+                  <form method="post" action="/logout">
+                    <button class="btn btn-outline-danger btn-sm">Выйти</button>
+                  </form>
+                </li>
+
+              <% } %>
+
+              <li class="nav-item ms-2 position-relative"
+                  <% if (!currentUser || currentUser.rule === 'admin') { %>
+                    style="display:none"
+                  <% } %>>
+
+                <a href="/cart" class="text-dark fs-5">
+                  <i class="bi bi-cart3"></i>
+
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <%= (cart && cart.items) ? cart.items.length : 0 %>
+                  </span>
+                </a>
+              </li>
           </ul>
         </div>
     </div>
   </nav>
     <main class="container my-4">
-

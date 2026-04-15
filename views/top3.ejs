@@ -1,23 +1,19 @@
-<%- include('partials/header', { title: 'Amigurumi Nest' }) %>
+<%- include('partials/header', { title: 'Top 3' }) %>
 
 <div class="container">
     <h1 class="mt-5">Топ 3 самых популярных игрушек на сайте</h1>
+
     <div class="row">
-        <div class="col-md-4 top3 mt-4">
-            <img src="img/pic.jpg" alt="Amigurumi Nest">
-            <h2>Bunny Amigurumi</h2>
-            <p>Подробнее</p>
-        </div>
-        <div class="col-md-4 top3 mt-4">
-            <img src="img/pic.jpg" alt="Amigurumi Nest">
-            <h2>Bunny Amigurumi</h2>
-            <p>Подробнее</p>
-        </div>
-        <div class="col-md-4 top3 mt-4">
-            <img src="img/pic.jpg" alt="Amigurumi Nest">
-            <h2>Bunny Amigurumi</h2>
-            <p>Подробнее</p>
-        </div>
+
+        <% (products || []).forEach(function(p) { %>
+            <div class="col-md-4 top3 mt-4">
+                <img src="<%= p.pic %>" alt="<%= p.name %>">
+                <h2><%= p.name %></h2>
+                <p>Просмотры: <%= p.views %></p>
+            </div>
+        <% }) %>
+
     </div>
 </div>
-<%- include ('partials/footer') %>
+
+<%- include('partials/footer') %>

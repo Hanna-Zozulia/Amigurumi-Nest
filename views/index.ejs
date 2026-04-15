@@ -2,84 +2,73 @@
 
 <div class="container">
 
-  <!-- Блок 1: Hero + вертикальный слайдер -->
+  <!-- Блок 1 -->
   <div class="row block">
     <div class="col-md-6 h1">
-      <h1>Amigurumi Nest — это мир мягких вязаных чудес.­­</h1>
+      <h1>Amigurumi Nest — это мир мягких вязаных чудес.</h1>
     </div>
+
     <div class="col-md-6 h2">
       <div class="vertical-slider">
         <div class="slider-track">
-          <% const masterClasses = [
-                { title: 'Bunny Amigurumi', description: 'Learn to make a soft bunny toy', image: 'img/pic.png'},
-                { title: 'Bear Amigurumi', description: 'Make a cute bear', image: 'img/pic.png' },
-                { title: 'Cat Amigurumi', description: 'Craft your own cat', image: 'img/pic.png' }
-          ]; %>
-          <% masterClasses.forEach(function(mc) { %>
+
+          <% (products || []).slice(0, 3).forEach(function(p) { %>
             <div class="toys-item">
-              <img src="<%= mc.image %>" alt="<%= mc.title %>">
+              <img src="<%= p.pic %>" alt="<%= p.name %>">
             </div>
           <% }) %>
+
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Блок 2: Что включено -->
+  <!-- Блок 2 (оставляем как есть, это контент) -->
   <div class="row block_2">
     <div class="col-md-6 h2">
       <h2>Почему выбирают наши игрушки?</h2>
     </div>
+
     <div class="col-md-6 block_ul">
       <ul>
         <li>Каждая игрушка уникальная и сделана с любовью.</li>
-        <li>Мы используем только гипоаллергенную пряжу и безопасные наполнители.</li>
-        <li>Игрушки помогают развивать мелкую моторику и создают ощущение тепла и уюта.</li>
-        <li>Подходят для подарка детям и взрослым.</li>
+        <li>Мы используем безопасные материалы.</li>
+        <li>Создают уют и тепло.</li>
+        <li>Подходят для подарков.</li>
       </ul>
     </div>
   </div>
 
-  <!-- Блок 3: Trending now -->
+  <!-- Блок 3 = реальные продукты -->
   <div class="row block_3">
     <h2>Тренды сейчас</h2>
+
     <div class="block_3 toy-row">
-      <% const popularClasses = [
-            { title: 'Fox Amigurumi', image: 'img/pic.png' },
-            { title: 'Dog Amigurumi', image: 'img/pic.png' },
-            { title: 'Penguin Amigurumi', image: 'img/pic.png'},
-            { title: 'Penguin Amigurumi', image: 'img/pic.png'},
-            { title: 'Penguin Amigurumi', image: 'img/pic.png'},
-            { title: 'Penguin Amigurumi', image: 'img/pic.png'}
-      ]; %>
-      <% popularClasses.forEach(function(pc) { %>
+
+      <% (products || []).forEach(function(p) { %>
         <div class="toy-item">
-          <img src="<%= pc.image %>" alt="<%= pc.title %>" class="img-fluid mb-2">
-          <p><%= pc.title %></p>
+          <img src="<%= p.pic %>" class="img-fluid mb-2">
+          <p><%= p.name %></p>
         </div>
       <% }) %>
+
     </div>
   </div>
 
-  <!-- Блок 4: Отзывы -->
+  <!-- Блок 4 (пока статично — у тебя ещё нет модели reviews) -->
   <div class="row block_4">
     <h2>Ваши отзывы</h2>
+
     <div class="reviews-grid">
-      <% const reviews = [
-            { name: 'Anna', comment: 'Loved this class!', date: '2026-01-01'},
-            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' },
-            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' },
-            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' },
-            { name: 'Maria', comment: 'Great explanations and guidance.', date: '2026-01-21' }
-      ]; %>
-      <% reviews.forEach(function(rv) { %>
-        <div class="review-item">
-          <h4><strong><%= rv.name %></strong></h4>
-          <p><%= rv.comment %></p>
-          <p class="date"><%= rv.date %></p>
-        </div>
-      <% }) %>
+
+      <div class="review-item">
+        <h4><strong>Anna</strong></h4>
+        <p>Lovely handmade toys!</p>
+        <p class="date">2026</p>
+      </div>
+
     </div>
+
   </div>
 
 </div>

@@ -1,59 +1,83 @@
-<%- include('partials/header', { title: 'Каталог' }) %>
+<%- include('partials/header', { title: 'Каталог', currentUser: currentUser }) %>
 
 <div class="container">
-    <h1 class="mt-5">Каталог игрушек 🧸</h1>
 
-    <div class="row">
+  <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+    <h1 class="m-0">Каталог товаров</h1>
 
-        <!-- Товар 1 -->
-        <div class="col-md-4 mt-4">
-            <div class="card">
-                <img src="/img/pic.jpg" class="card-img-top" alt="Мишка">
-                <div class="card-body">
-                    <h5 class="card-title">Мишка Тедди</h5>
-                    <p class="card-text">Цена: 25€</p>
-                    <a href="/product" class="btn btn-primary">Подробнее</a>
-                </div>
-            </div>
-        </div>
+    <% if (currentUser && currentUser.rule === 'admin') { %>
+      <a href="/products/new" class="btn btn-success">Add product</a>
+    <% } %>
+  </div>
 
-        <!-- Товар 2 -->
-        <div class="col-md-4 mt-4">
-            <div class="card">
-                <img src="/img/pic.jpg" class="card-img-top" alt="Зайка">
-                <div class="card-body">
-                    <h5 class="card-title">Зайка</h5>
-                    <p class="card-text">Цена: 20€</p>
-                    <a href="/product" class="btn btn-primary">Подробнее</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Товар 3 -->
-        <div class="col-md-4 mt-4">
-            <div class="card">
-                <img src="/img/pic.jpg" class="card-img-top" alt="Кукла">
-                <div class="card-body">
-                    <h5 class="card-title">Кукла Аня</h5>
-                    <p class="card-text">Цена: 30€</p>
-                    <a href="/product" class="btn btn-primary">Подробнее</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Товар 4 -->
-        <div class="col-md-4 mt-4">
-            <div class="card">
-                <img src="/img/pic.jpg" class="card-img-top" alt="Мини кот">
-                <div class="card-body">
-                    <h5 class="card-title">Мини котик</h5>
-                    <p class="card-text">Цена: 12€</p>
-                    <a href="/product" class="btn btn-primary">Подробнее</a>
-                </div>
-            </div>
-        </div>
-
+  <!-- Фильтр -->
+  <form method="get" action="/" class="mb-4">
+    <div class="input-group">
+      <label class="input-group-text">Категория:</label>
+      <select class="form-select" name="category" onchange="this.form.submit()">
+        <% categories.forEach(cat => { %>
+          <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>>
+            <%= cat === '' ? 'Все категории' : cat %>
+          </option>
+        <% }) %>
+      </select>
     </div>
+  </form>
+
+  <!-- Товары -->
+  <div class="row g-3">
+    <% products.forEach(p => { %>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+
+          <!-- Картинка + ссылка -->
+          <a href="/products/<%= p.id %>">
+            <img src="<%= p.pic %>" 
+                 class="card-img-top object-fit-cover" 
+                 style="height: 180px" 
+                 alt="<%= p.name %>" />
+          </a>
+
+          <div class="card-body d-flex flex-column">
+
+            <h5 class="card-title"><%= p.name %></h5>
+            <p class="text-muted mb-1"><b>Категория:</b> <%= p.category %></p>
+            <p class="small text-muted flex-grow-1"><b>Описание:</b> <%= p.desc %></p>
+
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <span class="fw-bold"><%= Number(p.price).toFixed(2) %> €</span>
+
+              <div class="d-flex gap-1">
+
+                <% if (!currentUser || currentUser.rule !== 'admin') { %>
+                  <form action="<%= currentUser ? '/cart/add' : '/login' %>" method="post">
+                    <input type="hidden" name="productId" value="<%= p.id %>">
+                    <button class="btn btn-primary btn-sm">Купить</button>
+                  </form>
+                <% } %>
+
+                <% if (currentUser && currentUser.rule === 'admin') { %>
+                  <a class="btn btn-outline-primary btn-sm" href="/products/<%= p.id %>/edit">Edit</a>
+
+                  <form action="/products/<%= p.id %>/delete" method="post">
+                    <button class="btn btn-outline-danger btn-sm"
+                      onclick="return confirm('Delete product?')">
+                      Delete
+                    </button>
+                  </form>
+                <% } %>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    <% }) %>
+  </div>
+
 </div>
 
 <%- include('partials/footer') %>
