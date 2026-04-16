@@ -121,7 +121,7 @@ async function showPage(req, res) {
 
     await product.increment('views');
 
-    res.render('show', {
+    res.render('product', {
         title: product.name,
         product,
         currentUser: req.session.user || null
