@@ -7,6 +7,7 @@ const defineProduct = require('./Product');
 const defineCart = require('./Cart');
 const defineCartItem = require('./CartItem');
 const defineOrder = require('./Order');
+const defineReview = require('./Review');
 
 let sequelize = null;
 
@@ -15,7 +16,7 @@ let Product = null;
 let Cart = null;
 let CartItem = null;
 let Order = null;
-
+let Review = null;
 async function initDb() {
     try {
         // Подключение к MySQL
@@ -27,6 +28,7 @@ async function initDb() {
         Cart = defineCart(sequelize, require('sequelize').DataTypes);
         CartItem = defineCartItem(sequelize, require('sequelize').DataTypes);
         Order = defineOrder(sequelize);
+        Review = defineReview(sequelize, require('sequelize').DataTypes);
 
         // ======================
         // СВЯЗИ (ВАЖНО)
@@ -43,6 +45,13 @@ async function initDb() {
         // Cart -> Order (1 к 1)
         Cart.hasOne(Order, { foreignKey: 'cartId' });
         Order.belongsTo(Cart, { foreignKey: 'cartId' });
+
+        // User -> Review (1 ко многим)
+        User.hasMany(Review, { foreignKey: 'userId' });
+        Review.belongsTo(User, { foreignKey: 'userId' });
+
+        Product.hasMany(Review, { foreignKey: 'productId' });
+        Review.belongsTo(Product, { foreignKey: 'productId' });
 
         // ======================
         // СИНХРОНИЗАЦИЯ БД
@@ -85,14 +94,15 @@ async function initDb() {
 }
 
 function getModels() {
-    if (sequelize && User && Product && Cart && CartItem && Order) {
+    if (sequelize && User && Product && Cart && CartItem && Order && Review) {
         return {
             sequelize,
             User,
             Product,
             Cart,
             CartItem,
-            Order
+            Order,
+            Review
         };
     }
     return null;

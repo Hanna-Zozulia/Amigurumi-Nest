@@ -23,9 +23,55 @@
 
       <div class="mt-4">
         <button class="btn btn-primary">Купить</button>
-        <button class="btn btn-outline-primary">Edit</button>
-        <button class="btn btn-outline-danger">Delete</button>
+        <% if (currentUser && currentUser.role === 'admin') { %>
+          <button class="btn btn-outline-primary">Edit</button>
+          <button class="btn btn-outline-danger">Delete</button>
+        <% } %>
       </div>
+
+      <% if (currentUser) { %>
+
+        <hr>
+
+        <h4>Оставить отзыв</h4>
+
+        <form method="POST" action="/review/add">
+          <input type="hidden" name="productId" value="<%= product.id %>">
+
+          <div class="mb-3">
+            <textarea name="text" class="form-control" rows="3" placeholder="Ваш отзыв..." required></textarea>
+          </div>
+
+          <button class="btn btn-success">Отправить</button>
+        </form>
+
+      <% } else { %>
+
+        <hr>
+        <p class="text-muted">
+          Чтобы оставить отзыв, <a href="/login">войдите</a> в аккаунт.
+        </p>
+
+      <% } %>
+
+      <hr>
+
+      <h4>Отзывы</h4>
+
+      <% if (product.Reviews && product.Reviews.length > 0) { %>
+
+        <% product.Reviews.forEach(r => { %>
+          <div class="border rounded p-2 mb-2">
+            <b><%= r.User.name %></b>
+            <p class="mb-0"><%= r.text %></p>
+          </div>
+        <% }) %>
+
+      <% } else { %>
+
+        <p class="text-muted">Пока нет отзывов</p>
+
+      <% } %>
 
       <a href="/catalog" class="btn btn-link mt-3">← Назад в каталог</a>
     </div>

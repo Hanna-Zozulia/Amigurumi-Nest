@@ -5,13 +5,20 @@ const { getModels } = require('../models');
 const categories = ['', 'Свечи для массажа', 'Ароматические', 'Декоративные', 'Подарочные наборы'];
 
 async function homePage(req, res) {
-    const { Product } = getModels();
+    const { Product, Review, User } = getModels();
 
     const products = await Product.findAll();
 
+    const reviews = await Review.findAll({
+        include: [User],
+        order: [['createdAt', 'DESC']],
+        limit: 5
+    });
+    
     res.render('index', {
         title: 'Home',
         products,
+        reviews,
         currentUser: req.session.user || null
     });
 }
@@ -99,8 +106,16 @@ async function remove(req, res) {
 }
 
 async function showPage(req, res) {
-    const { Product } = getModels();
-    const product = await Product.findByPk(req.params.id);
+    const { Product, Review, User  } = getModels();
+    const product = await Product.findByPk(req.params.id, {
+        include: [
+            {
+                model: Review,
+                as: 'Reviews',
+                include: [User]
+            }
+        ]
+    });
 
     if (!product) return res.status(404).render('404');
 

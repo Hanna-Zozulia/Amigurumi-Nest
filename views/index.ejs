@@ -55,21 +55,27 @@
     </div>
   </div>
 
-  <!-- Блок 4 (пока статично — у тебя ещё нет модели reviews) -->
-  <div class="row block_4">
-    <h2>Ваши отзывы</h2>
+  <% if (reviews.length > 0) { %>
 
-    <div class="reviews-grid">
+    <div class="row block_4">
+      <h2>Ваши отзывы</h2>
 
-      <div class="review-item">
-        <h4><strong>Anna</strong></h4>
-        <p>Lovely handmade toys!</p>
-        <p class="date">2026</p>
+      <div class="reviews-grid">
+
+        <% reviews.forEach(review => { %>
+          <div class="review-item">
+            <h4><strong><%= review.User.name %></strong></h4>
+            <p><%= review.text %></p>
+            <p class="date">
+              <%= new Date(review.createdAt).getFullYear() %>
+            </p>
+          </div>
+        <% }) %>
+
       </div>
-
     </div>
 
-  </div>
+<% } %>
 
 </div>
 
