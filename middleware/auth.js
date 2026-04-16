@@ -13,7 +13,7 @@ function requireAdmin(req, res, next) {
         return res.status(401).send('Unauthorized');
     }
 
-    if (req.session.user.rule !== 'admin') {
+    if (req.session.user.role !== 'admin') {
         return res.status(403).send('Forbidden');
     }
 

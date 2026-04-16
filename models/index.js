@@ -72,13 +72,13 @@ async function initDb() {
                     name: 'Administrator',
                     email: process.env.ADMIN_EMAIL,
                     password: adminPass,
-                    rule: 'admin'
+                    role: 'admin'
                 },
                 {
                     name: 'Customer',
                     email: process.env.USER_EMAIL,
                     password: userPass,
-                    rule: 'user'
+                    role: 'user'
                 }
             ]);
 

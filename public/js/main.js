@@ -26,3 +26,8 @@ function editReview(id) {
     document.getElementById('text-' + id).classList.add('d-none');
     document.getElementById('form-' + id).classList.remove('d-none');
 }
+
+function editReply(id) {
+    document.getElementById('reply-text-' + id).classList.add('d-none');
+    document.getElementById('reply-form-' + id).classList.remove('d-none');
+}

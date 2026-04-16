@@ -22,28 +22,42 @@
       <h4 class="mt-3">Цена: <%= product.price %> €</h4>
 
       <div class="mt-4">
-        <div class="d-flex justify-content-end">
-          <button class="btn btn-primary">Купить</button>
-        </div>
-          <% if (currentUser && currentUser.role === 'admin') { %>
+
+        <% if (!currentUser || currentUser.role !== 'admin') { %>
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-primary">Купить</button>
+          </div>
+        <% } %>
+
+        <% if (currentUser && currentUser.role === 'admin') { %>
+          <div class="mt-2 d-flex gap-2 justify-content-end">
             <button class="btn btn-outline-primary">Edit</button>
             <button class="btn btn-outline-danger">Delete</button>
-          <% } %>
+          </div>
+        <% } %>
+
       </div>
 
+      <!-- ОТЗЫВЫ: форма добавления -->
       <% if (currentUser) { %>
-        <h4>Оставить отзыв</h4>
 
-        <form method="POST" action="/review/add">
-          <input type="hidden" name="productId" value="<%= product.id %>">
+        <% if (currentUser.role !== 'admin') { %>
 
-          <div class="mb-3">
-            <textarea name="text" class="form-control" rows="3" placeholder="Ваш отзыв..." required></textarea>
-          </div>
-          <div class="d-flex justify-content-end">
-            <button class="btn btn-success">Отправить</button>
-          </div>
-        </form>
+          <h4 class="mt-4">Оставить отзыв</h4>
+
+          <form method="POST" action="/review/add">
+            <input type="hidden" name="productId" value="<%= product.id %>">
+
+            <div class="mb-3">
+              <textarea name="text" class="form-control" rows="3" placeholder="Ваш отзыв..." required></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-success">Отправить</button>
+            </div>
+          </form>
+
+        <% } %>
 
       <% } else { %>
 
@@ -53,44 +67,61 @@
         </p>
 
       <% } %>
+
       <div class="d-flex justify-content-end">
         <a href="/catalog" class="btn btn-link mt-3">← Назад в каталог</a>
       </div>
+
     </div>
+  </div>
 
-      <h4 class="product_h4">Отзывы</h4>
+<!-- ОТЗЫВЫ: список -->
+  <div class="mt-5">
 
-      <% if (product.Reviews && product.Reviews.length > 0) { %>
+  <h4 class="product_h4">Отзывы</h4>
 
-        <div class="d-flex flex-column gap-3">
+  <% if (product.Reviews && product.Reviews.length > 0) { %>
 
-        <% product.Reviews.forEach(review => { %>
-          <div class="border rounded p-3 shadow-sm d-flex justify-content-between align-items-start">
+    <div class="d-flex flex-column gap-3">
+
+      <% product.Reviews.forEach(review => { %>
+
+        <div class="border rounded p-3 shadow-sm">
+
+          <div class="d-flex justify-content-between align-items-start">
             <div class="w-100 me-3">
+
               <b class="d-block"><%= review.User.name %></b>
-              <p id="text-<%= review.id %>" class="mb-1"><%= review.text %></p>
-          
-          <!-- КНОПКИ (ТОЛЬКО СВОИ ОТЗЫВЫ) -->
-            <form id="form-<%= review.id %>" class="d-none" method="POST" action="/review/edit/<%= review.id %>">
-              <textarea name="text" class="form-control mb-2" rows="3"><%= review.text %></textarea>
 
-              <button class="btn btn-sm btn-success">Сохранить</button>
+              <!-- REVIEW TEXT -->
+              <p id="text-<%= review.id %>" class="mb-1">
+                <%= review.text %>
+              </p>
 
-            </form>
+              <!-- EDIT REVIEW FORM -->
+              <form id="form-<%= review.id %>"
+                    class="d-none"
+                    method="POST"
+                    action="/review/edit/<%= review.id %>">
 
-          </div>
+                <textarea name="text" class="form-control mb-2"><%= review.text %></textarea>
+                <button class="btn btn-sm btn-success">Сохранить</button>
 
-          <% if (currentUser && currentUser.id === review.userId) { %>
+              </form>
+
+            </div>
+
+            <!-- REVIEW OWNER BUTTONS -->
+            <% if (currentUser && currentUser.id === review.userId) { %>
+
               <div class="d-flex gap-2 flex-shrink-0">
 
-                <!-- РЕДАКТИРОВАТЬ -->
                 <button type="button"
-                    class="btn btn-sm btn-outline-primary"
-                    onclick="editReview('<%= review.id %>')">
-                <i class="bi bi-pencil"></i>
-              </button>
+                        class="btn btn-sm btn-outline-primary"
+                        onclick="editReview('<%= review.id %>')">
+                  <i class="bi bi-pencil"></i>
+                </button>
 
-                <!-- УДАЛИТЬ -->
                 <form method="POST" action="/review/delete/<%= review.id %>">
                   <button class="btn btn-sm btn-outline-danger">
                     <i class="bi bi-trash"></i>
@@ -100,15 +131,88 @@
               </div>
 
             <% } %>
-
           </div>
-        <% }) %>
-      </div>
-      <% } else { %>
 
-        <p class="text-muted">Пока нет отзывов</p>
+          <!-- ADMIN REPLY: AFTER REVIEW -->
+          <% if (review.adminReply) { %>
 
-      <% } %>
+            <div class="mt-3 p-2 border rounded">
+
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="w-100 me-3">
+                  <b class="d-block">Ответ магазина:</b>
+
+                  <p id="reply-text-<%= review.id %>" class="mb-1">
+                    <%= review.adminReply %>
+                  </p>
+                </div>
+
+                <% if (currentUser && currentUser.role === 'admin') { %>
+                  <div class="d-flex gap-2 flex-shrink-0 reply-actions">
+
+                    <!-- EDIT REPLY -->
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            onclick="editReply('<%= review.id %>')">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- DELETE REPLY -->
+                    <form method="POST" action="/review/reply/delete/<%= review.id %>">
+                      <button class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+
+                  </div>
+                <% } %>
+              </div>
+
+              <% if (currentUser && currentUser.role === 'admin') { %>
+                <!-- REPLY EDIT FORM -->
+                <form id="reply-form-<%= review.id %>"
+                      class="d-none mt-2"
+                      method="POST"
+                      action="/review/reply/<%= review.id %>">
+
+                  <textarea name="adminReply" class="form-control mb-2"><%= review.adminReply %></textarea>
+
+                  <button class="btn btn-sm btn-success">Сохранить</button>
+
+                </form>
+              <% } %>
+
+            </div>
+
+          <% } %>
+
+          <!-- ADMIN CREATE REPLY -->
+          <% if (currentUser && currentUser.role === 'admin' && !review.adminReply) { %>
+
+            <form method="POST" action="/review/reply/<%= review.id %>" class="mt-3">
+
+              <textarea name="adminReply" class="form-control mb-2" rows="2"
+                        placeholder="Ответ магазина..."></textarea>
+
+              <button class="btn btn-sm btn-dark">Ответить</button>
+
+            </form>
+
+          <% } %>
+
+        </div>
+
+      <% }) %>
+
+    </div>
+
+  <% } else { %>
+
+    <p class="text-muted">Пока нет отзывов</p>
+
+  <% } %>
+
 </div>
-<script src="js/main.js"></script>
+
+<script src="/js/main.js"></script>
 <%- include('partials/footer') %>

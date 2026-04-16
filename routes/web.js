@@ -22,6 +22,8 @@ router.post('/review/add', productController.addReview);
 router.get('/review/edit/:id', productController.editReviewForm);
 router.post('/review/edit/:id', productController.updateReview);
 router.post('/review/delete/:id', productController.deleteReview);
+router.post('/review/reply/:id', requireAuth, productController.replyReview);
+router.post('/review/reply/delete/:id', requireAuth, productController.deleteReply);
 
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);

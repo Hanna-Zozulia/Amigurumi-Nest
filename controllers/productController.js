@@ -111,7 +111,6 @@ async function showPage(req, res) {
         include: [
             {
                 model: Review,
-                as: 'Reviews',
                 include: [User]
             }
         ]
@@ -192,4 +191,43 @@ async function deleteReview(req, res) {
     res.redirect('/product/' + review.productId);
 }
 
-module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage, top3Page, addReview, deleteReview, editReviewForm, updateReview };
+async function replyReview(req, res) {
+    const { Review } = getModels();
+
+    const review = await Review.findByPk(req.params.id);
+    if (!review) return res.status(404).send('Not found');
+
+    if (!req.session.user) {
+        return res.status(401).send('Not authorized');
+    }
+
+    if (req.session.user.role !== 'admin') {
+        return res.status(403).send('Forbidden');
+    }
+
+    await review.update({
+        adminReply: req.body.adminReply
+    });
+
+    res.redirect('/product/' + review.productId);
+}
+
+async function deleteReply(req, res) {
+    const { Review } = getModels();
+
+    const review = await Review.findByPk(req.params.id);
+
+    if (!review) return res.status(404).send('Not found');
+
+    if (!req.session.user) {
+        return res.status(401).send('Not authorized');
+    }
+
+    await review.update({
+        adminReply: null
+    });
+
+    res.redirect('/product/' + review.productId);
+}
+
+module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage, top3Page, addReview, deleteReview, editReviewForm, updateReview, replyReview, deleteReply };

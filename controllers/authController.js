@@ -30,7 +30,7 @@ async function postLogin(req, res) {
         id: user.id,
         name: user.name,
         email: user.email,
-        rule: user.rule
+        role: user.role
     };
 
     res.redirect('/');

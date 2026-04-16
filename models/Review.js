@@ -3,8 +3,11 @@ module.exports = (sequelize, DataTypes) => {
     text: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    adminReply: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   });
-
   return Review;
 };
