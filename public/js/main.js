@@ -21,3 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     animate();
 });
+
+function editReview(id) {
+    document.getElementById('text-' + id).classList.add('d-none');
+    document.getElementById('form-' + id).classList.remove('d-none');
+}

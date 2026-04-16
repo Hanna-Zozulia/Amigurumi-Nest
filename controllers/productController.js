@@ -128,4 +128,68 @@ async function showPage(req, res) {
     });
 }
 
-module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage, top3Page };
+async function addReview(req, res) {
+    const { Review } = getModels();
+
+    const { text, productId } = req.body;
+
+    await Review.create({
+        text,
+        productId,
+        userId: req.session.user.id
+    });
+
+    res.redirect('/product/' + productId);
+}
+
+async function editReviewForm(req, res) {
+    const { Review } = getModels();
+
+    const review = await Review.findByPk(req.params.id);
+
+    if (!review) return res.status(404).send('Not found');
+
+    // защита: только свой отзыв
+    if (review.userId !== req.session.user.id) {
+        return res.status(403).send('Forbidden');
+    }
+
+    res.render('edit_review', { review });
+}
+
+async function updateReview(req, res) {
+    const { Review } = getModels();
+
+    const review = await Review.findByPk(req.params.id);
+
+    if (!review) return res.status(404).send('Not found');
+
+    if (review.userId !== req.session.user.id) {
+        return res.status(403).send('Forbidden');
+    }
+
+    await review.update({
+        text: req.body.text
+    });
+
+    res.redirect('/product/' + review.productId);
+}
+
+async function deleteReview(req, res) {
+    const { Review } = getModels();
+
+    const review = await Review.findByPk(req.params.id);
+
+    if (!review) return res.status(404).send('Not found');
+
+    // защита: только свой отзыв
+    if (review.userId !== req.session.user.id) {
+        return res.status(403).send('Forbidden');
+    }
+
+    await review.destroy();
+
+    res.redirect('/product/' + review.productId);
+}
+
+module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage, top3Page, addReview, deleteReview, editReviewForm, updateReview };

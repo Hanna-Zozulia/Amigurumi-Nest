@@ -32,9 +32,6 @@
       </div>
 
       <% if (currentUser) { %>
-
-        <hr>
-
         <h4>Оставить отзыв</h4>
 
         <form method="POST" action="/review/add">
@@ -65,18 +62,53 @@
 
       <% if (product.Reviews && product.Reviews.length > 0) { %>
 
-        <% product.Reviews.forEach(r => { %>
-          <div class="border rounded p-2 mb-2">
-            <b><%= r.User.name %></b>
-            <p class="mb-0"><%= r.text %></p>
+        <div class="d-flex flex-column gap-3">
+
+        <% product.Reviews.forEach(review => { %>
+          <div class="border rounded p-3 shadow-sm d-flex justify-content-between align-items-start">
+            <div class="w-100 me-3">
+              <b class="d-block"><%= review.User.name %></b>
+              <p id="text-<%= review.id %>" class="mb-1"><%= review.text %></p>
+          
+          <!-- КНОПКИ (ТОЛЬКО СВОИ ОТЗЫВЫ) -->
+            <form id="form-<%= review.id %>" class="d-none" method="POST" action="/review/edit/<%= review.id %>">
+              <textarea name="text" class="form-control mb-2" rows="3"><%= review.text %></textarea>
+
+              <button class="btn btn-sm btn-success">Сохранить</button>
+
+            </form>
+
+          </div>
+
+          <% if (currentUser && currentUser.id === review.userId) { %>
+              <div class="d-flex gap-2 flex-shrink-0">
+
+                <!-- РЕДАКТИРОВАТЬ -->
+                <button type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    onclick="editReview('<%= review.id %>')">
+                <i class="bi bi-pencil"></i>
+              </button>
+
+                <!-- УДАЛИТЬ -->
+                <form method="POST" action="/review/delete/<%= review.id %>">
+                  <button class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+
+              </div>
+
+            <% } %>
+
           </div>
         <% }) %>
-
+      </div>
       <% } else { %>
 
         <p class="text-muted">Пока нет отзывов</p>
 
       <% } %>
 </div>
-
+<script src="js/main.js"></script>
 <%- include('partials/footer') %>

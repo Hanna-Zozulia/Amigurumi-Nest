@@ -17,6 +17,12 @@ router.get('/history', (req, res) => res.render('history'));
 router.get('/catalog', productController.listPage);
 router.get('/top3', productController.top3Page);
 
+// ===== ОТЗЫВЫ =====
+router.post('/review/add', productController.addReview);
+router.get('/review/edit/:id', productController.editReviewForm);
+router.post('/review/edit/:id', productController.updateReview);
+router.post('/review/delete/:id', productController.deleteReview);
+
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);
 
