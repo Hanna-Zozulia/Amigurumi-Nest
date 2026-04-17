@@ -35,8 +35,10 @@ router.post('/logout', authController.postLogout);
 
 // Регистрация (пока просто форма)
 router.get('/register', (req, res) => {
-    res.render('login', { type: 'register' });
+    const showError = Boolean(req.query.error);
+    res.render('login', { type: 'register', showError });
 });
+router.post('/register', authController.postRegister);
 
 // ===== КОРЗИНА =====
 router.get('/cart', cartController.show);

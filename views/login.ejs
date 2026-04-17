@@ -6,6 +6,12 @@
       <div class="card-body">
         <h1 class="h4 mb-3 text-center"><%= type === 'login' ? 'Вход' : 'Регистрация' %></h1>
 
+        <% if (showError) { %>
+          <div class="alert alert-danger" role="alert">
+            Ошибка авторизации или регистрации. Проверьте данные и попробуйте снова.
+          </div>
+        <% } %>
+
         <% if(type === 'login'){ %>
           <!-- Форма входа -->
           <form action="/login" method="post">
