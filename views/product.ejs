@@ -6,7 +6,12 @@
 
     <!-- Картинка -->
     <div class="col-md-6">
-      <img src="<%= product.image %>" class="img-fluid rounded shadow-sm" alt="<%= product.name %>">
+      <div class="image-wrapper">
+
+        <img src="<%= product.image %>" class="img-main img-fluid rounded shadow-sm" alt="<%= product.name %>">
+        <img src="<%= product.image2 %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %>">
+
+      </div>
     </div>
 
     <!-- Информация -->
@@ -24,9 +29,12 @@
       <div class="mt-4">
 
         <% if (!currentUser || currentUser.role !== 'admin') { %>
-          <div class="d-flex justify-content-end">
-            <button class="btn btn-primary">Купить</button>
-          </div>
+          <form action="/cart/add" method="post">
+            <input type="hidden" name="productId" value="<%= product.id %>">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary btn-sm">Купить</button>
+            </div>
+          </form> 
         <% } %>
 
         <% if (currentUser && currentUser.role === 'admin') { %>

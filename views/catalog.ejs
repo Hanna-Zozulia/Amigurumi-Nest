@@ -32,10 +32,9 @@
         <div class="card h-100 shadow-sm">
 
           <!-- Картинка + ссылка -->
-          <a href="/product/<%= product.id %>">
+             <a href="/product/<%= product.id %>" class="catalog-image-link">
             <img src="<%= product.image %>" 
-                 class="card-img-top object-fit-cover" 
-                 style="height: 180px" 
+               class="card-img-top catalog-card-img" 
                  alt="<%= product.name %>" />
           </a>
 

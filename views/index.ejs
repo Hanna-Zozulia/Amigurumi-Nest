@@ -12,11 +12,13 @@
       <div class="vertical-slider">
         <div class="slider-track">
 
-          <% (products || []).slice(0, 3).forEach(function(product) { %>
+          <% for (let i = 0; i < (products || []).length; i += 1) { %>
             <div class="toys-item">
-              <img src="<%= product.image %>" alt="<%= product.name %>">
+              <a href="/product/<%= products[i].id %>">
+                <img src="<%= products[i].image %>" alt="<%= products[i].name %>">
+              </a>
             </div>
-          <% }) %>
+          <% } %>
 
         </div>
       </div>
@@ -44,12 +46,16 @@
     <h2>Тренды сейчас</h2>
 
     <div class="block_3 toy-row">
-
+      
       <% (products || []).forEach(function(product) { %>
+        
         <div class="toy-item">
-          <img src="<%= product.image %>" class="img-fluid mb-2">
-          <p><%= product.name %></p>
+          <a href="/product/<%= product.id %>">
+            <img src="<%= product.image %>" class="img-fluid mb-2">
+            <p><%= product.name %></p>
+          </a>
         </div>
+        
       <% }) %>
 
     </div>

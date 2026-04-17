@@ -256,14 +256,17 @@ async function sendOrderEmail(orderData, req) {
 async function homePage(req, res) {
     const { Product, Review, User } = getModels();
 
-    const products = await Product.findAll();
+    const products = await Product.findAll({
+        order: [['views', 'DESC']], // самые популярные
+        limit: 6
+    });
 
     const reviews = await Review.findAll({
         include: [User],
         order: [['createdAt', 'DESC']],
         limit: 5
     });
-    
+
     res.render('index', {
         title: 'Home',
         products,
