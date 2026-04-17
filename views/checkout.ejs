@@ -1,44 +1,81 @@
-<%- include('partials/header', { title: 'Оформление заказа' }) %>
+<%- include('partials/header', { title: 'Оформление заказа', currentUser: currentUser }) %>
 
 <div class="container mt-5">
-  <h1 class="mb-4">Оформление заказа 🧸</h1>
+  <h1 class="mb-4">Оформление заказа</h1>
 
-  <form id="orderForm">
+  <% if (successMessage) { %>
+    <div class="alert alert-success" role="alert">
+      <%= successMessage %>
+    </div>
+  <% } %>
+
+  <!-- ТОВАРЫ ИЗ КОРЗИНЫ -->
+  <div class="mb-4">
+    <h4>Ваш заказ:</h4>
+
+    <% if (cart && cart.items && cart.items.length > 0) { %>
+
+      <div class="border rounded p-3">
+
+        <% cart.items.forEach(item => { %>
+          <div class="d-flex justify-content-between mb-2">
+            <div>
+              <b><%= item.Product.name %></b>
+              <div class="text-muted small">
+                Кол-во: <%= item.quantity %>
+              </div>
+            </div>
+
+            <div>
+              <%= item.Product.price * item.quantity %> €
+            </div>
+          </div>
+        <% }) %>
+
+      </div>
+
+      <div class="mt-3 text-end">
+        <h5>Итого: <b><%= total %> €</b></h5>
+      </div>
+      
+    <% } else { %>
+      <p class="text-muted">Корзина пустая</p>
+    <% } %>
+  </div>
+
+  <!-- ФОРМА -->
+  <form method="POST" action="/order">
+
     <div class="mb-3">
-      <label for="name" class="form-label">Имя и фамилия</label>
-      <input type="text" class="form-control" id="name" placeholder="Иван Иванов" required>
+      <label class="form-label">Имя и фамилия</label>
+      <input type="text" name="name" class="form-control" required>
     </div>
 
     <div class="mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="email" placeholder="example@mail.com" required>
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-control" required>
     </div>
 
     <div class="mb-3">
-      <label for="phone" class="form-label">Телефон</label>
-      <input type="tel" class="form-control" id="phone" placeholder="+372 5555 5555" required>
+      <label class="form-label">Телефон</label>
+      <input type="text" name="phone" class="form-control" required>
     </div>
 
     <div class="mb-3">
-      <label for="product" class="form-label">Выбранная игрушка</label>
-      <input type="text" class="form-control" id="product" placeholder="Мишка Тедди" required>
+      <label class="form-label">Комментарий</label>
+      <textarea name="notes" class="form-control" rows="3"></textarea>
     </div>
 
-    <div class="mb-3">
-      <label for="quantity" class="form-label">Количество</label>
-      <input type="number" class="form-control" id="quantity" value="1" min="1" required>
-    </div>
+    <button class="btn btn-success w-100">
+      Оформить заказ
+    </button>
 
-    <div class="mb-3">
-      <label for="notes" class="form-label">Дополнительно (по желанию)</label>
-      <textarea class="form-control" id="notes" rows="3" placeholder="Особые пожелания, цвет, имя на игрушке..."></textarea>
-    </div>
+    <a href="/catalog" class="btn btn-link w-100 mt-2">
+      ← Вернуться к покупкам
+    </a>
 
-    <button type="submit" class="btn btn-success w-100">Отправить заказ</button>
-    <a href="/cart" class="btn btn-link w-100 mt-2">← Вернуться в корзину</a>
   </form>
 
-  <div id="message" class="mt-3"></div>
 </div>
 
 <%- include('partials/footer') %>

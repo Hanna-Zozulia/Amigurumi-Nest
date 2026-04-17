@@ -47,8 +47,7 @@ router.post('/cart/remove', cartController.removeOne);
 router.post('/cart/clear', cartController.clear);
 
 // ===== CHECKOUT =====
-router.get('/checkout', requireAuth, (req, res) => {
-    res.render('checkout');
-});
+router.get('/checkout', productController.checkoutPage);
+router.post('/order', productController.createOrder);
 
 module.exports = router;

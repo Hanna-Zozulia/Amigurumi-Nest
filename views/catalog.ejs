@@ -51,7 +51,7 @@
               <div class="d-flex gap-1">
 
                 <% if (!currentUser || currentUser.role !== 'admin') { %>
-                  <form action="<%= currentUser ? '/cart/add' : '/login' %>" method="post">
+                  <form action="/cart/add" method="post">
                     <input type="hidden" name="productId" value="<%= product.id %>">
                     <button class="btn btn-primary btn-sm">Купить</button>
                   </form>

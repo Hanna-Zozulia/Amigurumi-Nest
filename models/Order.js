@@ -10,7 +10,23 @@ module.exports = (sequelize) => {
     },
     cartId: {
       type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true
+    },
+    customerName: {
+      type: DataTypes.STRING(255),
       allowNull: false
+    },
+    customerEmail: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    customerPhone: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    customerNotes: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     total: {
       type: DataTypes.DECIMAL(10,2),

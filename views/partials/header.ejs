@@ -87,7 +87,7 @@
               <% } %>
 
               <li class="nav-item ms-2 position-relative"
-                  <% if (!currentUser || currentUser.role === 'admin') { %>
+                  <% if (currentUser && currentUser.role === 'admin') { %>
                     style="display:none"
                   <% } %>>
 

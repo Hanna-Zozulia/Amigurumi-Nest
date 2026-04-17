@@ -2,6 +2,46 @@
 const bcrypt = require('bcryptjs');
 const { getModels } = require('../models');
 
+async function mergeSessionCartIntoUser(req, userId) {
+    const { Cart, CartItem } = getModels();
+    const sessionItems = Array.isArray(req.session.cart?.items) ? req.session.cart.items : [];
+
+    if (sessionItems.length === 0) {
+        return;
+    }
+
+    let cart = await Cart.findOne({ where: { userId } });
+    if (!cart) {
+        cart = await Cart.create({ userId });
+    }
+
+    for (const sessionItem of sessionItems) {
+        const productId = Number(sessionItem.productId);
+        const quantityToAdd = Number(sessionItem.quantity) || 0;
+
+        if (!productId || quantityToAdd <= 0) {
+            continue;
+        }
+
+        const existingItem = await CartItem.findOne({
+            where: { cartId: cart.id, productId }
+        });
+
+        if (existingItem) {
+            existingItem.quantity += quantityToAdd;
+            await existingItem.save();
+        } else {
+            await CartItem.create({
+                cartId: cart.id,
+                productId,
+                quantity: quantityToAdd
+            });
+        }
+    }
+
+    req.session.cart = { items: [] };
+}
+
 // GET /login
 async function getLogin(req, res) {
     if (req.session.user) return res.redirect('/');
@@ -32,6 +72,8 @@ async function postLogin(req, res) {
         email: user.email,
         role: user.role
     };
+
+    await mergeSessionCartIntoUser(req, user.id);
 
     res.redirect('/');
 }
@@ -72,6 +114,8 @@ async function postRegister(req, res) {
         email: createdUser.email,
         role: createdUser.role
     };
+
+    await mergeSessionCartIntoUser(req, createdUser.id);
 
     res.redirect('/');
 }
