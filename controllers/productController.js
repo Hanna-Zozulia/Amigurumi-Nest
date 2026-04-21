@@ -338,13 +338,29 @@ async function editForm(req, res) {
 }
 
 async function update(req, res) {
-    const { Product } = getModels();
-    const product = await Product.findByPk(req.params.id);
+  const { Product } = getModels();
+  const product = await Product.findByPk(req.params.id);
 
-    if (!product) return res.status(404).send('Not found');
+  if (!product) return res.status(404).send('Not found');
 
-    await product.update(req.body);
-    res.redirect('/');
+  const image = Array.isArray(req.body.image)
+    ? req.body.image[0]
+    : req.body.image;
+
+  const image2 = Array.isArray(req.body.image2)
+    ? req.body.image2[0]
+    : req.body.image2;
+
+  await product.update({
+    name: req.body.name,
+    category: req.body.category,
+    desc: req.body.desc,
+    price: req.body.price,
+    image,
+    image2
+  });
+
+  res.redirect('/');
 }
 
 async function remove(req, res) {

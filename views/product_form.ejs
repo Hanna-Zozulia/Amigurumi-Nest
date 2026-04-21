@@ -30,11 +30,20 @@
       <label class="form-label" for="image">Image URL or path</label>
       <!-- Текстовое поле для адреса картинки. По умолчанию /img/pic.png -->
       <input class="form-control" id="image" name="image" placeholder="" value="<%= product ? product.image : '' %>" />
+    </div>
+    <div class="col-12"> 
+      <label class="form-label" for="image">Image 2 URL or path</label> 
+      <!-- Текстовое поле для адреса картинки. По умолчанию /img/pic.png -->
+      <input class="form-control" id="image2" name="image2" placeholder="" value="<%= product ? product.image2 : '' %>" />
       <div class="form-text">Stored as address in DB. Use absolute URL or app-relative path.</div>
       <!-- Превью картинки для удобства администратора -->
       <div class="d-flex align-items-center gap-3 mt-2">
         <img id="imagePreview" src="<%= product ? product.image : '' %>" width="80" height="80" class="rounded object-fit-cover border" alt="image" />
         <span class="text-muted small">Preview</span>
+        <div class="d-flex align-items-center gap-3 mt-2">
+        <img id="imagePreview2" src="<%= product ? product.image2 : '' %>" width="80" height="80" class="rounded object-fit-cover border" alt="image2" />
+        <span class="text-muted small">Preview</span>
+      </div>
       </div>
     </div>
   </div>

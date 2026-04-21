@@ -39,8 +39,14 @@
 
         <% if (currentUser && currentUser.role === 'admin') { %>
           <div class="mt-2 d-flex gap-2 justify-content-end">
-            <button class="btn btn-outline-primary">Edit</button>
-            <button class="btn btn-outline-danger">Delete</button>
+          <a class="btn btn-outline-primary" href="/products/<%= product.id %>/edit">Edit</a>
+
+          <form action="/products/<%= product.id %>/delete" method="post">
+            <button class="btn btn-outline-danger"
+              onclick="return confirm('Delete product?')">
+              Delete
+            </button>
+          </form>
           </div>
         <% } %>
 

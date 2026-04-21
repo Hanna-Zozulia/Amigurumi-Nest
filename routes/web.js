@@ -5,6 +5,7 @@ const productController = require('../controllers/productController');
 const cartController = require('../controllers/cartWebController');
 const authController = require('../controllers/authController');
 const { requireAuth } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/auth');
 
 // ===== ГЛАВНАЯ =====
 router.get('/', productController.homePage);
@@ -27,6 +28,12 @@ router.post('/review/reply/delete/:id', requireAuth, productController.deleteRep
 
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);
+router.get('/products/new', requireAdmin, productController.newForm);
+router.post('/products', requireAdmin, productController.create);
+router.get('/products/:id/edit', requireAdmin, productController.editForm);
+router.post('/products/:id', requireAdmin, productController.update);
+router.post('/products/:id/delete', requireAdmin, productController.remove);
+
 
 // ===== AUTH =====
 router.get('/login', authController.getLogin);
