@@ -69,12 +69,16 @@
               <% } else { %>
                 <!-- АВТОРИЗОВАННЫЙ ПОЛЬЗОВАТЕЛЬ -->
                 <li class="nav-item ms-3 d-flex align-items-center">
-                  <span class="text-muted small">
-                    Привет, <b><%= currentUser.name %></b>
+                  <span class="text-white small opacity-75">
+                    Привет,
+                  </span>
+
+                  <span class="text-white small ms-1 fw-semibold">
+                    <%= currentUser.name %>
                   </span>
 
                   <% if (currentUser.role === 'admin') { %>
-                    <span class="badge bg-warning text-dark ms-2">Admin</span>
+                    <span class="ms-2 fw-semibold text-warning small">Admin</span>
                   <% } %>
                 </li>
 
