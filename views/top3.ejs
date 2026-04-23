@@ -7,9 +7,11 @@
 
         <% (products || []).forEach(function(product) { %>
             <div class="col-md-4 top3 mt-4">
-                <img src="<%= product.image %>" alt="<%= product.name %>">
-                <h2><%= product.name %></h2>
-                <p>Просмотры: <%= product.views %></p>
+                <a href="/product/<%= product.id %>" class="catalog-image-link">
+                    <img src="<%= product.image %>" alt="<%= product.name %>">
+                    <h2><%= product.name %></h2>
+                    <p>Просмотры: <%= product.views %></p>
+                </a>
             </div>
         <% }) %>
 
