@@ -4,8 +4,8 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const cartController = require('../controllers/cartWebController');
 const authController = require('../controllers/authController');
-const { requireAuth } = require('../middleware/auth');
-const { requireAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { reviewRateLimit } = require('../middleware/reviewSecurity');
 
 // ===== ГЛАВНАЯ =====
 router.get('/', productController.homePage);
@@ -19,10 +19,10 @@ router.get('/catalog', productController.listPage);
 router.get('/top3', productController.top3Page);
 
 // ===== ОТЗЫВЫ =====
-router.post('/review/add', productController.addReview);
-router.get('/review/edit/:id', productController.editReviewForm);
-router.post('/review/edit/:id', productController.updateReview);
-router.post('/review/delete/:id', productController.deleteReview);
+router.post('/review/add', reviewRateLimit, productController.addReview);
+router.get('/review/edit/:id', requireAuth, productController.editReviewForm);
+router.post('/review/edit/:id', requireAuth, productController.updateReview);
+router.post('/review/delete/:id', requireAuth, productController.deleteReview);
 router.post('/review/reply/:id', requireAuth, productController.replyReview);
 router.post('/review/reply/delete/:id', requireAuth, productController.deleteReply);
 

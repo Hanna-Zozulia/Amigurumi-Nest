@@ -4,9 +4,24 @@ const { getModels } = require('../models');
 const fs = require('fs/promises');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const { checkProfanity } = require('../services/profanityFilter');
 
 const categories = ['', 'Свечи для массажа', 'Ароматические', 'Декоративные', 'Подарочные наборы'];
 const ORDER_RECEIVER_EMAIL = process.env.ORDER_RECEIVER_EMAIL || process.env.MAIL_TO || '';
+let lastReviewEmailAt = 0;
+const EMAIL_COOLDOWN_MS = 5 * 60 * 1000;
+
+function getReviewErrorMessage(code) {
+    if (code === 'empty') {
+        return 'Комментарий не должен быть пустым.';
+    }
+
+    if (code === 'blocked') {
+        return 'Комментарий не опубликован: текст нарушает правила публикации.';
+    }
+
+    return null;
+}
 
 function getSiteBaseUrl(req) {
     const configuredBaseUrl = String(process.env.APP_URL || process.env.BASE_URL || '').trim();
@@ -262,6 +277,7 @@ async function homePage(req, res) {
     });
 
     const reviews = await Review.findAll({
+        where: { status: 'approved' },
         include: [User],
         order: [['createdAt', 'DESC']],
         limit: 5
@@ -375,10 +391,13 @@ async function remove(req, res) {
 
 async function showPage(req, res) {
     const { Product, Review, User  } = getModels();
+    const reviewError = String(req.query.reviewError || '');
     const product = await Product.findByPk(req.params.id, {
         include: [
             {
                 model: Review,
+                where: { status: 'approved' },
+                required: false,
                 include: [User]
             }
         ]
@@ -386,27 +405,64 @@ async function showPage(req, res) {
 
     if (!product) return res.status(404).render('404');
 
+    if (Array.isArray(product.Reviews)) {
+        product.Reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
     await product.increment('views');
 
     res.render('product', {
         title: product.name,
         product,
-        currentUser: req.session.user || null
+        currentUser: req.session.user || null,
+        reviewErrorMessage: getReviewErrorMessage(reviewError)
     });
 }
 
 async function addReview(req, res) {
-    const { Review } = getModels();
+    try {
+        const { Review } = getModels();
+        const { productId } = req.body;
+        const reviewText = String(req.body.text || '').toLowerCase().trim();
 
-    const { text, productId } = req.body;
+        if (!req.session.user) {
+            return res.redirect('/login');
+        }
 
-    await Review.create({
-        text,
-        productId,
-        userId: req.session.user.id
-    });
+        const moderationResult = checkProfanity(reviewText);
+        if (moderationResult.flagged) {
+            return res.redirect('/product/' + productId + '?reviewError=blocked');
+        }
 
-    res.redirect('/product/' + productId);
+        await Review.create({
+            text: reviewText,
+            productId,
+            userId: req.session.user.id,
+            status: 'approved'
+        });
+
+        const now = Date.now();
+        if (now - lastReviewEmailAt > EMAIL_COOLDOWN_MS) {
+            const transporter = getOrderTransporter();
+            const from = process.env.MAIL_FROM || process.env.MAIL_USER;
+            if (transporter && ORDER_RECEIVER_EMAIL && from) {
+                await transporter.sendMail({
+                    from,
+                    to: ORDER_RECEIVER_EMAIL,
+                    subject: `Новый комментарий к товару #${productId}`,
+                    text: `Пользователь #${req.session.user.id} оставил комментарий:\n\n${reviewText}`
+                });
+                lastReviewEmailAt = now;
+            }
+        }
+
+        return res.redirect('/product/' + productId);
+
+    } catch (err) {
+        console.error('addReview error:', err);
+
+        return res.status(500).send('Error adding review');
+    }
 }
 
 async function editReviewForm(req, res) {
@@ -428,18 +484,24 @@ async function updateReview(req, res) {
     const { Review } = getModels();
 
     const review = await Review.findByPk(req.params.id);
-
     if (!review) return res.status(404).send('Not found');
 
     if (review.userId !== req.session.user.id) {
         return res.status(403).send('Forbidden');
     }
 
+    const reviewText = String(req.body.text || '').toLowerCase().trim();
+
+    const moderationResult = checkProfanity(reviewText);
+    if (moderationResult.flagged) {
+        return res.redirect('/product/' + review.productId + '?reviewError=blocked');
+    }
+
     await review.update({
-        text: req.body.text
+        text: reviewText
     });
 
-    res.redirect('/product/' + review.productId);
+    return res.redirect('/product/' + review.productId);
 }
 
 async function deleteReview(req, res) {
@@ -449,14 +511,30 @@ async function deleteReview(req, res) {
 
     if (!review) return res.status(404).send('Not found');
 
-    // защита: только свой отзыв
-    if (review.userId !== req.session.user.id) {
+    if (!req.session.user) {
+        return res.status(401).send('Not authorized');
+    }
+
+    const isAdmin = req.session.user.role === 'admin';
+    const isOwner = review.userId === req.session.user.id;
+    const hasAdminReply = Boolean(review.adminReply);
+
+    if (isAdmin) {
+        await review.destroy();
+        return res.redirect('/product/' + review.productId);
+    }
+
+    if (!isOwner) {
         return res.status(403).send('Forbidden');
+    }
+
+    if (hasAdminReply) {
+        return res.status(403).send('Нельзя удалить комментарий после ответа администратора');
     }
 
     await review.destroy();
 
-    res.redirect('/product/' + review.productId);
+    return res.redirect('/product/' + review.productId);
 }
 
 async function replyReview(req, res) {
@@ -473,8 +551,15 @@ async function replyReview(req, res) {
         return res.status(403).send('Forbidden');
     }
 
+    const adminReplyText = String(req.body.adminReply || '').toLowerCase().trim();
+
+    const moderationResult = checkProfanity(adminReplyText);
+    if (moderationResult.flagged) {
+        return res.redirect('/product/' + review.productId + '?reviewError=blocked');
+    }
+
     await review.update({
-        adminReply: req.body.adminReply
+        adminReply: adminReplyText
     });
 
     res.redirect('/product/' + review.productId);

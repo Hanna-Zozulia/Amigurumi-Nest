@@ -70,8 +70,18 @@ async function initDb() {
         // ======================
         await sequelize.sync();
 
-        // Приведение схемы orders к актуальному виду для guest checkout
         const queryInterface = sequelize.getQueryInterface();
+
+        const reviewsTable = await queryInterface.describeTable('reviews');
+        if (!reviewsTable.status) {
+            await queryInterface.addColumn('reviews', 'status', {
+                type: DataTypes.ENUM('approved', 'pending', 'blocked'),
+                allowNull: false,
+                defaultValue: 'approved'
+            });
+        }
+
+        // Приведение схемы orders к актуальному виду для guest checkout
         const ordersTable = await queryInterface.describeTable('orders');
 
         await queryInterface.changeColumn('orders', 'cartId', {
