@@ -5,11 +5,32 @@ const fs = require('fs/promises');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const { checkProfanity } = require('../services/profanityFilter');
+const { cached, deleteCache, clearCacheByPattern } = require('../utils/cache');
+const { cacheKeys } = require('../utils/cacheKeys');
 
 const categories = ['', 'Свечи для массажа', 'Ароматические', 'Декоративные', 'Подарочные наборы'];
 const ORDER_RECEIVER_EMAIL = process.env.ORDER_RECEIVER_EMAIL || process.env.MAIL_TO || '';
 let lastReviewEmailAt = 0;
 const EMAIL_COOLDOWN_MS = 5 * 60 * 1000;
+
+async function invalidateProductCache(productId) {
+    await deleteCache(cacheKeys.products);
+    await deleteCache(cacheKeys.homeProducts);
+    await deleteCache(cacheKeys.topProducts);
+    await clearCacheByPattern(cacheKeys.catalogPattern);
+
+    if (productId) {
+        await deleteCache(cacheKeys.product(productId));
+        await deleteCache(cacheKeys.reviews(productId));
+    }
+}
+
+async function invalidateReviewsCache(productId) {
+    if (!productId) return;
+
+    await deleteCache(cacheKeys.reviews(productId));
+    await deleteCache(cacheKeys.product(productId));
+}
 
 function getReviewErrorMessage(code) {
     if (code === 'empty') {
@@ -269,69 +290,91 @@ async function sendOrderEmail(orderData, req) {
 }
 
 async function homePage(req, res) {
-    const { Product, Review, User } = getModels();
+    try {
+        const { Product, Review, User } = getModels();
 
-    const products = await Product.findAll({
-        order: [['views', 'DESC']], // самые популярные
-        limit: 6
-    });
+        const products = await cached(cacheKeys.homeProducts, 60, async () => {
+            return await Product.findAll({
+                order: [['views', 'DESC']],
+                limit: 6
+            });
+        });
 
-    const reviews = await Review.findAll({
-        where: { status: 'approved' },
-        include: [User],
-        order: [['createdAt', 'DESC']],
-        limit: 5
-    });
+        const reviews = await Review.findAll({
+            where: { status: 'approved' },
+            include: [User],
+            order: [['createdAt', 'DESC']],
+            limit: 5
+        });
 
-    res.render('index', {
-        title: 'Home',
-        products,
-        reviews,
-        currentUser: req.session.user || null
-    });
+        return res.render('index', {
+            title: 'Home',
+            products,
+            reviews,
+            currentUser: req.session.user || null
+        });
+    } catch (err) {
+        console.error('productWeb.homePage error:', err.message);
+        return res.status(500).send('Internal server error');
+    }
 }
 
 async function listPage(req, res) {
-    const { Product, Cart, CartItem } = getModels();
+    try {
+        const { Product, Cart, CartItem } = getModels();
 
-    const categoryFilter = req.query.category || '';
-    const where = categoryFilter ? { category: categoryFilter } : {};
+        const categoryFilter = req.query.category || '';
+        const where = categoryFilter ? { category: categoryFilter } : {};
+        const listKey = cacheKeys.catalog(categoryFilter);
 
-    const products = await Product.findAll({ where });
-
-    let cart = null;
-    const userId = req.session.user?.id;
-
-    if (userId) {
-        cart = await Cart.findOne({
-            where: { userId },
-            include: [{ model: CartItem, as: 'items', include: [Product] }]
+        const products = await cached(listKey, 60, async () => {
+            return await Product.findAll({ where });
         });
-    }
 
-    res.render('catalog', {
-        title: 'Catalog',
-        products,
-        categories,
-        selectedCategory: categoryFilter,
-        cart,
-        currentUser: req.session.user || null
-    });
+        let cart = null;
+        const userId = req.session.user?.id;
+
+        if (userId) {
+            cart = await Cart.findOne({
+                where: { userId },
+                include: [{ model: CartItem, as: 'items', include: [Product] }]
+            });
+        }
+
+        return res.render('catalog', {
+            title: 'Catalog',
+            products,
+            categories,
+            selectedCategory: categoryFilter,
+            cart,
+            currentUser: req.session.user || null
+        });
+    } catch (err) {
+        console.error('productWeb.listPage error:', err.message);
+        return res.status(500).send('Internal server error');
+    }
 }
 
 async function top3Page(req, res) {
-    const { Product } = getModels();
+    try {
+        const { Product } = getModels();
 
-    const products = await Product.findAll({
-        order: [['views', 'DESC']],
-        limit: 3
-    });
+        const products = await cached(cacheKeys.topProducts, 60, async () => {
+            return await Product.findAll({
+                order: [['views', 'DESC']],
+                limit: 3
+            });
+        });
 
-    res.render('top3', {
-        title: 'Top 3',
-        products,
-        currentUser: req.session.user || null
-    });
+        return res.render('top3', {
+            title: 'Top 3',
+            products,
+            currentUser: req.session.user || null
+        });
+    } catch (err) {
+        console.error('productWeb.top3Page error:', err.message);
+        return res.status(500).send('Internal server error');
+    }
 }
 
 async function newForm(req, res) {
@@ -339,9 +382,15 @@ async function newForm(req, res) {
 }
 
 async function create(req, res) {
-    const { Product } = getModels();
-    await Product.create(req.body);
-    res.redirect('/');
+    try {
+        const { Product } = getModels();
+        const created = await Product.create(req.body);
+        await invalidateProductCache(created.id);
+        return res.redirect('/');
+    } catch (err) {
+        console.error('productWeb.create error:', err.message);
+        return res.status(500).send('Internal server error');
+    }
 }
 
 async function editForm(req, res) {
@@ -354,69 +403,94 @@ async function editForm(req, res) {
 }
 
 async function update(req, res) {
-  const { Product } = getModels();
-  const product = await Product.findByPk(req.params.id);
+    try {
+        const { Product } = getModels();
+        const product = await Product.findByPk(req.params.id);
 
-  if (!product) return res.status(404).send('Not found');
+        if (!product) return res.status(404).send('Not found');
 
-  const image = Array.isArray(req.body.image)
-    ? req.body.image[0]
-    : req.body.image;
+        const image = Array.isArray(req.body.image)
+            ? req.body.image[0]
+            : req.body.image;
 
-  const image2 = Array.isArray(req.body.image2)
-    ? req.body.image2[0]
-    : req.body.image2;
+        const image2 = Array.isArray(req.body.image2)
+            ? req.body.image2[0]
+            : req.body.image2;
 
-  await product.update({
-    name: req.body.name,
-    category: req.body.category,
-    desc: req.body.desc,
-    price: req.body.price,
-    image,
-    image2
-  });
+        await product.update({
+            name: req.body.name,
+            category: req.body.category,
+            desc: req.body.desc,
+            price: req.body.price,
+            image,
+            image2
+        });
 
-  res.redirect('/');
+        await invalidateProductCache(product.id);
+        return res.redirect('/');
+    } catch (err) {
+        console.error('productWeb.update error:', err.message);
+        return res.status(500).send('Internal server error');
+    }
 }
 
 async function remove(req, res) {
-    const { Product } = getModels();
-    const product = await Product.findByPk(req.params.id);
+    try {
+        const { Product } = getModels();
+        const product = await Product.findByPk(req.params.id);
 
-    if (!product) return res.status(404).send('Not found');
+        if (!product) return res.status(404).send('Not found');
 
-    await product.destroy();
-    res.redirect('/');
+        const deletedId = product.id;
+        await product.destroy();
+        await invalidateProductCache(deletedId);
+        return res.redirect('/');
+    } catch (err) {
+        console.error('productWeb.remove error:', err.message);
+        return res.status(500).send('Internal server error');
+    }
 }
 
 async function showPage(req, res) {
-    const { Product, Review, User  } = getModels();
-    const reviewError = String(req.query.reviewError || '');
-    const product = await Product.findByPk(req.params.id, {
-        include: [
-            {
-                model: Review,
-                where: { status: 'approved' },
-                required: false,
-                include: [User]
-            }
-        ]
-    });
+    try {
+        const { Product, Review, User  } = getModels();
+        const reviewError = String(req.query.reviewError || '');
+        const productId = req.params.id;
+        const productKey = cacheKeys.product(productId);
+        const reviewsKey = cacheKeys.reviews(productId);
 
-    if (!product) return res.status(404).render('404');
+        const product = await cached(productKey, 60, async () => {
+            return await Product.findByPk(productId);
+        });
 
-    if (Array.isArray(product.Reviews)) {
-        product.Reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        if (!product) {
+            return res.status(404).render('404');
+        }
+
+        const reviews = await cached(reviewsKey, 60, async () => {
+            return await Review.findAll({
+                where: { status: 'approved', productId },
+                include: [User],
+                order: [['createdAt', 'DESC']]
+            });
+        });
+
+        product.Reviews = Array.isArray(reviews)
+            ? reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            : [];
+
+        await Product.increment('views', { where: { id: productId } });
+
+        return res.render('product', {
+            title: product.name,
+            product,
+            currentUser: req.session.user || null,
+            reviewErrorMessage: getReviewErrorMessage(reviewError)
+        });
+    } catch (err) {
+        console.error('productWeb.showPage error:', err.message);
+        return res.status(500).send('Internal server error');
     }
-
-    await product.increment('views');
-
-    res.render('product', {
-        title: product.name,
-        product,
-        currentUser: req.session.user || null,
-        reviewErrorMessage: getReviewErrorMessage(reviewError)
-    });
 }
 
 async function addReview(req, res) {
@@ -440,6 +514,8 @@ async function addReview(req, res) {
             userId: req.session.user.id,
             status: 'approved'
         });
+
+        await invalidateReviewsCache(productId);
 
         const now = Date.now();
         if (now - lastReviewEmailAt > EMAIL_COOLDOWN_MS) {
@@ -501,6 +577,8 @@ async function updateReview(req, res) {
         text: reviewText
     });
 
+    await invalidateReviewsCache(review.productId);
+
     return res.redirect('/product/' + review.productId);
 }
 
@@ -521,6 +599,7 @@ async function deleteReview(req, res) {
 
     if (isAdmin) {
         await review.destroy();
+        await invalidateReviewsCache(review.productId);
         return res.redirect('/product/' + review.productId);
     }
 
@@ -533,6 +612,8 @@ async function deleteReview(req, res) {
     }
 
     await review.destroy();
+
+    await invalidateReviewsCache(review.productId);
 
     return res.redirect('/product/' + review.productId);
 }
@@ -562,6 +643,8 @@ async function replyReview(req, res) {
         adminReply: adminReplyText
     });
 
+    await invalidateReviewsCache(review.productId);
+
     res.redirect('/product/' + review.productId);
 }
 
@@ -579,6 +662,8 @@ async function deleteReply(req, res) {
     await review.update({
         adminReply: null
     });
+
+    await invalidateReviewsCache(review.productId);
 
     res.redirect('/product/' + review.productId);
 }

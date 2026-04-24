@@ -5,6 +5,7 @@ const express = require('express');
 const session = require('express-session');
 
 const { initDb } = require('./models');
+const { initRedis } = require('./config/redis');
 const webRoutes = require('./routes/web');
 const apiRoutes = require('./routes/api');
 
@@ -46,7 +47,7 @@ app.use('/api', apiRoutes);
 // ================= START SERVER =================
 const port = process.env.PORT || 3000;
 
-initDb()
+Promise.all([initDb(), initRedis()])
     .then(() => {
         app.listen(port, () => {
             console.log(`Server running on http://localhost:${port}`);

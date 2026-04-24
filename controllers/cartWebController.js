@@ -1,5 +1,12 @@
 //cartWebController.js
 const { getModels } = require('../models');
+const { deleteCache } = require('../utils/cache');
+const { cacheKeys } = require('../utils/cacheKeys');
+
+async function invalidateCartCache(userId) {
+    if (!userId) return;
+    await deleteCache(cacheKeys.cart(userId));
+}
 
 async function loadSessionCart(sessionCart, Product) {
     const items = Array.isArray(sessionCart?.items) ? sessionCart.items : [];
@@ -68,6 +75,8 @@ async function add(req, res) {
                 quantity: 1
             });
         }
+
+        await invalidateCartCache(req.session.user.id);
     } else {
         const items = Array.isArray(req.session.cart?.items) ? req.session.cart.items : [];
         const existingItem = items.find((item) => String(item.productId) === String(productId));
@@ -107,6 +116,8 @@ async function removeOne(req, res) {
         } else {
             await item.destroy();
         }
+
+        await invalidateCartCache(req.session.user.id);
     } else {
         const items = Array.isArray(req.session.cart?.items) ? req.session.cart.items : [];
         const item = items.find((entry) => String(entry.productId) === String(productId));
@@ -136,6 +147,8 @@ async function clear(req, res) {
         if (cart) {
             await CartItem.destroy({ where: { cartId: cart.id } });
         }
+
+        await invalidateCartCache(req.session.user.id);
     } else {
         req.session.cart = { items: [] };
     }
