@@ -213,17 +213,16 @@ async function sendOrderEmail(orderData, req) {
 
     const baseUrl = getSiteBaseUrl(req);
 
-    const preparedItems = [];
-    for (let index = 0; index < orderData.items.length; index += 1) {
-        const item = orderData.items[index];
+    const preparedItems = await Promise.all(orderData.items.map(async (item, index) => {
         const inlineImage = await buildInlineImageAttachment(item.image, `product-${index}`);
-        preparedItems.push({
+
+        return {
             ...item,
             imageCid: inlineImage?.src || '',
             attachment: inlineImage?.attachment || null,
             fallbackImageUrl: getAbsoluteImageUrl(item.image, baseUrl)
-        });
-    }
+        };
+    }));
 
     const attachments = preparedItems
         .filter((item) => item.attachment)
@@ -768,48 +767,51 @@ async function createOrder(req, res) {
         total
     });
 
-    for (const item of cart.items) {
-        if (!item.Product) continue;
-
-        await OrderItem.create({
+    const orderItems = cart.items
+        .filter((item) => item.Product)
+        .map((item) => ({
             orderId: order.id,
             productId: item.productId,
             quantity: item.quantity,
             price: item.Product.price
-        });
-    }
+        }));
+
+    await Promise.all([
+        orderItems.length > 0
+            ? OrderItem.bulkCreate(orderItems, { validate: false })
+            : Promise.resolve(),
+        isLoggedIn
+            ? CartItem.destroy({
+                where: { cartId: cart.id }
+            })
+            : Promise.resolve()
+    ]);
 
     const emailItems = cart.items
         .filter((item) => item.Product)
         .map((item) => ({
             name: item.Product.name,
-                image: item.Product.image,
+            image: item.Product.image,
             quantity: Number(item.quantity),
             lineTotal: Number(item.quantity) * Number(item.Product.price)
         }));
 
-    try {
-        await sendOrderEmail({
+    req.session.cart = { items: [] };
+
+    res.redirect('/checkout?orderSent=1');
+
+    setImmediate(() => {
+        void sendOrderEmail({
             customerName,
             customerEmail,
             customerPhone,
             customerNotes,
             items: emailItems,
             total
-            }, req);
-    } catch (emailError) {
-        console.error('Order email send error:', emailError.message);
-    }
-
-    if (isLoggedIn) {
-        await CartItem.destroy({
-            where: { cartId: cart.id }
+        }, req).catch((emailError) => {
+            console.error('Order email send error:', emailError.message);
         });
-    }
-
-    req.session.cart = { items: [] };
-
-    res.redirect('/checkout?orderSent=1');
+    });
 }
 
 module.exports = { homePage, listPage, newForm, create, editForm, update, remove, showPage, top3Page, addReview, deleteReview, editReviewForm, updateReview, replyReview, deleteReply, checkoutPage, createOrder };
