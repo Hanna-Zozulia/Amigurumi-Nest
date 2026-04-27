@@ -443,7 +443,7 @@ async function remove(req, res) {
         const deletedId = product.id;
         await product.destroy();
         await invalidateProductCache(deletedId);
-        return res.redirect('/');
+        return res.redirect('/catalog');
     } catch (err) {
         console.error('productWeb.remove error:', err.message);
         return res.status(500).send('Internal server error');
