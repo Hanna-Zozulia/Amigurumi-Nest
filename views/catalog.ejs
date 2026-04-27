@@ -59,9 +59,13 @@
                 <% if (currentUser && currentUser.role === 'admin') { %>
                   <a class="btn btn-outline-primary btn-sm" href="/products/<%= product.id %>/edit">Edit</a>
 
-                  <form action="/products/<%= product.id %>/delete" method="post">
-                    <button class="btn btn-outline-danger btn-sm"
-                      onclick="return confirm('Delete product?')">
+                  <form action="/products/<%= product.id %>/delete" method="post"
+                        data-confirm
+                        data-confirm-title="Удалить товар?"
+                        data-confirm-description="Это действие нельзя отменить. Товар будет удален из каталога."
+                        data-confirm-text="Удалить"
+                        data-confirm-cancel-text="Отмена">
+                    <button class="btn btn-outline-danger btn-sm">
                       Delete
                     </button>
                   </form>

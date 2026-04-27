@@ -41,9 +41,13 @@
           <div class="mt-2 d-flex gap-2 justify-content-end">
           <a class="btn btn-outline-primary" href="/products/<%= product.id %>/edit">Edit</a>
 
-          <form action="/products/<%= product.id %>/delete" method="post">
-            <button class="btn btn-outline-danger"
-              onclick="return confirm('Delete product?')">
+          <form action="/products/<%= product.id %>/delete" method="post"
+                data-confirm
+                data-confirm-title="Удалить товар?"
+                data-confirm-description="Это действие нельзя отменить. Товар будет удален из каталога."
+                data-confirm-text="Удалить"
+                data-confirm-cancel-text="Отмена">
+            <button class="btn btn-outline-danger">
               Delete
             </button>
           </form>
@@ -134,7 +138,13 @@
                   ✏️
                 </button>
 
-                <form method="POST" action="/review/delete/<%= review.id %>">
+                <form method="POST"
+                      action="/review/delete/<%= review.id %>"
+                      data-confirm
+                      data-confirm-title="Удалить отзыв?"
+                      data-confirm-description="Это действие нельзя отменить. Отзыв будет удален без возможности восстановления."
+                      data-confirm-text="Удалить"
+                      data-confirm-cancel-text="Отмена">
                   <button class="btn btn-sm btn-outline-danger">
                     🗑️
                   </button>

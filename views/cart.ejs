@@ -79,7 +79,13 @@
   </div>
 
   <div class="d-flex justify-content-between mt-3">
-    <form method="POST" action="/cart/clear">
+    <form method="POST"
+          action="/cart/clear"
+          data-confirm
+          data-confirm-title="Очистить корзину?"
+          data-confirm-description="Все товары будут удалены из корзины. Это действие нельзя отменить."
+          data-confirm-text="Очистить"
+          data-confirm-cancel-text="Отмена">
       <button class="btn btn-danger">Очистить корзину</button>
     </form>
     <a href="/checkout" class="btn btn-success">Оформить заказ</a>
