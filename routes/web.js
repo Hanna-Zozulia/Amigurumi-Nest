@@ -38,12 +38,20 @@ router.post('/products/:id/delete', requireAdmin, productController.remove);
 // ===== AUTH =====
 router.get('/login', authController.getLogin);
 router.post('/login', authController.postLogin);
+router.get('/forgot-password', authController.getForgotPassword);
+router.post('/forgot-password', authController.postForgotPassword);
+router.get('/reset-password/:token', authController.getResetPassword);
+router.post('/reset-password/:token', authController.postResetPassword);
 router.post('/logout', authController.postLogout);
 
 // Регистрация (пока просто форма)
 router.get('/register', (req, res) => {
     const showError = Boolean(req.query.error);
-    res.render('login', { type: 'register', showError });
+    res.render('login', {
+        type: 'register',
+        showError,
+        resetSuccess: false
+    });
 });
 router.post('/register', authController.postRegister);
 

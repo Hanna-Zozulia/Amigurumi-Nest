@@ -12,6 +12,12 @@
           </div>
         <% } %>
 
+        <% if (typeof resetSuccess !== 'undefined' && resetSuccess) { %>
+          <div class="alert alert-success" role="alert">
+            Пароль обновлен. Теперь войдите с новым паролем.
+          </div>
+        <% } %>
+
         <% if(type === 'login'){ %>
           <!-- Форма входа -->
           <form action="/login" method="post">
@@ -22,6 +28,9 @@
             <div class="mb-3">
               <label for="password" class="form-label">Пароль</label>
               <input type="password" class="form-control" id="password" name="password" required />
+            </div>
+            <div class="mb-3 text-end">
+              <a href="/forgot-password" class="small">Забыли пароль?</a>
             </div>
             <button type="submit" class="btn btn-primary w-100" data-loading data-loading-text="Входим...">Вход</button>
           </form>

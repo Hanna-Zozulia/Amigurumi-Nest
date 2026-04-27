@@ -120,6 +120,22 @@ async function initDb() {
             });
         }
 
+        const usersTable = await queryInterface.describeTable('users');
+
+        if (!usersTable.reset_token) {
+            await queryInterface.addColumn('users', 'reset_token', {
+                type: DataTypes.STRING(128),
+                allowNull: true
+            });
+        }
+
+        if (!usersTable.reset_token_exp) {
+            await queryInterface.addColumn('users', 'reset_token_exp', {
+                type: DataTypes.DATE,
+                allowNull: true
+            });
+        }
+
         // ======================
         // ДЕФОЛТНЫЕ ЮЗЕРЫ
         // ======================
