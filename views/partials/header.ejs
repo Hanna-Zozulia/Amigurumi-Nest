@@ -82,6 +82,12 @@
                   <% } %>
                 </li>
 
+                <% if (currentUser.role === 'admin') { %>
+                  <li class="nav-item ms-2">
+                    <a class="btn btn-outline-warning btn-sm" href="/admin/users">Пользователи</a>
+                  </li>
+                <% } %>
+
                 <li class="nav-item ms-2">
                   <form method="post" action="/logout">
                     <button class="btn btn-outline-danger btn-sm" data-loading data-loading-text="Выходим...">Выйти</button>

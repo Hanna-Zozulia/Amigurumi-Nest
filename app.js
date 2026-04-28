@@ -6,6 +6,7 @@ const session = require('express-session');
 
 const { initDb } = require('./models');
 const { initRedis } = require('./config/redis');
+const { startInactiveUsersMonitor, runInactiveUsersCheck } = require('./services/inactiveUsersService');
 const webRoutes = require('./routes/web');
 const apiRoutes = require('./routes/api');
 
@@ -48,7 +49,10 @@ app.use('/api', apiRoutes);
 const port = process.env.PORT || 3000;
 
 Promise.all([initDb(), initRedis()])
-    .then(() => {
+    .then(async () => {
+        await runInactiveUsersCheck('startup');
+        startInactiveUsersMonitor();
+
         app.listen(port, () => {
             console.log(`Server running on http://localhost:${port}`);
         });

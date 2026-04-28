@@ -136,6 +136,25 @@ async function initDb() {
             });
         }
 
+        if (!usersTable.last_login_at) {
+            await queryInterface.addColumn('users', 'last_login_at', {
+                type: DataTypes.DATE,
+                allowNull: true
+            });
+        }
+
+        if (!usersTable.status) {
+            await queryInterface.addColumn('users', 'status', {
+                type: DataTypes.STRING(20),
+                allowNull: false,
+                defaultValue: 'active'
+            });
+        }
+
+        await queryInterface.sequelize.query(
+            "UPDATE users SET status = 'active' WHERE status IS NULL OR status = ''"
+        );
+
         // ======================
         // ДЕФОЛТНЫЕ ЮЗЕРЫ
         // ======================
@@ -150,12 +169,16 @@ async function initDb() {
                     name: 'Administrator',
                     email: process.env.ADMIN_EMAIL,
                     password: adminPass,
+                    status: 'active',
+                    lastLoginAt: new Date(),
                     role: 'admin'
                 },
                 {
                     name: 'Customer',
                     email: process.env.USER_EMAIL,
                     password: userPass,
+                    status: 'active',
+                    lastLoginAt: new Date(),
                     role: 'user'
                 }
             ]);

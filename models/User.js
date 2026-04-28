@@ -9,6 +9,8 @@ module.exports = (sequelize) => {
             name: { type: DataTypes.STRING(255), allowNull: false },
             email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
             password: { type: DataTypes.STRING(255), allowNull: false },
+            lastLoginAt: { type: DataTypes.DATE, allowNull: true, field: 'last_login_at' },
+            status: { type: DataTypes.STRING(20), allowNull: false, defaultValue: 'active' },
             resetToken: { type: DataTypes.STRING(128), allowNull: true, field: 'reset_token' },
             resetTokenExp: { type: DataTypes.DATE, allowNull: true, field: 'reset_token_exp' },
             role: { type: DataTypes.ENUM('admin', 'user'), allowNull: false, defaultValue: 'user' }

@@ -272,12 +272,18 @@ async function postResetPassword(req, res) {
 async function postLogin(req, res) {
     const { User } = getModels();
     const { email, password } = req.body;
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email: normalizedEmail } });
     if (!user) return res.redirect('/login?error=1');
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.redirect('/login?error=1');
+
+    await user.update({
+        lastLoginAt: new Date(),
+        status: 'active'
+    });
 
     req.session.user = {
         id: user.id,
@@ -318,6 +324,8 @@ async function postRegister(req, res) {
         name: String(name).trim(),
         email: normalizedEmail,
         password: hashedPassword,
+        lastLoginAt: new Date(),
+        status: 'active',
         role: safeRole
     });
 
