@@ -84,7 +84,9 @@
 
                 <% if (currentUser.role === 'admin') { %>
                   <li class="nav-item ms-2">
-                    <a class="btn btn-outline-warning btn-sm" href="/admin/users">Пользователи</a>
+                    <a class="btn btn-outline-light btn-sm" href="/admin">
+                      <i class="bi bi-speedometer2"></i> Админ-панель
+                    </a>
                   </li>
                 <% } %>
 
@@ -96,10 +98,7 @@
 
               <% } %>
 
-              <li class="nav-item ms-2 position-relative"
-                  <% if (currentUser && currentUser.role === 'admin') { %>
-                    style="display:none"
-                  <% } %>>
+              <li class="nav-item ms-2 position-relative <%= currentUser && currentUser.role === 'admin' ? 'admin-cart-hidden' : '' %>">
 
                 <a href="/cart" class="text-dark fs-5">
                   <i class="bi bi-cart3"></i>

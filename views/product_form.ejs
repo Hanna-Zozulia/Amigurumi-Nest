@@ -1,57 +1,71 @@
-<%- include('partials/header', { title: (product ? 'Edit Product' : 'New Product') }) %>
+<%- include('admin/layout_start', { title: (product ? 'Редактирование продукта' : 'Новый продукт'), currentUser, activeSection: 'products' }) %>
 
-<h1 class="h4 mb-3"><%= product ? 'Edit Product' : 'New Product' %></h1>
+<div class="admin-header">
+  <h1><i class="bi bi-shop"></i> <%= product ? 'Редактирование' : 'Новый продукт' %></h1>
+  <p><%= product ? `Продукт #${product.id}` : 'Добавление в каталог' %></p>
+</div>
 
-<form method="post" action="<%= product ? ('/products/' + product.id) : '/products' %>">
-  <div class="row g-3">
-    <div class="col-12">
-      <label class="form-label" for="name">Name</label>
-      <input class="form-control" id="name" name="name" required value="<%= product ? product.name : '' %>" />
-    </div>
-    <div class="col-12">
-      <label class="form-label" for="category">Category</label>
-      <select class="form-select" id="category" name="category" required>
-        <% categories.forEach(category => { %>
-            <option value="<%= category %>" <%= product && product.category === category ? 'selected' : '' %>>
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <form method="post" action="<%= product ? ('/products/' + product.id) : '/products' %>">
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label" for="name">Название</label>
+          <input class="form-control form-control-lg" id="name" name="name" required value="<%= product ? product.name : '' %>" placeholder="Введите название продукта" />
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="category">Категория</label>
+          <select class="form-select form-select-lg" id="category" name="category" required>
+            <% categories.forEach(category => { %>
+              <option value="<%= category %>" <%= product && product.category === category ? 'selected' : '' %>>
                 <%= category %>
-            </option>
-        <% }) %>
-      </select>
-    </div>
-    <div class="col-12">
-      <label class="form-label" for="desc">Description</label>
-      <textarea class="form-control" id="desc" name="desc" rows="4" required><%= product ? product.desc : '' %></textarea>
-    </div>
-    <div class="col-6 col-sm-4">
-      <label class="form-label" for="price">Price</label>
-      <input class="form-control" id="price" name="price" type="number" min="0" step="0.01" required value="<%= product ? product.price : '' %>" />
-    </div>
-    <div class="col-12">
-      <label class="form-label" for="image">Image URL or path</label>
-      <!-- Текстовое поле для адреса картинки. По умолчанию /img/pic.png -->
-      <input class="form-control" id="image" name="image" placeholder="" value="<%= product ? product.image : '' %>" />
-    </div>
-    <div class="col-12"> 
-      <label class="form-label" for="image">Image 2 URL or path</label> 
-      <!-- Текстовое поле для адреса картинки. По умолчанию /img/pic.png -->
-      <input class="form-control" id="image2" name="image2" placeholder="" value="<%= product ? product.image2 : '' %>" />
-      <div class="form-text">Stored as address in DB. Use absolute URL or app-relative path.</div>
-      <!-- Превью картинки для удобства администратора -->
-      <div class="d-flex align-items-center gap-3 mt-2">
-        <img id="imagePreview" src="<%= product ? product.image : '' %>" width="80" height="80" class="rounded object-fit-cover border" alt="image" />
-        <span class="text-muted small">Preview</span>
-        <div class="d-flex align-items-center gap-3 mt-2">
-        <img id="imagePreview2" src="<%= product ? product.image2 : '' %>" width="80" height="80" class="rounded object-fit-cover border" alt="image2" />
-        <span class="text-muted small">Preview</span>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="price">Цена (EUR)</label>
+          <input class="form-control form-control-lg" id="price" name="price" type="number" min="0" step="0.01" required value="<%= product ? product.price : '' %>" placeholder="0.00" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="desc">Описание</label>
+          <textarea class="form-control" id="desc" name="desc" rows="5" required placeholder="Введите описание продукта"><%= product ? product.desc : '' %></textarea>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="image">Основное изображение (URL или путь)</label>
+          <input class="form-control" id="image" name="image" placeholder="/img/pic.png" value="<%= product ? product.image : '' %>" />
+          <div class="form-text">Например: /img/amigurumi.png или https://example.com/image.jpg</div>
+          <div class="mt-3">
+            <img id="imagePreview" src="<%= product ? product.image : '' %>" width="100" height="100" class="rounded object-fit-cover border admin-preview-image <%= product && product.image ? 'is-loaded' : '' %>" alt="Preview" />
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="image2">Дополнительное изображение (URL или путь)</label>
+          <input class="form-control" id="image2" name="image2" placeholder="/img/pic2.png" value="<%= product ? product.image2 : '' %>" />
+          <div class="form-text">Дополнительное фото продукта</div>
+          <div class="mt-3">
+            <img id="imagePreview2" src="<%= product ? product.image2 : '' %>" width="100" height="100" class="rounded object-fit-cover border admin-preview-image <%= product && product.image2 ? 'is-loaded' : '' %>" alt="Preview 2" />
+          </div>
+        </div>
       </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-primary btn-lg" type="submit">
+          <i class="bi bi-check-circle"></i> <%= product ? 'Обновить' : 'Создать' %>
+        </button>
+        <a class="btn btn-outline-secondary btn-lg" href="/admin/products">
+          <i class="bi bi-x-circle"></i> Отмена
+        </a>
       </div>
-    </div>
+    </form>
   </div>
-  <div class="mt-3 d-flex gap-2">
-    <button class="btn btn-primary" type="submit">Save</button>
-    <a class="btn btn-outline-secondary" href="/">Cancel</a>
-  </div>
-</form>
+</div>
+
 <script>
   // Обновляем превью при вводе адреса картинки
   const imageInput = document.getElementById('image');
@@ -60,7 +74,19 @@
     imageInput.addEventListener('input', () => {
       const value = imageInput.value && imageInput.value.trim() ? imageInput.value.trim() : '';
       imagePreview.src = value;
+      imagePreview.classList.toggle('is-loaded', Boolean(value));
+    });
+  }
+
+  const imageInput2 = document.getElementById('image2');
+  const imagePreview2 = document.getElementById('imagePreview2');
+  if (imageInput2 && imagePreview2) {
+    imageInput2.addEventListener('input', () => {
+      const value = imageInput2.value && imageInput2.value.trim() ? imageInput2.value.trim() : '';
+      imagePreview2.src = value;
+      imagePreview2.classList.toggle('is-loaded', Boolean(value));
     });
   }
 </script>
-<%- include('partials/footer') %>
+
+<%- include('admin/layout_end', { activeSection: 'products' }) %>

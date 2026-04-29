@@ -5,6 +5,9 @@ const productController = require('../controllers/productController');
 const cartController = require('../controllers/cartWebController');
 const authController = require('../controllers/authController');
 const userAdminController = require('../controllers/userAdminController');
+const orderAdminController = require('../controllers/orderAdminController');
+const adminDashboardController = require('../controllers/adminDashboardController');
+const adminProductsController = require('../controllers/adminProductsController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { reviewRateLimit } = require('../middleware/reviewSecurity');
 
@@ -37,6 +40,16 @@ router.post('/products/:id/delete', requireAdmin, productController.remove);
 router.get('/admin/users', requireAdmin, userAdminController.showInactiveUsers);
 router.get('/admin/users/inactive', requireAdmin, userAdminController.showInactiveUsers);
 router.post('/admin/users/:id/status', requireAdmin, userAdminController.updateUserStatus);
+router.get('/admin/orders', requireAdmin, orderAdminController.listOrdersPage);
+router.get('/admin/orders/:id', requireAdmin, orderAdminController.orderDetailsPage);
+router.post('/admin/orders/:id/status', requireAdmin, orderAdminController.updateOrderStatusPage);
+router.get('/admin/products', requireAdmin, adminProductsController.listProductsAdmin);
+router.get('/admin', requireAdmin, adminDashboardController.adminDashboard);
+
+// ===== ORDERS API (для админа) =====
+router.get('/orders', requireAdmin, orderAdminController.listOrdersApi);
+router.get('/orders/:id', requireAdmin, orderAdminController.orderDetailsApi);
+router.patch('/orders/:id/status', requireAdmin, orderAdminController.updateOrderStatus);
 
 
 // ===== AUTH =====

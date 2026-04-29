@@ -29,7 +29,7 @@
           <td>
             <div class="d-flex align-items-center">
               <% if (item.Product) { %>
-              <img src="<%= item.Product.image %>" alt="<%= item.Product.name %>" style="width:60px; height:60px; object-fit:cover;" class="me-2 rounded">
+              <img src="<%= item.Product.image %>" alt="<%= item.Product.name %>" class="me-2 rounded cart-product-image">
               <span><%= item.Product.name %></span>
               <% } else { %>
                 <span class="text-muted">Товар недоступен</span>
@@ -46,14 +46,14 @@
           <td>
             <div class="d-flex align-items-center">
               <form method="POST" action="/cart/remove" class="me-1">
-                <button class="btn btn-sm btn-danger" style="width:30px; padding:0;">-</button>
+                <button class="btn btn-sm btn-danger cart-quantity-button">-</button>
                 <input type="hidden" name="productId" value="<%= item.productId %>">
               </form>
 
-              <span class="px-2 fw-bold text-center" style="min-width:30px;"><%= item.quantity %></span>
+              <span class="px-2 fw-bold text-center cart-quantity-count"><%= item.quantity %></span>
 
               <form method="POST" action="/cart/add" class="ms-1">
-                <button class="btn btn-sm btn-success" style="width:30px; padding:0;">+</button>
+                <button class="btn btn-sm btn-success cart-quantity-button">+</button>
                 <input type="hidden" name="productId" value="<%= item.productId %>">
               </form>
             </div>

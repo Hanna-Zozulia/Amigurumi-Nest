@@ -52,6 +52,7 @@ async function showInactiveUsers(req, res) {
     return res.render('inactive_users', {
         title: 'Пользователи',
         users: usersForView,
+        activeSection: 'users',
         allowedStatuses: Array.from(ALLOWED_STATUSES),
         updated: Boolean(req.query.updated),
         error: Boolean(req.query.error)

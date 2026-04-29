@@ -1,51 +1,49 @@
-<%- include('partials/header', { title: 'Пользователи', currentUser: currentUser }) %>
+<%- include('admin/layout_start', { title: 'Пользователи', currentUser, activeSection: 'users' }) %>
 
-<div class="container mt-5">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 m-0">Управление пользователями</h1>
-    <a href="/catalog" class="btn btn-outline-secondary btn-sm">Назад</a>
+<div class="admin-header">
+  <h1><i class="bi bi-people-fill"></i> Пользователи</h1>
+  <p>Управление пользователями и их статусами — всего <%= users.length %></p>
+</div>
+
+<% if (updated) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill"></i> Статус пользователя успешно обновлен.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
+<% } %>
 
-  <% if (updated) { %>
-    <div class="alert alert-success" role="alert">
-      Статус пользователя успешно обновлен.
-    </div>
-  <% } %>
+<% if (error) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i> Не удалось обновить статус пользователя.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
 
-  <% if (error) { %>
-    <div class="alert alert-danger" role="alert">
-      Не удалось обновить статус пользователя.
-    </div>
-  <% } %>
-
-  <% if (!users || users.length === 0) { %>
-    <div class="alert alert-info" role="alert">
-      Пользователи не найдены.
-    </div>
-  <% } else { %>
+<% if (!users || users.length === 0) { %>
+  <div class="alert alert-info">Пользователи не найдены.</div>
+<% } else { %>
+  <div class="card shadow-sm border-0">
     <div class="table-responsive">
-      <table class="table table-hover align-middle shadow-sm">
+      <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr>
-            <th>ID</th>
+            <th class="admin-user-col-id">ID</th>
             <th>Имя</th>
             <th>Email</th>
             <th>Дата регистрации</th>
             <th>Последний вход</th>
-            <th>Статус</th>
+            <th class="admin-user-col-status">Статус</th>
             <th class="text-end">Действие</th>
           </tr>
         </thead>
         <tbody>
           <% users.forEach(user => { %>
             <tr>
-              <td><%= user.id %></td>
-              <td><%= user.name %></td>
-              <td><%= user.email %></td>
-              <td><%= user.createdAtFormatted %></td>
-              <td>
-                <%= user.lastLoginAtFormatted %>
-              </td>
+              <td><small>#<%= user.id %></small></td>
+              <td><strong><%= user.name %></strong></td>
+              <td><small><%= user.email %></small></td>
+              <td><small><%= user.createdAtFormatted %></small></td>
+              <td><small><%= user.lastLoginAtFormatted || '—' %></small></td>
               <td>
                 <% if (user.status === 'active') { %>
                   <span class="badge bg-success">active</span>
@@ -56,16 +54,15 @@
                 <% } %>
               </td>
               <td class="text-end">
-                <form method="post" action="/admin/users/<%= user.id %>/status" class="d-inline-flex gap-2">
-                  <select name="status" class="form-select form-select-sm" style="min-width: 130px;">
+                <form method="post" action="/admin/users/<%= user.id %>/status" class="d-flex gap-2 justify-content-end">
+                  <select name="status" class="form-select form-select-sm admin-user-status-select">
                     <% allowedStatuses.forEach(status => { %>
                       <option value="<%= status %>" <%= user.status === status ? 'selected' : '' %>>
                         <%= status %>
                       </option>
                     <% }) %>
                   </select>
-
-                  <button class="btn btn-sm btn-primary" type="submit" data-loading data-loading-text="Сохраняем...">
+                  <button class="btn btn-sm btn-primary" type="submit" data-loading data-loading-text="...">
                     Сохранить
                   </button>
                 </form>
@@ -75,7 +72,9 @@
         </tbody>
       </table>
     </div>
-  <% } %>
-</div>
+  </div>
+<% } %>
+
+<%- include('admin/layout_end', { activeSection: 'users' }) %>
 
 <%- include('partials/footer') %>

@@ -253,8 +253,9 @@ async function sendOrderEmail(orderData, req) {
         'Новый заказ с сайта Amigurumi Nest',
         '',
         `Имя: ${orderData.customerName}`,
-        `Email: ${orderData.customerEmail}`,
+        `Email: ${orderData.customerEmail || '-'}`,
         `Телефон: ${orderData.customerPhone}`,
+        `Адрес: ${orderData.customerAddress}`,
         `Комментарий: ${orderData.customerNotes || '-'}`,
         '',
         'Состав заказа:',
@@ -267,8 +268,9 @@ async function sendOrderEmail(orderData, req) {
         <div style="font-family:Arial,sans-serif;color:#111827;line-height:1.5;">
             <h2 style="margin:0 0 16px;">Новый заказ с сайта Amigurumi Nest</h2>
             <p><b>Имя:</b> ${escapeHtml(orderData.customerName)}</p>
-            <p><b>Email:</b> ${escapeHtml(orderData.customerEmail)}</p>
+            <p><b>Email:</b> ${escapeHtml(orderData.customerEmail || '-')}</p>
             <p><b>Телефон:</b> ${escapeHtml(orderData.customerPhone)}</p>
+            <p><b>Адрес:</b> ${escapeHtml(orderData.customerAddress)}</p>
             <p><b>Комментарий:</b> ${escapeHtml(orderData.customerNotes || '-')}</p>
             <h3 style="margin:24px 0 12px;">Состав заказа</h3>
             ${productCardsHtml}
@@ -377,7 +379,7 @@ async function top3Page(req, res) {
 }
 
 async function newForm(req, res) {
-    res.render('product_form', { title: 'New Product', product: null, categories });
+    res.render('product_form', { title: 'New Product', product: null, categories, activeSection: 'products' });
 }
 
 async function create(req, res) {
@@ -398,7 +400,7 @@ async function editForm(req, res) {
 
     if (!product) return res.status(404).send('Not found');
 
-    res.render('product_form', { title: 'Edit Product', product, categories });
+    res.render('product_form', { title: 'Edit Product', product, categories, activeSection: 'products' });
 }
 
 async function update(req, res) {
@@ -750,9 +752,10 @@ async function createOrder(req, res) {
     const customerName = String(req.body.name || '').trim();
     const customerEmail = String(req.body.email || '').trim();
     const customerPhone = String(req.body.phone || '').trim();
+    const customerAddress = String(req.body.address || '').trim();
     const customerNotes = String(req.body.notes || '').trim();
 
-    if (!customerName || !customerEmail || !customerPhone) {
+    if (!customerName || !customerPhone || !customerAddress) {
         return res.redirect('/checkout');
     }
 
@@ -760,9 +763,11 @@ async function createOrder(req, res) {
 
     const order = await Order.create({
         cartId: isLoggedIn ? cart.id : null,
+        userId: isLoggedIn ? req.session.user.id : null,
         customerName,
-        customerEmail,
+        customerEmail: customerEmail || null,
         customerPhone,
+        customerAddress,
         customerNotes: customerNotes || null,
         total
     });
@@ -805,6 +810,7 @@ async function createOrder(req, res) {
             customerName,
             customerEmail,
             customerPhone,
+            customerAddress,
             customerNotes,
             items: emailItems,
             total

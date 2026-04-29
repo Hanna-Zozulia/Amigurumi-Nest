@@ -343,7 +343,18 @@ async function postRegister(req, res) {
 
 // POST /logout
 async function postLogout(req, res) {
-    req.session.destroy(() => res.redirect('/'));
+    if (!req.session) {
+        return res.redirect('/');
+    }
+
+    req.session.destroy((err) => {
+        if (err) {
+            return res.redirect('/');
+        }
+
+        res.clearCookie('connect.sid');
+        return res.redirect('/');
+    });
 }
 
 module.exports = {

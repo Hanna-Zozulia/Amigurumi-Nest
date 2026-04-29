@@ -1,0 +1,131 @@
+<%- include('admin/layout_start', { title: `Заказ #${order.id}`, currentUser, activeSection: 'orders' }) %>
+
+<div class="admin-header">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1><i class="bi bi-box-seam"></i> Заказ #<%= order.id %></h1>
+      <p>Детали и управление заказом</p>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-white border-bottom">
+        <h6 class="mb-0"><i class="bi bi-person-fill"></i> Клиент</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="text-muted small">Имя</div>
+          <div><strong><%= order.customerName %></strong></div>
+        </div>
+        <div class="mb-3">
+          <div class="text-muted small">Телефон</div>
+          <div><strong><%= order.customerPhone %></strong></div>
+        </div>
+        <div class="mb-3">
+          <div class="text-muted small">Email</div>
+          <div><%= order.customerEmail || '—' %></div>
+        </div>
+        <div class="mb-3">
+          <div class="text-muted small">Адрес доставки</div>
+          <div><%= order.customerAddress || '—' %></div>
+        </div>
+        <div class="mb-3">
+          <div class="text-muted small">Комментарий</div>
+          <div><%= order.customerNotes || '—' %></div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+          <div class="text-muted small">Дата заказа</div>
+          <div><strong><%= order.createdAtFormatted %></strong></div>
+        </div>
+
+        <div class="mb-3">
+          <div class="text-muted small">Текущий статус</div>
+          <div>
+            <span class="badge admin-order-status-badge <%= order.status === 'unprocessed' ? 'bg-secondary' : order.status === 'processing' ? 'bg-warning text-dark' : 'bg-success' %>">
+              <%= order.statusLabel %>
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-footer bg-light border-top">
+        <div class="text-muted small mb-2">Изменить статус</div>
+        <div class="d-flex gap-2 flex-wrap">
+          <form method="post" action="/admin/orders/<%= order.id %>/status" class="flex-fill">
+            <input type="hidden" name="status" value="unprocessed">
+            <button class="btn btn-sm <%= order.status === 'unprocessed' ? 'btn-secondary' : 'btn-outline-secondary' %> w-100" type="submit">
+              Не обработан
+            </button>
+          </form>
+          <form method="post" action="/admin/orders/<%= order.id %>/status" class="flex-fill">
+            <input type="hidden" name="status" value="processing">
+            <button class="btn btn-sm <%= order.status === 'processing' ? 'btn-warning' : 'btn-outline-warning' %> w-100" type="submit">
+              В работе
+            </button>
+          </form>
+          <form method="post" action="/admin/orders/<%= order.id %>/status" class="flex-fill">
+            <input type="hidden" name="status" value="shipped">
+            <button class="btn btn-sm <%= order.status === 'shipped' ? 'btn-success' : 'btn-outline-success' %> w-100" type="submit">
+              Отправлен
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-white border-bottom">
+        <h6 class="mb-0"><i class="bi bi-basket-fill"></i> Состав заказа</h6>
+      </div>
+      <div class="card-body p-0">
+        <% if (!order.items || order.items.length === 0) { %>
+          <div class="p-3 text-muted small text-center">В заказе нет товаров.</div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Товар</th>
+                  <th class="admin-order-col-small">Кол-во</th>
+                    <th class="admin-order-col-small">Изображение</th>
+                  <th class="admin-order-col-medium">Цена</th>
+                  <th class="admin-order-col-medium text-end">Сумма</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% order.items.forEach(item => { %>
+                  <tr>
+                    <td><%= item.productName %></td>
+                    <td><%= item.quantity %></td>
+                    <td>
+                        <img src="<%= item.image %>" alt="" style="width: 50px; height: 50px; object-fit: cover;">
+                    </td>
+                    <td><%= item.price.toFixed(2) %> EUR</td>
+                    <td class="text-end"><strong><%= item.lineTotal.toFixed(2) %> EUR</strong></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-3 bg-light border-top">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted">Итоговая сумма:</span>
+              <h5 class="mb-0"><strong><%= order.total.toFixed(2) %> EUR</strong></h5>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('admin/layout_end', { activeSection: 'orders' }) %>

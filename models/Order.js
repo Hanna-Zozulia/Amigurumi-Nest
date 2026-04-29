@@ -12,17 +12,26 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true
     },
+    userId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true
+    },
     customerName: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
     customerEmail: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     customerPhone: {
       type: DataTypes.STRING(255),
       allowNull: false
+    },
+    customerAddress: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: ''
     },
     customerNotes: {
       type: DataTypes.TEXT,
@@ -33,8 +42,8 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     status: {
-      type: DataTypes.ENUM('pending','paid','shipped','cancelled'),
-      defaultValue: 'pending'
+      type: DataTypes.ENUM('unprocessed','processing','shipped'),
+      defaultValue: 'unprocessed'
     }
   }, {
     tableName: 'orders',

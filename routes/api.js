@@ -8,6 +8,7 @@ const { cacheKeys } = require('../utils/cacheKeys');
 
 const api = require('../controllers/productApiController');
 const cart = require('../controllers/cartApiController');
+const orderAdminController = require('../controllers/orderAdminController');
 
 // ================= PRODUCTS =================
 router.get('/products', cacheGet({ keyBuilder: () => cacheKeys.products, ttl: 60 }), api.list);
@@ -21,5 +22,10 @@ router.get('/cart', requireAuth, cacheGet({ keyBuilder: (req) => cacheKeys.cart(
 router.post('/cart/add', requireAuth, cart.add);
 router.post('/cart/remove', requireAuth, cart.removeOne);
 router.post('/cart/clear', requireAuth, cart.clear);
+
+// ================= ORDERS =================
+router.get('/orders', requireAdmin, orderAdminController.listOrdersApi);
+router.get('/orders/:id', requireAdmin, orderAdminController.orderDetailsApi);
+router.patch('/orders/:id/status', requireAdmin, orderAdminController.updateOrderStatus);
 
 module.exports = router;

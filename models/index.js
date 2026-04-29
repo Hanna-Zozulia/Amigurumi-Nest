@@ -50,6 +50,10 @@ async function initDb() {
         Cart.hasOne(Order, { foreignKey: 'cartId' });
         Order.belongsTo(Cart, { foreignKey: 'cartId' });
 
+        // User -> Order (1 ко многим)
+        User.hasMany(Order, { foreignKey: 'userId' });
+        Order.belongsTo(User, { foreignKey: 'userId' });
+
         // Order -> OrderItem
         Order.hasMany(OrderItem, { as: 'items', foreignKey: 'orderId' });
         OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
@@ -105,9 +109,22 @@ async function initDb() {
             });
         }
 
+        await queryInterface.changeColumn('orders', 'customerEmail', {
+            type: DataTypes.STRING(255),
+            allowNull: true
+        });
+
         if (!ordersTable.customerPhone) {
             await queryInterface.addColumn('orders', 'customerPhone', {
                 type: DataTypes.STRING(255),
+                allowNull: false,
+                defaultValue: ''
+            });
+        }
+
+        if (!ordersTable.customerAddress) {
+            await queryInterface.addColumn('orders', 'customerAddress', {
+                type: DataTypes.TEXT,
                 allowNull: false,
                 defaultValue: ''
             });
@@ -119,6 +136,25 @@ async function initDb() {
                 allowNull: true
             });
         }
+
+        if (!ordersTable.userId) {
+            await queryInterface.addColumn('orders', 'userId', {
+                type: DataTypes.INTEGER.UNSIGNED,
+                allowNull: true
+            });
+        }
+
+        await queryInterface.sequelize.query(
+            "UPDATE orders SET status = 'unprocessed' WHERE status = 'pending' OR status = 'cancelled'"
+        );
+        await queryInterface.sequelize.query(
+            "UPDATE orders SET status = 'processing' WHERE status = 'paid'"
+        );
+        await queryInterface.changeColumn('orders', 'status', {
+            type: DataTypes.ENUM('unprocessed', 'processing', 'shipped'),
+            allowNull: false,
+            defaultValue: 'unprocessed'
+        });
 
         const usersTable = await queryInterface.describeTable('users');
 

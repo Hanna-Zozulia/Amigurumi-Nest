@@ -1,0 +1,41 @@
+      </div>
+
+      <!-- ЛЕВЫЙ SIDEBAR -->
+      <div class="admin-sidebar">
+        <div class="admin-sidebar-header">Разделы</div>
+
+        <nav class="nav">
+          <form method="post" action="/logout" class="m-0 w-100">
+            <button type="submit" class="logout-button nav-link text-start" data-loading data-loading-text="...">
+              <i class="bi bi-box-arrow-right nav-icon"></i>
+              <span class="d-none d-lg-inline">Выход</span>
+            </button>
+          </form>
+          <a class="nav-link" href="/" title="Вернуться на сайт">
+            <i class="bi bi-box-arrow-up-right nav-icon"></i>
+            <span class="d-none d-lg-inline">На сайт</span>
+          </a>
+          <a class="nav-link <%= (typeof activeSection !== 'undefined' && activeSection === 'dashboard') ? 'active' : '' %>" href="/admin" title="Вернуться на дашборд">
+            <i class="bi bi-house-door nav-icon"></i>
+            <span class="d-none d-lg-inline">Дашборд</span>
+          </a>
+          <a class="nav-link <%= (typeof activeSection !== 'undefined' && activeSection === 'orders') ? 'active' : '' %>" href="/admin/orders" title="Управление заказами">
+            <i class="bi bi-box-seam nav-icon"></i>
+            <span class="d-none d-lg-inline">Заказы</span>
+          </a>
+          <a class="nav-link <%= (typeof activeSection !== 'undefined' && activeSection === 'users') ? 'active' : '' %>" href="/admin/users" title="Управление пользователями">
+            <i class="bi bi-people nav-icon"></i>
+            <span class="d-none d-lg-inline">Пользователи</span>
+          </a>
+          <a class="nav-link <%= (typeof activeSection !== 'undefined' && activeSection === 'products') ? 'active' : '' %>" href="/admin/products" title="Управление продуктами">
+            <i class="bi bi-shop nav-icon"></i>
+            <span class="d-none d-lg-inline">Продукты</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>
