@@ -129,8 +129,7 @@ body.admin-page .admin-wrapper {
 }
 
 body.admin-page .admin-topbar {
-  background: #D094EA;;
-  border-bottom: 1px solid #e5e7eb;
+  background: #D094EA;
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;
@@ -195,7 +194,7 @@ body.admin-page .admin-sidebar-header {
   font-weight: bold;
   font-size: 12px;
   padding: 0 20px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(240, 237, 237, 0.3);
   margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1037,6 +1036,11 @@ body.confirm-modal-open {
 .confirm-modal .btn-danger:focus {
   background-color: #a52727;
   border-color: #a52727;
+}
+
+.new-product-block:has(#isNew:checked) .card {
+  background-color: var(--bs-info-bg-subtle) !important;
+  border-color: var(--bs-info-border-subtle) !important;
 }
 
 /* ===== Мобильная адаптивность ===== */

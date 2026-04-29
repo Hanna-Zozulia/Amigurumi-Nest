@@ -5,6 +5,7 @@ const { createSequelize } = require('../config/database');
 
 const defineUser = require('./User');
 const defineProduct = require('./Product');
+const defineCategory = require('./Category');
 const defineCart = require('./Cart');
 const defineCartItem = require('./CartItem');
 const defineOrder = require('./Order');
@@ -15,11 +16,13 @@ let sequelize = null;
 
 let User = null;
 let Product = null;
+let Category = null;
 let Cart = null;
 let CartItem = null;
 let Order = null;
 let OrderItem = null;
 let Review = null;
+
 async function initDb() {
     try {
         // Подключение к MySQL
@@ -28,11 +31,12 @@ async function initDb() {
         // Инициализация моделей
         User = defineUser(sequelize);
         Product = defineProduct(sequelize);
-        Cart = defineCart(sequelize, require('sequelize').DataTypes);
-        CartItem = defineCartItem(sequelize, require('sequelize').DataTypes);
+        Category = defineCategory(sequelize, DataTypes);
+        Cart = defineCart(sequelize, DataTypes);
+        CartItem = defineCartItem(sequelize, DataTypes);
         Order = defineOrder(sequelize);
         OrderItem = defineOrderItem(sequelize);
-        Review = defineReview(sequelize, require('sequelize').DataTypes);
+        Review = defineReview(sequelize, DataTypes);
 
         // ======================
         // СВЯЗИ (ВАЖНО)
@@ -45,6 +49,10 @@ async function initDb() {
         // Product -> CartItem
         Product.hasMany(CartItem, { foreignKey: 'productId' });
         CartItem.belongsTo(Product, { foreignKey: 'productId' });
+
+        // Category -> Product
+        Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' });
+        Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
 
         // Cart -> Order (1 к 1)
         Cart.hasOne(Order, { foreignKey: 'cartId' });
@@ -73,6 +81,19 @@ async function initDb() {
         // СИНХРОНИЗАЦИЯ БД
         // ======================
         await sequelize.sync();
+
+        const categoriesCount = await Category.count();
+
+            if (categoriesCount === 0) {
+                await Category.bulkCreate([
+                    { name: 'Игрушки' },
+                    { name: 'Мини-игрушки' },
+                    { name: 'Брелки' },
+                    { name: 'Разное' }
+                ]);
+
+                console.log('Default categories created');
+            }
 
         const queryInterface = sequelize.getQueryInterface();
 
@@ -231,11 +252,12 @@ async function initDb() {
 }
 
 function getModels() {
-    if (sequelize && User && Product && Cart && CartItem && Order && OrderItem && Review) {
+    if (sequelize && User && Product && Category && Cart && CartItem && Order && OrderItem && Review) {
         return {
             sequelize,
             User,
             Product,
+            Category,
             Cart,
             CartItem,
             Order,

@@ -8,7 +8,6 @@ const { checkProfanity } = require('../services/profanityFilter');
 const { cached, deleteCache, clearCacheByPattern } = require('../utils/cache');
 const { cacheKeys } = require('../utils/cacheKeys');
 
-const categories = ['', 'Свечи для массажа', 'Ароматические', 'Декоративные', 'Подарочные наборы'];
 const ORDER_RECEIVER_EMAIL = process.env.ORDER_RECEIVER_EMAIL || process.env.MAIL_TO || '';
 let lastReviewEmailAt = 0;
 const EMAIL_COOLDOWN_MS = 5 * 60 * 1000;
@@ -322,14 +321,25 @@ async function homePage(req, res) {
 
 async function listPage(req, res) {
     try {
-        const { Product, Cart, CartItem } = getModels();
+        const { Product, Cart, CartItem, Category } = getModels();
 
-        const categoryFilter = req.query.category || '';
-        const where = categoryFilter ? { category: categoryFilter } : {};
-        const listKey = cacheKeys.catalog(categoryFilter);
+        const filter = req.query.filter || '';
+        const categoriesList = await Category.findAll();
+
+        let where = {};
+
+         if (filter === 'new') {
+            where.isNew = true;
+        }
+
+        if (filter.startsWith('cat-')) {
+            where.categoryId = filter.replace('cat-', '');
+        }
+
+        const listKey = cacheKeys.catalog(filter || 'all');
 
         const products = await cached(listKey, 60, async () => {
-            return await Product.findAll({ where });
+            return await Product.findAll({ where, include: [{ model: Category, as: 'category' }] });
         });
 
         let cart = null;
@@ -345,8 +355,9 @@ async function listPage(req, res) {
         return res.render('catalog', {
             title: 'Catalog',
             products,
-            categories,
-            selectedCategory: categoryFilter,
+            categories: categoriesList,
+            selectedCategory: filter.startsWith('cat-') ? filter.replace('cat-', '') : '',
+            selectedFilter: filter,
             cart,
             currentUser: req.session.user || null
         });
@@ -379,15 +390,35 @@ async function top3Page(req, res) {
 }
 
 async function newForm(req, res) {
-    res.render('product_form', { title: 'New Product', product: null, categories, activeSection: 'products' });
+    const { Category } = getModels();
+    const categories = await Category.findAll();
+
+    res.render('product_form', {
+        title: 'New Product',
+        product: null,
+        categories,
+        activeSection: 'products'
+    });
 }
 
 async function create(req, res) {
     try {
         const { Product } = getModels();
-        const created = await Product.create(req.body);
+        const { name, desc, price, image, image2, categoryId, isNew } = req.body;
+
+        const created = await Product.create({
+            name,
+            desc,
+            price,
+            image,
+            image2,
+            categoryId,
+            isNew: isNew === 'on'
+        });
+
         await invalidateProductCache(created.id);
-        return res.redirect('/');
+        return res.redirect('/admin/products');
+
     } catch (err) {
         console.error('productWeb.create error:', err.message);
         return res.status(500).send('Internal server error');
@@ -395,12 +426,18 @@ async function create(req, res) {
 }
 
 async function editForm(req, res) {
-    const { Product } = getModels();
+    const { Product, Category } = getModels();
     const product = await Product.findByPk(req.params.id);
+    const categories = await Category.findAll();
 
     if (!product) return res.status(404).send('Not found');
 
-    res.render('product_form', { title: 'Edit Product', product, categories, activeSection: 'products' });
+    res.render('product_form', {
+        title: 'Edit Product',
+        product,
+        categories,
+        activeSection: 'products'
+    });
 }
 
 async function update(req, res) {
@@ -420,7 +457,8 @@ async function update(req, res) {
 
         await product.update({
             name: req.body.name,
-            category: req.body.category,
+            categoryId: req.body.categoryId,
+            isNew: req.body.isNew === 'on',
             desc: req.body.desc,
             price: req.body.price,
             image,
@@ -428,7 +466,7 @@ async function update(req, res) {
         });
 
         await invalidateProductCache(product.id);
-        return res.redirect('/');
+        return res.redirect('/admin/products');
     } catch (err) {
         console.error('productWeb.update error:', err.message);
         return res.status(500).send('Internal server error');
@@ -444,9 +482,12 @@ async function remove(req, res) {
 
         const deletedId = product.id;
         await product.destroy();
-        await invalidateProductCache(deletedId);
-        return res.redirect('/catalog');
+
+        const redirectTo = req.body.redirectTo || '/admin/products' || '/catalog';
+        return res.redirect(redirectTo);
+
     } catch (err) {
+        console.log('DELETE PRODUCT ID:', req.params.id);
         console.error('productWeb.remove error:', err.message);
         return res.status(500).send('Internal server error');
     }
@@ -454,21 +495,21 @@ async function remove(req, res) {
 
 async function showPage(req, res) {
     try {
-        const { Product, Review, User  } = getModels();
+        const { Product, Review, User, Category } = getModels();
         const reviewError = String(req.query.reviewError || '');
         const productId = req.params.id;
         const productKey = cacheKeys.product(productId);
         const reviewsKey = cacheKeys.reviews(productId);
 
-        const product = await cached(productKey, 60, async () => {
-            return await Product.findByPk(productId);
+        const product = await cached(productKey, 10, async () => {
+           return await Product.findByPk(productId, { include: [{ model: Category, as: 'category' }]});
         });
 
         if (!product) {
             return res.status(404).render('404');
         }
 
-        const reviews = await cached(reviewsKey, 60, async () => {
+        const reviews = await cached(reviewsKey, 10, async () => {
             return await Review.findAll({
                 where: { status: 'approved', productId },
                 include: [User],

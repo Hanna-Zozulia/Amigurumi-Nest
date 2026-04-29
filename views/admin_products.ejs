@@ -46,11 +46,20 @@
               <a href="/products/<%= product.id %>/edit" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-pencil"></i> Редактировать
               </a>
-              <form method="post" action="/products/<%= product.id %>/delete" class="w-100">
+              <form method="post" action="/products/<%= product.id %>/delete"
+                    class="w-100"
+                    data-confirm
+                    data-confirm-title="Удалить товар?"
+                    data-confirm-description="Товар будет удалён без возможности восстановления."
+                    data-confirm-text="Удалить"
+                    data-confirm-cancel-text="Отмена">
+
+                  <input type="hidden" name="redirectTo" value="/admin/products">
                 <button class="btn btn-sm btn-outline-danger w-100" data-loading data-loading-text="Удаляем...">
                   <i class="bi bi-trash"></i> Удалить
                 </button>
               </form>
+
             </div>
           </div>
         </div>
