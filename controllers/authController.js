@@ -317,6 +317,11 @@ async function postLogin(req, res) {
         const { email, password } = req.body;
         const normalizedEmail = String(email || '').trim().toLowerCase();
 
+        // Basic input validation
+        if (!normalizedEmail || !password) {
+            return res.redirect('/login?error=1');
+        }
+
         const user = await User.findOne({ where: { email: normalizedEmail } });
         if (!user) return res.redirect('/login?error=1');
 
@@ -349,8 +354,20 @@ async function postRegister(req, res) {
         const { name, email, password, confirm_password } = req.body;
         const normalizedEmail = String(email || '').trim().toLowerCase();
 
+        // Basic input validation
         if (!name || !normalizedEmail || !password || !confirm_password) {
             return res.redirect('/register?error=1');
+        }
+
+        // Simple email format check
+        const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+        if (!emailRegex.test(normalizedEmail)) {
+            return res.redirect('/register?error=1');
+        }
+
+        // Minimal password length enforcement
+        if (String(password).length < 8) {
+            return res.redirect('/register?error=password');
         }
 
         if (password !== confirm_password) {

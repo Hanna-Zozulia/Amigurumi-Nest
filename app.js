@@ -3,6 +3,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const helmet = require('helmet');
 
 const { initDb } = require('./models');
 const { initRedis } = require('./config/redis');
@@ -16,6 +17,11 @@ const { sessionIdleTimeout, DEFAULT_USER_TIMEOUT } = require('./middleware/sessi
 
 const app = express();
 
+// SECURITY: require a session secret, fail fast if missing
+if (!process.env.SESSION_SECRET) {
+    console.error('FATAL: SESSION_SECRET is not set. Set it in your .env and restart.');
+    process.exit(1);
+}
 // ================= VIEW ENGINE =================
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -25,10 +31,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// SECURITY: basic HTTP headers
+app.use(helmet());
+
 // ================= SESSION =================
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || 'dev_secret',
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         rolling: true,

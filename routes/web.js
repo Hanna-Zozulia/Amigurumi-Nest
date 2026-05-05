@@ -10,6 +10,7 @@ const adminDashboardController = require('../controllers/adminDashboardControlle
 const adminProductsController = require('../controllers/adminProductsController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { reviewRateLimit } = require('../middleware/reviewSecurity');
+const { loginLimiter, registerLimiter } = require('../middleware/rateLimits');
 
 // ===== ГЛАВНАЯ =====
 router.get('/', productController.homePage);
@@ -54,7 +55,7 @@ router.patch('/orders/:id/status', requireAdmin, orderAdminController.updateOrde
 
 // ===== AUTH =====
 router.get('/login', authController.getLogin);
-router.post('/login', authController.postLogin);
+router.post('/login', loginLimiter, authController.postLogin);
 router.get('/forgot-password', authController.getForgotPassword);
 router.post('/forgot-password', authController.postForgotPassword);
 router.get('/reset-password/:token', authController.getResetPassword);
@@ -71,7 +72,7 @@ router.get('/register', (req, res) => {
         resetSuccess: false
     });
 });
-router.post('/register', authController.postRegister);
+router.post('/register', registerLimiter, authController.postRegister);
 
 // ===== КОРЗИНА =====
 router.get('/cart', cartController.show);
