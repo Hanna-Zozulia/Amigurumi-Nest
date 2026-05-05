@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const { getModels } = require('../models');
+const { validatePassword } = require('../utils/validatePassword');
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
@@ -193,12 +194,14 @@ async function postForgotPassword(req, res) {
 async function getResetPassword(req, res) {
     const { User } = getModels();
     const token = String(req.params.token || '');
+    const errorCode = String(req.query.error || '');
 
     if (!token) {
         return res.render('reset_password', {
             title: 'Сброс пароля',
             token: '',
             showError: false,
+            errorCode: '',
             invalidToken: true
         });
     }
@@ -215,7 +218,8 @@ async function getResetPassword(req, res) {
     return res.render('reset_password', {
         title: 'Сброс пароля',
         token,
-        showError: Boolean(req.query.error),
+        showError: Boolean(errorCode),
+        errorCode,
         invalidToken: !user
     });
 }
@@ -231,12 +235,18 @@ async function postResetPassword(req, res) {
             title: 'Сброс пароля',
             token: '',
             showError: true,
+            errorCode: 'invalid-token',
             invalidToken: true
         });
     }
 
-    if (!password || password.length < 6 || password !== confirmPassword) {
-        return res.redirect(`/reset-password/${encodeURIComponent(token)}?error=1`);
+    if (!password || password !== confirmPassword) {
+        return res.redirect(`/reset-password/${encodeURIComponent(token)}?error=mismatch`);
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+        return res.redirect(`/reset-password/${encodeURIComponent(token)}?error=password`);
     }
 
     const tokenHash = hashResetToken(token);
@@ -253,6 +263,7 @@ async function postResetPassword(req, res) {
             title: 'Сброс пароля',
             token: '',
             showError: false,
+            errorCode: '',
             invalidToken: true
         });
     }
@@ -308,14 +319,19 @@ async function postRegister(req, res) {
     }
 
     if (password !== confirm_password) {
-        return res.redirect('/register?error=1');
+        return res.redirect('/register?error=mismatch');
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+        return res.redirect('/register?error=password');
     }
 
     const safeRole = 'user';
 
     const existingUser = await User.findOne({ where: { email: normalizedEmail } });
     if (existingUser) {
-        return res.redirect('/register?error=1');
+        return res.redirect('/register?error=exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

@@ -63,10 +63,11 @@ router.post('/logout', authController.postLogout);
 
 // Регистрация (пока просто форма)
 router.get('/register', (req, res) => {
-    const showError = Boolean(req.query.error);
+    const errorCode = String(req.query.error || '');
     res.render('login', {
         type: 'register',
-        showError,
+        showError: Boolean(errorCode),
+        errorCode,
         resetSuccess: false
     });
 });

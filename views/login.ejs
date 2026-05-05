@@ -8,7 +8,15 @@
 
         <% if (showError) { %>
           <div class="alert alert-danger" role="alert">
-            Ошибка авторизации или регистрации. Проверьте данные и попробуйте снова.
+            <% if (type === 'register' && errorCode === 'password') { %>
+              Пароль слишком слабый. Используйте минимум 8 символов, заглавную и строчную буквы, цифру и спецсимвол.
+            <% } else if (type === 'register' && errorCode === 'mismatch') { %>
+              Пароли не совпадают.
+            <% } else if (type === 'register' && errorCode === 'exists') { %>
+              Пользователь с таким email уже существует.
+            <% } else { %>
+              Ошибка авторизации или регистрации. Проверьте данные и попробуйте снова.
+            <% } %>
           </div>
         <% } %>
 
@@ -50,11 +58,12 @@
             </div>
             <div class="mb-3">
               <label for="password-register" class="form-label">Пароль</label>
-              <input type="password" class="form-control" id="password-register" name="password" required />
+              <input type="password" class="form-control" id="password-register" name="password" minlength="8" autocomplete="new-password" required />
+              <div class="form-text">Минимум 8 символов, 1 заглавная буква, 1 строчная буква, 1 цифра и 1 спецсимвол.</div>
             </div>
             <div class="mb-3">
               <label for="confirm-password" class="form-label">Подтвердить пароль</label>
-              <input type="password" class="form-control" id="confirm-password" name="confirm_password" required />
+              <input type="password" class="form-control" id="confirm-password" name="confirm_password" minlength="8" autocomplete="new-password" required />
             </div>
             <button type="submit" class="btn btn-success w-100" data-loading data-loading-text="Создаем аккаунт...">Зарегистрироваться</button>
           </form>
