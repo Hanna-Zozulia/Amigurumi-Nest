@@ -26,6 +26,12 @@
           </div>
         <% } %>
 
+        <% if (typeof sessionExpired !== 'undefined' && sessionExpired) { %>
+          <div class="alert alert-warning" role="alert">
+            Сессия завершена из-за неактивности. Войдите снова.
+          </div>
+        <% } %>
+
         <% if(type === 'login'){ %>
           <!-- Форма входа -->
           <form action="/login" method="post">

@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const { getModels } = require('../models');
 const { validatePassword } = require('../utils/validatePassword');
+const { DEFAULT_USER_TIMEOUT, ADMIN_TIMEOUT } = require('../middleware/sessionTimeout');
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
@@ -134,17 +135,47 @@ async function mergeSessionCartIntoUser(req, userId) {
     req.session.cart = { items: [] };
 }
 
+function regenerateSession(req) {
+    return new Promise((resolve, reject) => {
+        req.session.regenerate((err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve();
+        });
+    });
+}
+
+function startAuthenticatedSession(req, user) {
+    const now = Date.now();
+    const timeout = user.role === 'admin' ? ADMIN_TIMEOUT : DEFAULT_USER_TIMEOUT;
+
+    req.session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+    };
+    req.session.lastActivity = now;
+    req.session.expiresAt = now + timeout;
+    req.session.cookie.maxAge = timeout;
+}
+
 // GET /login
 async function getLogin(req, res) {
     if (req.session.user) return res.redirect('/');
 
     const showError = Boolean(req.query.error);
     const resetSuccess = Boolean(req.query.reset);
+    const sessionExpired = Boolean(req.query.expired);
 
     res.render('login', {
         title: 'Enter',
         showError,
         resetSuccess,
+        sessionExpired,
         type: 'login'
     });
 }
@@ -281,80 +312,86 @@ async function postResetPassword(req, res) {
 
 // POST /login
 async function postLogin(req, res) {
-    const { User } = getModels();
-    const { email, password } = req.body;
-    const normalizedEmail = String(email || '').trim().toLowerCase();
+    try {
+        const { User } = getModels();
+        const { email, password } = req.body;
+        const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    const user = await User.findOne({ where: { email: normalizedEmail } });
-    if (!user) return res.redirect('/login?error=1');
+        const user = await User.findOne({ where: { email: normalizedEmail } });
+        if (!user) return res.redirect('/login?error=1');
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.redirect('/login?error=1');
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.redirect('/login?error=1');
 
-    await user.update({
-        lastLoginAt: new Date(),
-        status: 'active'
-    });
+        await user.update({
+            lastLoginAt: new Date(),
+            status: 'active'
+        });
 
-    req.session.user = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-    };
+        const sessionCartItems = Array.isArray(req.session.cart?.items) ? [...req.session.cart.items] : [];
+        await regenerateSession(req);
+        req.session.cart = { items: sessionCartItems };
+        startAuthenticatedSession(req, user);
 
-    await mergeSessionCartIntoUser(req, user.id);
+        await mergeSessionCartIntoUser(req, user.id);
 
-    res.redirect('/');
+        res.redirect('/');
+    } catch (err) {
+        console.error('[auth] postLogin error:', err.message);
+        return res.redirect('/login?error=1');
+    }
 }
 
 // POST /register
 async function postRegister(req, res) {
-    const { User } = getModels();
-    const { name, email, password, confirm_password } = req.body;
-    const normalizedEmail = String(email || '').trim().toLowerCase();
+    try {
+        const { User } = getModels();
+        const { name, email, password, confirm_password } = req.body;
+        const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!name || !normalizedEmail || !password || !confirm_password) {
+        if (!name || !normalizedEmail || !password || !confirm_password) {
+            return res.redirect('/register?error=1');
+        }
+
+        if (password !== confirm_password) {
+            return res.redirect('/register?error=mismatch');
+        }
+
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.valid) {
+            return res.redirect('/register?error=password');
+        }
+
+        const safeRole = 'user';
+
+        const existingUser = await User.findOne({ where: { email: normalizedEmail } });
+        if (existingUser) {
+            return res.redirect('/register?error=exists');
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const createdUser = await User.create({
+            name: String(name).trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
+            lastLoginAt: new Date(),
+            status: 'active',
+            role: safeRole
+        });
+
+        const sessionCartItems = Array.isArray(req.session.cart?.items) ? [...req.session.cart.items] : [];
+        await regenerateSession(req);
+        req.session.cart = { items: sessionCartItems };
+        startAuthenticatedSession(req, createdUser);
+
+        await mergeSessionCartIntoUser(req, createdUser.id);
+
+        res.redirect('/');
+    } catch (err) {
+        console.error('[auth] postRegister error:', err.message);
         return res.redirect('/register?error=1');
     }
-
-    if (password !== confirm_password) {
-        return res.redirect('/register?error=mismatch');
-    }
-
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.valid) {
-        return res.redirect('/register?error=password');
-    }
-
-    const safeRole = 'user';
-
-    const existingUser = await User.findOne({ where: { email: normalizedEmail } });
-    if (existingUser) {
-        return res.redirect('/register?error=exists');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const createdUser = await User.create({
-        name: String(name).trim(),
-        email: normalizedEmail,
-        password: hashedPassword,
-        lastLoginAt: new Date(),
-        status: 'active',
-        role: safeRole
-    });
-
-    req.session.user = {
-        id: createdUser.id,
-        name: createdUser.name,
-        email: createdUser.email,
-        role: createdUser.role
-    };
-
-    await mergeSessionCartIntoUser(req, createdUser.id);
-
-    res.redirect('/');
 }
 
 // POST /logout

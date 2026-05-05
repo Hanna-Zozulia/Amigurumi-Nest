@@ -12,6 +12,7 @@ const apiRoutes = require('./routes/api');
 const searchRoutes = require('./routes/search');
 
 const cartMiddleware = require('./middleware/cartMiddleware');
+const { sessionIdleTimeout, DEFAULT_USER_TIMEOUT } = require('./middleware/sessionTimeout');
 
 const app = express();
 
@@ -30,11 +31,18 @@ app.use(
         secret: process.env.SESSION_SECRET || 'dev_secret',
         resave: false,
         saveUninitialized: false,
-        cookie: { httpOnly: true }
+        rolling: true,
+        cookie: {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: String(process.env.SESSION_SECURE || process.env.NODE_ENV === 'production') === 'true',
+            maxAge: DEFAULT_USER_TIMEOUT
+        }
     })
 );
 
 // ================= MIDDLEWARE =================
+app.use(sessionIdleTimeout);
 app.use(cartMiddleware);
 
 app.use((req, res, next) => {

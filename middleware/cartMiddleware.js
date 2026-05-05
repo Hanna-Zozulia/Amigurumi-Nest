@@ -35,6 +35,18 @@ const { getModels } = require('../models');
 // }
 
 function cartMiddleware(req, res, next) {
+    // If the session was destroyed due to idle timeout, don't attempt to
+    // recreate session state in this request — just render empty cart.
+    if (!req.session) {
+        res.locals.cart = { items: [] };
+        return next();
+    }
+
+    if (req.session.__expired) {
+        res.locals.cart = { items: [] };
+        return next();
+    }
+
     if (!req.session.cart) {
         req.session.cart = { items: [] };
     }
