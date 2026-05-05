@@ -9,6 +9,7 @@ const { initRedis } = require('./config/redis');
 const { startInactiveUsersMonitor, runInactiveUsersCheck } = require('./services/inactiveUsersService');
 const webRoutes = require('./routes/web');
 const apiRoutes = require('./routes/api');
+const searchRoutes = require('./routes/search');
 
 const cartMiddleware = require('./middleware/cartMiddleware');
 
@@ -44,6 +45,8 @@ app.use((req, res, next) => {
 // ================= ROUTES =================
 app.use('/', webRoutes);
 app.use('/api', apiRoutes);
+
+app.use('/api/search', searchRoutes);
 
 // ================= START SERVER =================
 const port = process.env.PORT || 3000;

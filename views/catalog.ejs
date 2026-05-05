@@ -10,6 +10,20 @@
     <% } %>
   </div>
 
+    <div class="d-flex justify-content-end my-4">
+
+        <div class="input-group shadow-sm w-auto">
+
+            <input type="text" id="searchInput" class="form-control py-2" placeholder="Поиск игрушек..." style="width: 280px;">
+
+            <span class="input-group-text bg-white">
+                <i class="bi bi-search"></i>
+            </span>
+
+        </div>
+
+    </div>
+
     <!-- Фильтр -->
      <form method="get" action="/catalog" class="mb-4">
       <div class="input-group">
@@ -42,7 +56,7 @@
     </form>
 
   <!-- Товары -->
-  <div class="row g-3">
+  <div class="row g-3" id="productsContainer">
     <% products.forEach(product => { %>
 
       <div class="col-12 col-sm-6 col-lg-4">
