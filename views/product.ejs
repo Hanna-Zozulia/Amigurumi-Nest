@@ -8,8 +8,8 @@
     <div class="col-md-6">
       <div class="image-wrapper">
 
-        <img src="<%= product.image %>" class="img-main img-fluid rounded shadow-sm" alt="<%= product.name %>">
-        <img src="<%= product.image2 %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %>">
+        <img src="<%= normalizeImagePath(product.image) %>" class="img-main img-fluid rounded shadow-sm" alt="<%= product.name %>">
+        <img src="<%= normalizeImagePath(product.image2) %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %>">
 
       </div>
     </div>

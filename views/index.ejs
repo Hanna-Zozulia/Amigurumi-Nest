@@ -15,7 +15,7 @@
           <% for (let i = 0; i < (products || []).length; i += 1) { %>
             <div class="toys-item">
               <a href="/product/<%= products[i].id %>">
-                <img src="<%= products[i].image %>" alt="<%= products[i].name %>">
+                <img src="<%= normalizeImagePath(products[i].image) %>" alt="<%= products[i].name %>">
               </a>
             </div>
           <% } %>
@@ -51,7 +51,7 @@
         
         <div class="toy-item">
           <a href="/product/<%= product.id %>">
-            <img src="<%= product.image %>" class="img-fluid mb-2">
+            <img src="<%= normalizeImagePath(product.image) %>" class="img-fluid mb-2">
             <p><%= product.name %></p>
           </a>
         </div>

@@ -11,6 +11,7 @@ const adminProductsController = require('../controllers/adminProductsController'
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { reviewRateLimit } = require('../middleware/reviewSecurity');
 const { loginLimiter, registerLimiter } = require('../middleware/rateLimits');
+const { uploadImageAndImage2, handleUploadError } = require('../middleware/uploadMiddleware');
 
 // ===== ГЛАВНАЯ =====
 router.get('/', productController.homePage);
@@ -34,9 +35,9 @@ router.post('/review/reply/delete/:id', requireAuth, productController.deleteRep
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);
 router.get('/products/new', requireAdmin, productController.newForm);
-router.post('/products', requireAdmin, productController.create);
+router.post('/products', requireAdmin, uploadImageAndImage2, handleUploadError, productController.create);
 router.get('/products/:id/edit', requireAdmin, productController.editForm);
-router.post('/products/:id', requireAdmin, productController.update);
+router.post('/products/:id', requireAdmin, uploadImageAndImage2, handleUploadError, productController.update);
 router.post('/products/:id/delete', requireAdmin, productController.remove);
 router.get('/admin/users', requireAdmin, userAdminController.showInactiveUsers);
 router.get('/admin/users/inactive', requireAdmin, userAdminController.showInactiveUsers);

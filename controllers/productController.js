@@ -404,14 +404,23 @@ async function newForm(req, res) {
 async function create(req, res) {
     try {
         const { Product } = getModels();
-        const { name, desc, price, image, image2, categoryId, isNew } = req.body;
+        const { name, desc, price, categoryId, isNew } = req.body;
+
+        const mainImageFile = req.files && req.files.image && req.files.image[0];
+        if (!mainImageFile) {
+            return res.status(400).send('Основное изображение обязательно');
+        }
+
+        const imageVal = '/img/uploads/' + mainImageFile.filename;
+        const image2File = req.files && req.files.image2 && req.files.image2[0];
+        const image2Val = image2File ? '/img/uploads/' + image2File.filename : '';
 
         const created = await Product.create({
             name,
             desc,
             price,
-            image,
-            image2,
+            image: imageVal,
+            image2: image2Val,
             categoryId,
             isNew: isNew === 'on'
         });
@@ -447,13 +456,11 @@ async function update(req, res) {
 
         if (!product) return res.status(404).send('Not found');
 
-        const image = Array.isArray(req.body.image)
-            ? req.body.image[0]
-            : req.body.image;
+        const imageFile = req.files && req.files.image && req.files.image[0];
+        const image2File = req.files && req.files.image2 && req.files.image2[0];
 
-        const image2 = Array.isArray(req.body.image2)
-            ? req.body.image2[0]
-            : req.body.image2;
+        const imageVal = imageFile ? '/img/uploads/' + imageFile.filename : product.image;
+        const image2Val = image2File ? '/img/uploads/' + image2File.filename : product.image2;
 
         await product.update({
             name: req.body.name,
@@ -461,8 +468,8 @@ async function update(req, res) {
             isNew: req.body.isNew === 'on',
             desc: req.body.desc,
             price: req.body.price,
-            image,
-            image2
+            image: imageVal,
+            image2: image2Val
         });
 
         await invalidateProductCache(product.id);
@@ -480,14 +487,43 @@ async function remove(req, res) {
 
         if (!product) return res.status(404).send('Not found');
 
-        const deletedId = product.id;
+        // 🔥 УДАЛЕНИЕ ФАЙЛА КАРТИНКИ
+        if (product.image) {
+            const imagePath = path.join(
+                process.cwd(),
+                'public',
+                product.image
+            );
+
+            try {
+                await fs.unlink(imagePath);
+            } catch (err) {
+                console.log('Image delete error:', err.message);
+            }
+        }
+
+        if (product.image2) {
+            const image2Path = path.join(
+                process.cwd(),
+                'public',
+                product.image2
+            );
+
+            try {
+                await fs.unlink(image2Path);
+            } catch (err) {
+                console.log('Image2 delete error:', err.message);
+            }
+        }
+
         await product.destroy();
 
-        const redirectTo = req.body.redirectTo || '/admin/products' || '/catalog';
+        await invalidateProductCache(product.id);
+
+        const redirectTo = req.body.redirectTo || '/admin/products';
         return res.redirect(redirectTo);
 
     } catch (err) {
-        console.log('DELETE PRODUCT ID:', req.params.id);
         console.error('productWeb.remove error:', err.message);
         return res.status(500).send('Internal server error');
     }

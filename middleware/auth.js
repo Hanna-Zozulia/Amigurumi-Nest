@@ -1,7 +1,7 @@
 // middleware/auth.js
 // Проверка авторизации и роли пользователя
 
-const { isApiRequest } = require('./sessionTimeout');
+const { isApiRequest } = require('../utils/isApiRequest');
 
 function handleUnauthorized(req, res) {
     if (isApiRequest(req)) {
@@ -40,4 +40,4 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-module.exports = { requireAuth, requireAdmin };
+module.exports = { requireAuth, requireAdmin, handleUnauthorized, handleForbidden };

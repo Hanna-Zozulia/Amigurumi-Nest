@@ -70,7 +70,7 @@
             <% } %>
 
             <a href="/product/<%= product.id %>" class="catalog-image-link">
-              <img src="<%= product.image %>"
+                <img src="<%= normalizeImagePath(product.image) %>"
                   class="card-img-top catalog-card-img"
                   alt="<%= product.name %>" />
             </a>

@@ -42,9 +42,20 @@ async function getOne(req, res) {
 async function create(req, res) {
     try {
         const { Product } = getModels();
-        const { name, desc, price, image, image2, category } = req.body;
+        const { name, desc, price, image, image2 } = req.body;
+        const categoryId = req.body.categoryId || req.body.category;
 
-        const created = await Product.create({ name, desc, price, image, image2, category });
+        const imageVal = Array.isArray(image) ? image[0] : image;
+        const image2Val = Array.isArray(image2) ? image2[0] : image2;
+
+        const created = await Product.create({
+            name,
+            desc,
+            price,
+            image: imageVal,
+            image2: image2Val,
+            categoryId
+        });
         await invalidateProductCache(created.id);
         return res.status(201).json(created);
     } catch (err) {
@@ -68,9 +79,11 @@ async function update(req, res) {
       ? req.body.image2[0]
       : req.body.image2;
 
+    const categoryId = req.body.categoryId || req.body.category;
+
     await product.update({
       name: req.body.name,
-      category: req.body.category,
+      categoryId,
       desc: req.body.desc,
       price: req.body.price,
       image,

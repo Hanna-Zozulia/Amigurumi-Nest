@@ -23,7 +23,7 @@
       <div class="col-md-6 col-lg-4">
         <div class="card shadow-sm border-0 h-100">
           <% if (product.image) { %>
-            <img src="<%= product.image %>" class="card-img-top object-fit-cover admin-product-image" alt="<%= product.name %>">
+            <img src="<%= normalizeImagePath(product.image) %>" class="card-img-top object-fit-cover admin-product-image" alt="<%= product.name %>">
           <% } else { %>
             <div class="card-img-top bg-light d-flex align-items-center justify-content-center admin-product-placeholder">
               <i class="bi bi-image admin-product-placeholder-icon"></i>

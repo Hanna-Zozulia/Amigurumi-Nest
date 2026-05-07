@@ -14,6 +14,7 @@ const searchRoutes = require('./routes/search');
 
 const cartMiddleware = require('./middleware/cartMiddleware');
 const { sessionIdleTimeout, DEFAULT_USER_TIMEOUT } = require('./middleware/sessionTimeout');
+const { normalizeImagePath } = require('./utils/imagePath');
 
 const app = express();
 
@@ -32,7 +33,42 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // SECURITY: basic HTTP headers
-app.use(helmet());
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+
+                scriptSrc: [
+                    "'self'",
+                    "https://cdn.jsdelivr.net"
+                ],
+
+                styleSrc: [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net"
+                ],
+
+                fontSrc: [
+                    "'self'",
+                    "https://cdn.jsdelivr.net"
+                ],
+
+                imgSrc: [
+                    "'self'",
+                    "data:",
+                    "blob:"
+                ],
+
+                connectSrc: [
+                    "'self'",
+                    "https://cdn.jsdelivr.net"
+                ]
+            }
+        }
+    })
+);
 
 // ================= SESSION =================
 app.use(
@@ -56,6 +92,7 @@ app.use(cartMiddleware);
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.session.user || null;
+    res.locals.normalizeImagePath = normalizeImagePath;
     next();
 });
 

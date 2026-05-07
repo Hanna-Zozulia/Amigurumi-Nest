@@ -1,6 +1,28 @@
 let isSearchMode = false;
 let searchQuery = '';
 
+function normalizeImageSrc(value) {
+    const raw = String(value || '').trim();
+
+    if (!raw) {
+        return '';
+    }
+
+    if (/^(https?:)?\/\//i.test(raw) || raw.startsWith('data:')) {
+        return raw;
+    }
+
+    if (raw.startsWith('/')) {
+        return raw;
+    }
+
+    if (raw.startsWith('img/')) {
+        return `/${raw}`;
+    }
+
+    return `/img/${raw.replace(/^\/+/, '')}`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const slider = document.querySelector('.vertical-slider');
     const track = document.querySelector('.slider-track');
@@ -64,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </span>
                             ` : ''}
                             <a href="/product/${product.id}" class="catalog-image-link">
-                                <img src="${product.image}" class="card-img-top catalog-card-img" alt="${product.name}">
+                                <img src="${normalizeImageSrc(product.image)}" class="card-img-top catalog-card-img" alt="${product.name}">
                             </a>
                         </div>
                         <div class="card-body d-flex flex-column">
@@ -122,4 +144,53 @@ function editReview(id) {
 function editReply(id) {
     document.getElementById('reply-text-' + id).classList.add('d-none');
     document.getElementById('reply-form-' + id).classList.remove('d-none');
+}
+
+const imageField = document.getElementById('image');
+const imagePreviewField = document.getElementById('imagePreview');
+
+if (imageField && imagePreviewField) {
+        imageField.addEventListener('change', function (e) {
+                const file = e.target.files && e.target.files[0];
+
+                if (file) {
+                        imagePreviewField.src = URL.createObjectURL(file);
+                }
+        });
+}
+
+// Обработка основного изображения в форме продукта
+const productImageFileInput = document.getElementById('image');
+const productImagePreview = document.getElementById('imagePreview');
+
+if (productImageFileInput && productImagePreview) {
+    productImageFileInput.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                productImagePreview.src = event.target.result;
+                productImagePreview.classList.add('is-loaded');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+// Обработка дополнительного изображения в форме продукта
+const product2ImageFileInput = document.getElementById('image2');
+const product2ImagePreview = document.getElementById('imagePreview2');
+
+if (product2ImageFileInput && product2ImagePreview) {
+    product2ImageFileInput.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                product2ImagePreview.src = event.target.result;
+                product2ImagePreview.classList.add('is-loaded');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 }
