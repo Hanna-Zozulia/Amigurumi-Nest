@@ -5,21 +5,10 @@ const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const { getModels } = require('../models');
 const { validatePassword } = require('../utils/validatePassword');
+const { getSiteBaseUrl } = require('../utils/htmlUtils');
 const { DEFAULT_USER_TIMEOUT, ADMIN_TIMEOUT } = require('../middleware/sessionTimeout');
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
-
-function buildSiteBaseUrl(req) {
-    const configuredBaseUrl = String(process.env.APP_URL || process.env.BASE_URL || '').trim();
-    if (configuredBaseUrl) {
-        return configuredBaseUrl.replace(/\/$/, '');
-    }
-
-    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
-    const host = req.get('host');
-
-    return host ? `${protocol}://${host}` : '';
-}
 
 function getMailTransporter() {
     const host = process.env.MAIL_HOST;
@@ -205,7 +194,7 @@ async function postForgotPassword(req, res) {
                     resetTokenExp: expiresAt
                 });
 
-                const baseUrl = buildSiteBaseUrl(req);
+                const baseUrl = getSiteBaseUrl(req);
                 const resetLink = `${baseUrl}/reset-password/${encodeURIComponent(rawToken)}`;
 
                 await sendResetPasswordEmail({

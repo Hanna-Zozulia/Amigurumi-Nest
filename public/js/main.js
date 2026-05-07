@@ -146,51 +146,29 @@ function editReply(id) {
     document.getElementById('reply-form-' + id).classList.remove('d-none');
 }
 
-const imageField = document.getElementById('image');
-const imagePreviewField = document.getElementById('imagePreview');
+function bindImagePreview(fileInputId, previewImageId) {
+    const fileInput = document.getElementById(fileInputId);
+    const previewImage = document.getElementById(previewImageId);
 
-if (imageField && imagePreviewField) {
-        imageField.addEventListener('change', function (e) {
-                const file = e.target.files && e.target.files[0];
+    if (!fileInput || !previewImage) {
+        return;
+    }
 
-                if (file) {
-                        imagePreviewField.src = URL.createObjectURL(file);
-                }
-        });
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            previewImage.src = event.target.result;
+            previewImage.classList.add('is-loaded');
+        };
+        reader.readAsDataURL(file);
+    });
 }
 
 // Обработка основного изображения в форме продукта
-const productImageFileInput = document.getElementById('image');
-const productImagePreview = document.getElementById('imagePreview');
-
-if (productImageFileInput && productImagePreview) {
-    productImageFileInput.addEventListener('change', (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                productImagePreview.src = event.target.result;
-                productImagePreview.classList.add('is-loaded');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}
+bindImagePreview('image', 'imagePreview');
 
 // Обработка дополнительного изображения в форме продукта
-const product2ImageFileInput = document.getElementById('image2');
-const product2ImagePreview = document.getElementById('imagePreview2');
-
-if (product2ImageFileInput && product2ImagePreview) {
-    product2ImageFileInput.addEventListener('change', (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                product2ImagePreview.src = event.target.result;
-                product2ImagePreview.classList.add('is-loaded');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}
+bindImagePreview('image2', 'imagePreview2');

@@ -1,19 +1,6 @@
 // controllers/productApiController.js
 const { getModels } = require('../models');
-const { deleteCache, clearCacheByPattern } = require('../utils/cache');
-const { cacheKeys } = require('../utils/cacheKeys');
-
-async function invalidateProductCache(productId) {
-    await deleteCache(cacheKeys.products);
-    await clearCacheByPattern(cacheKeys.catalogPattern);
-    await deleteCache(cacheKeys.homeProducts);
-    await deleteCache(cacheKeys.topProducts);
-
-    if (productId) {
-        await deleteCache(cacheKeys.product(productId));
-        await deleteCache(cacheKeys.reviews(productId));
-    }
-}
+const { invalidateProductCache } = require('../services/cacheService');
 
 async function list(req, res) {
     try {

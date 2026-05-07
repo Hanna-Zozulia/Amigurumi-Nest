@@ -1,32 +1,7 @@
 const { getModels } = require('../models');
+const { formatDateRu } = require('../utils/dateFormatter');
 
 const ALLOWED_STATUSES = new Set(['active', 'inactive', 'suspended']);
-
-function formatLastLoginDate(value) {
-    if (!value) return '—';
-
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '—';
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear());
-
-    return `${day}.${month}.${year}`;
-}
-
-function formatRegistrationDate(value) {
-    if (!value) return '—';
-
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '—';
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear());
-
-    return `${day}.${month}.${year}`;
-}
 
 async function showInactiveUsers(req, res) {
     const { User } = getModels();
@@ -44,8 +19,8 @@ async function showInactiveUsers(req, res) {
 
         return {
             ...plain,
-            lastLoginAtFormatted: formatLastLoginDate(plain.lastLoginAt),
-            createdAtFormatted: formatRegistrationDate(plain.createdAt)
+            lastLoginAtFormatted: formatDateRu(plain.lastLoginAt, '—'),
+            createdAtFormatted: formatDateRu(plain.createdAt, '—')
         };
     });
 

@@ -1,4 +1,5 @@
 const { getModels } = require('../models');
+const { formatDateRu } = require('../utils/dateFormatter');
 
 async function listProductsAdmin(req, res) {
     try {
@@ -19,11 +20,7 @@ async function listProductsAdmin(req, res) {
                 price: Number(product.price || 0),
                 image: product.image,
                 createdAt: product.createdAt,
-                createdAtFormatted: new Date(product.createdAt).toLocaleString('ru-RU', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                })
+                createdAtFormatted: formatDateRu(product.createdAt)
             }))
         });
     } catch (err) {

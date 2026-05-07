@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const productController = require('../controllers/productController');
+const reviewController = require('../controllers/reviewController');
+const orderController = require('../controllers/orderController');
 const cartController = require('../controllers/cartWebController');
 const authController = require('../controllers/authController');
 const userAdminController = require('../controllers/userAdminController');
@@ -25,12 +27,12 @@ router.get('/catalog', productController.listPage);
 router.get('/top3', productController.top3Page);
 
 // ===== ОТЗЫВЫ =====
-router.post('/review/add', reviewRateLimit, productController.addReview);
-router.get('/review/edit/:id', requireAuth, productController.editReviewForm);
-router.post('/review/edit/:id', requireAuth, productController.updateReview);
-router.post('/review/delete/:id', requireAuth, productController.deleteReview);
-router.post('/review/reply/:id', requireAuth, productController.replyReview);
-router.post('/review/reply/delete/:id', requireAuth, productController.deleteReply);
+router.post('/review/add', reviewRateLimit, reviewController.addReview);
+router.get('/review/edit/:id', requireAuth, reviewController.editReviewForm);
+router.post('/review/edit/:id', requireAuth, reviewController.updateReview);
+router.post('/review/delete/:id', requireAuth, reviewController.deleteReview);
+router.post('/review/reply/:id', requireAuth, reviewController.replyReview);
+router.post('/review/reply/delete/:id', requireAuth, reviewController.deleteReply);
 
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);
@@ -82,7 +84,7 @@ router.post('/cart/remove', cartController.removeOne);
 router.post('/cart/clear', cartController.clear);
 
 // ===== CHECKOUT =====
-router.get('/checkout', productController.checkoutPage);
-router.post('/order', productController.createOrder);
+router.get('/checkout', orderController.checkoutPage);
+router.post('/order', orderController.createOrder);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const { getModels } = require('../models');
+const { formatDateTimeRu } = require('../utils/dateFormatter');
 
 const ORDER_STATUSES = ['unprocessed', 'processing', 'shipped'];
 const STATUS_LABELS = {
@@ -23,18 +24,6 @@ function getNextStatus(status) {
 
 function mapStatusLabel(status) {
     return STATUS_LABELS[status] || status;
-}
-
-function formatDate(dateValue) {
-    if (!dateValue) return '';
-
-    return new Date(dateValue).toLocaleString('ru-RU', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
 }
 
 function normalizeOrder(order) {
@@ -62,7 +51,7 @@ function normalizeOrder(order) {
         status: order.status,
         statusLabel: mapStatusLabel(order.status),
         createdAt: order.createdAt,
-        createdAtFormatted: formatDate(order.createdAt),
+        createdAtFormatted: formatDateTimeRu(order.createdAt),
         items
     };
 }

@@ -61,8 +61,6 @@ function handleUploadError(err, req, res, next) {
         return res.status(400).json({ error: err.message });
     }
     next();
-
-    console.log('Upload error:', err.code, err.message);
 }
 
 module.exports = {

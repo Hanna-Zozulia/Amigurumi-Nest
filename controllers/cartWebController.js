@@ -1,12 +1,6 @@
 //cartWebController.js
 const { getModels } = require('../models');
-const { deleteCache } = require('../utils/cache');
-const { cacheKeys } = require('../utils/cacheKeys');
-
-async function invalidateCartCache(userId) {
-    if (!userId) return;
-    await deleteCache(cacheKeys.cart(userId));
-}
+const { invalidateCartCache } = require('../services/cacheService');
 
 async function loadSessionCart(sessionCart, Product) {
     const items = Array.isArray(sessionCart?.items) ? sessionCart.items : [];

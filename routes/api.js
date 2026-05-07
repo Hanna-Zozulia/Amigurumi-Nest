@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { requireAdmin } = require('../middleware/auth');
-const { requireAuth } = require('../middleware/auth');
+const { requireAdmin, requireAuth } = require('../middleware/auth');
 const { cacheGet } = require('../middleware/cacheMiddleware');
 const { cacheKeys } = require('../utils/cacheKeys');
 
