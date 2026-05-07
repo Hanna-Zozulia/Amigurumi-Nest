@@ -102,6 +102,8 @@ app.use('/api', apiRoutes);
 
 app.use('/api/search', searchRoutes);
 
+app.use((req, res) => res.status(404).render('404', { title: '404 - Страница не найдена' }));
+
 // ================= START SERVER =================
 const port = process.env.PORT || 3000;
 

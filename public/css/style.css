@@ -483,6 +483,90 @@ body.admin-page .admin-stat-list {
   display: none !important;
 }
 
+/* ===== 404 page ===== */
+body.error-page {
+  min-height: 100vh;
+  padding-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top, rgba(227, 129, 94, 0.18), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(32, 49, 30, 0.22), transparent 34%),
+    linear-gradient(160deg, #f7f2ec 0%, #eef4ef 52%, #f9f4ee 100%);
+  color: #20311e;
+}
+
+body.error-page main {
+  flex: 0 0 auto;
+}
+
+.error-page-wrap {
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.error-page-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(32, 49, 30, 0.08);
+  box-shadow: 0 30px 80px rgba(32, 49, 30, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.error-page-emoji {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.25rem;
+  font-size: 2.6rem;
+  background: linear-gradient(145deg, rgba(227, 129, 94, 0.16), rgba(32, 49, 30, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.error-page-emoji img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+
+.error-page-code {
+  font-size: clamp(3rem, 10vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: #20311e;
+  margin-bottom: 0.75rem;
+}
+
+.error-page-title {
+  color: #20311e;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.error-page-subtitle {
+  max-width: 32rem;
+  margin: 0 auto 1.5rem;
+  color: #5d6b62;
+  font-size: 1.05rem;
+}
+
+.error-page-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.error-page-actions .btn {
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  box-shadow: 0 14px 28px rgba(227, 129, 94, 0.22);
+}
+
 /* ===== Главная страница ===== */
 h1, h2, h3 {
   color: #dedcdc;
@@ -1266,6 +1350,10 @@ body.confirm-modal-open {
 
   .top3 {
     width: 100%;
+  }
+
+  .error-page-card {
+    padding: 3rem 2.5rem;
   }
 
   footer {
