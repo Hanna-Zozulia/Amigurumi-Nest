@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const helmet = require('helmet');
+const { Op } = require('sequelize');
 
 const { initDb } = require('./models');
 const { initRedis } = require('./config/redis');
@@ -15,6 +16,7 @@ const searchRoutes = require('./routes/search');
 const cartMiddleware = require('./middleware/cartMiddleware');
 const { sessionIdleTimeout, DEFAULT_USER_TIMEOUT } = require('./middleware/sessionTimeout');
 const { normalizeImagePath } = require('./utils/imagePath');
+const { getModels } = require('./models');
 
 const app = express();
 
@@ -93,6 +95,48 @@ app.use(cartMiddleware);
 app.use((req, res, next) => {
     res.locals.currentUser = req.session.user || null;
     res.locals.normalizeImagePath = normalizeImagePath;
+    res.locals.adminReviewBadgeCount = 0;
+    next();
+});
+
+app.use(async (req, res, next) => {
+    if (!req.session.user || req.session.user.role !== 'admin' || !req.originalUrl.startsWith('/admin')) {
+        return next();
+    }
+
+    try {
+        const models = getModels();
+        if (!models) {
+            return next();
+        }
+
+        const { Review } = models;
+        const lastAdminVisitAt = req.session.adminCommentsLastVisitAt
+            ? new Date(req.session.adminCommentsLastVisitAt)
+            : null;
+
+        if (!lastAdminVisitAt || Number.isNaN(lastAdminVisitAt.getTime())) {
+            res.locals.adminReviewBadgeCount = 0;
+            return next();
+        }
+
+        const rawCount = await Review.count({
+            where: {
+                createdAt: {
+                    [Op.gt]: lastAdminVisitAt
+                }
+            }
+        });
+
+        const normalizedCount = Number(rawCount);
+        res.locals.adminReviewBadgeCount = Number.isFinite(normalizedCount) && normalizedCount > 0
+            ? normalizedCount
+            : 0;
+    } catch (err) {
+        console.error('adminReviewBadgeCount error:', err.message);
+        res.locals.adminReviewBadgeCount = 0;
+    }
+
     next();
 });
 

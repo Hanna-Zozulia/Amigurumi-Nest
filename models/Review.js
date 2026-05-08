@@ -18,9 +18,13 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     status: {
-      type: DataTypes.ENUM('approved', 'pending', 'blocked'),
+      type: DataTypes.ENUM('approved', 'hidden', 'blocked'),
       allowNull: false,
       defaultValue: 'approved'
+    },
+    blockedReason: {
+      type: DataTypes.STRING(32),
+      allowNull: true
     },
     adminReply: {
       type: DataTypes.TEXT,
@@ -28,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'reviews',
-    timestamps: true
+    timestamps: true,
+    paranoid: true
   });
   return Review;
 };

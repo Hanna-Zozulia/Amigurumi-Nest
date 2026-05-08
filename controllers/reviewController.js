@@ -21,18 +21,21 @@ async function addReview(req, res) {
         }
 
         const moderationResult = checkProfanity(reviewText);
-        if (moderationResult.flagged) {
-            return res.redirect('/product/' + productId + '?reviewError=blocked');
-        }
+        const reviewStatus = moderationResult.flagged ? 'blocked' : 'approved';
 
         await Review.create({
             text: reviewText,
             productId,
             userId: req.session.user.id,
-            status: 'approved'
+            status: reviewStatus,
+            blockedReason: moderationResult.flagged ? moderationResult.reason : null
         });
 
         await invalidateReviewsCache(productId);
+
+        if (moderationResult.flagged) {
+            return res.redirect('/product/' + productId + '?reviewError=blocked');
+        }
 
         const now = Date.now();
         if (now - lastReviewEmailAt > EMAIL_COOLDOWN_MS) {
@@ -85,15 +88,19 @@ async function updateReview(req, res) {
     const reviewText = String(req.body.text || '').toLowerCase().trim();
 
     const moderationResult = checkProfanity(reviewText);
-    if (moderationResult.flagged) {
-        return res.redirect('/product/' + review.productId + '?reviewError=blocked');
-    }
+    const reviewStatus = moderationResult.flagged ? 'blocked' : 'approved';
 
     await review.update({
-        text: reviewText
+        text: reviewText,
+        status: reviewStatus,
+        blockedReason: moderationResult.flagged ? moderationResult.reason : null
     });
 
     await invalidateReviewsCache(review.productId);
+
+    if (moderationResult.flagged) {
+        return res.redirect('/product/' + review.productId + '?reviewError=blocked');
+    }
 
     return res.redirect('/product/' + review.productId);
 }
@@ -173,6 +180,10 @@ async function deleteReply(req, res) {
 
     if (!req.session.user) {
         return res.status(401).send('Not authorized');
+    }
+
+    if (req.session.user.role !== 'admin') {
+        return res.status(403).send('Forbidden');
     }
 
     await review.update({

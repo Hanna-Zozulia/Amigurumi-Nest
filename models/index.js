@@ -100,9 +100,33 @@ async function initDb() {
         const reviewsTable = await queryInterface.describeTable('reviews');
         if (!reviewsTable.status) {
             await queryInterface.addColumn('reviews', 'status', {
-                type: DataTypes.ENUM('approved', 'pending', 'blocked'),
+                type: DataTypes.ENUM('approved', 'hidden', 'blocked'),
                 allowNull: false,
                 defaultValue: 'approved'
+            });
+        } else {
+            await queryInterface.sequelize.query(
+                "UPDATE reviews SET status = 'hidden' WHERE status = 'pending'"
+            );
+
+            await queryInterface.changeColumn('reviews', 'status', {
+                type: DataTypes.ENUM('approved', 'hidden', 'blocked'),
+                allowNull: false,
+                defaultValue: 'approved'
+            });
+        }
+
+        if (!reviewsTable.blockedReason) {
+            await queryInterface.addColumn('reviews', 'blockedReason', {
+                type: DataTypes.STRING(32),
+                allowNull: true
+            });
+        }
+
+        if (!reviewsTable.deletedAt) {
+            await queryInterface.addColumn('reviews', 'deletedAt', {
+                type: DataTypes.DATE,
+                allowNull: true
             });
         }
 

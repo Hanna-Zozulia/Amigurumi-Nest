@@ -31,6 +31,13 @@
             <i class="bi bi-shop nav-icon"></i>
             <span class="d-none d-lg-inline">Продукты</span>
           </a>
+          <a class="nav-link <%= (typeof activeSection !== 'undefined' && activeSection === 'comments') ? 'active' : '' %>" href="/admin/comments" title="Управление комментариями">
+            <i class="bi bi-chat-left-text nav-icon"></i>
+            <span class="d-none d-lg-inline">Комментарии</span>
+            <% if (Number(adminReviewBadgeCount || 0) > 0) { %>
+              <span class="badge bg-danger ms-auto"><%= Number(adminReviewBadgeCount) %></span>
+            <% } %>
+          </a>
         </nav>
       </div>
     </div>

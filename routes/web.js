@@ -3,6 +3,7 @@ const router = express.Router();
 
 const productController = require('../controllers/productController');
 const reviewController = require('../controllers/reviewController');
+const adminCommentsController = require('../controllers/adminCommentsController');
 const orderController = require('../controllers/orderController');
 const cartController = require('../controllers/cartWebController');
 const authController = require('../controllers/authController');
@@ -31,8 +32,16 @@ router.post('/review/add', reviewRateLimit, reviewController.addReview);
 router.get('/review/edit/:id', requireAuth, reviewController.editReviewForm);
 router.post('/review/edit/:id', requireAuth, reviewController.updateReview);
 router.post('/review/delete/:id', requireAuth, reviewController.deleteReview);
-router.post('/review/reply/:id', requireAuth, reviewController.replyReview);
-router.post('/review/reply/delete/:id', requireAuth, reviewController.deleteReply);
+router.post('/review/reply/:id', requireAdmin, reviewController.replyReview);
+router.post('/review/reply/delete/:id', requireAdmin, reviewController.deleteReply);
+
+// ===== КОММЕНТАРИИ В АДМИН-ПАНЕЛИ =====
+router.get('/admin/comments', requireAdmin, adminCommentsController.listCommentsPage);
+router.post('/admin/comments/:id/approve', requireAdmin, adminCommentsController.approveComment);
+router.post('/admin/comments/:id/reply', requireAdmin, adminCommentsController.replyComment);
+router.post('/admin/comments/:id/hide', requireAdmin, adminCommentsController.hideComment);
+router.post('/admin/comments/:id/delete', requireAdmin, adminCommentsController.deleteComment);
+router.post('/admin/comments/:id/restore', requireAdmin, adminCommentsController.restoreComment);
 
 // ===== ПРОДУКТ =====
 router.get('/product/:id', productController.showPage);
