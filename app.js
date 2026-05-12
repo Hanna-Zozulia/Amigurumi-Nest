@@ -145,6 +145,9 @@ app.use('/', webRoutes);
 app.use('/api', apiRoutes);
 
 app.use('/api/search', searchRoutes);
+// Swagger UI
+const swaggerRouter = require('./swagger/swagger');
+app.use('/api-docs', swaggerRouter);
 
 app.use((req, res) => res.status(404).render('404', { title: '404 - Страница не найдена' }));
 
