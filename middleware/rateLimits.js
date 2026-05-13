@@ -5,7 +5,10 @@ const loginLimiter = rateLimit({
     max: 15, // limit each IP to 15 requests per windowMs
     standardHeaders: true,
     legacyHeaders: false,
-    message: 'Too many login attempts from this IP, please try again later.'
+    message: {
+        error: 'RATE_LIMIT_EXCEEDED',
+        message: 'Слишком много попыток входа. Попробуйте позже.'
+    }
 });
 
 const registerLimiter = rateLimit({
@@ -13,7 +16,10 @@ const registerLimiter = rateLimit({
     max: 10, // limit each IP to 10 registrations per windowMs
     standardHeaders: true,
     legacyHeaders: false,
-    message: 'Too many registration attempts from this IP, please try again later.'
+    message: {
+        error: 'RATE_LIMIT_EXCEEDED',
+        message: 'Слишком много попыток регистрации. Попробуйте позже.'
+    }
 });
 
 module.exports = {

@@ -46,7 +46,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         div.className = 'toys-item';
 
                         div.innerHTML = `
-                            <img src="${normalizeImageSrc(product.image)}" alt="${product.name}">
+                            <a href="/product/${product.id}" class="text-decoration-none">
+                                <img 
+                                    src="${normalizeImageSrc(product.image)}" 
+                                    alt="${product.name}"
+                                >
+                            </a>
                         `;
 
                         track.appendChild(div);
@@ -204,3 +209,20 @@ bindImagePreview('image', 'imagePreview');
 
 // Обработка дополнительного изображения в форме продукта
 bindImagePreview('image2', 'imagePreview2');
+
+let idleTimer;
+const IDLE_LIMIT = 15 * 60 * 1000;
+
+function resetIdle() {
+    clearTimeout(idleTimer);
+
+    idleTimer = setTimeout(() => {
+        window.location.href = '/login?expired=true';
+    }, IDLE_LIMIT);
+}
+
+['mousemove', 'keydown', 'click', 'scroll'].forEach(e =>
+    document.addEventListener(e, resetIdle)
+);
+
+resetIdle();

@@ -13,6 +13,7 @@ function getSessionTimeout(req) {
 
 function sessionIdleTimeout(req, res, next) {
     if (!req.session || !req.session.user) {
+
         return next();
     }
 
@@ -26,15 +27,7 @@ function sessionIdleTimeout(req, res, next) {
 
     if (isExpired) {
         req.session.__expired = true;
-
-        return req.session.destroy((err) => {
-            if (err) {
-                console.error('[session] destroy error:', err.message);
-            }
-
-            res.clearCookie('connect.sid');
-            return next();
-        });
+        return next();
     }
 
     // обновляем активность

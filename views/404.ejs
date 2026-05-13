@@ -19,16 +19,32 @@
         <div class="error-page-emoji" aria-hidden="true">
             <img src="/img/logo.png" alt="Amigurumi Nest">
         </div>
-        <div class="error-page-code fw-bold">404</div>
-        <h1 class="error-page-title h2">Страница не найдена</h1>
-        <p class="error-page-subtitle">
-          Кажется, ты заблудился. Эта страница не существует или была перемещена.
-        </p>
-        <div class="error-page-actions">
-          <a class="btn btn-primary btn-lg" href="/">
-            <i class="bi bi-house-door me-2"></i>Вернуться на главную
-          </a>
-        </div>
+        
+        <% if (sessionExpired) { %>
+          <!-- Режим: Сессия истекла -->
+          <div class="error-page-code fw-bold">⏱️</div>
+          <h1 class="error-page-title h2">Сессия завершена</h1>
+          <p class="error-page-subtitle">
+            Ваша сессия истекла. Войдите снова, чтобы продолжить работу.
+          </p>
+          <div class="error-page-actions">
+            <a class="btn btn-primary btn-lg" href="/login">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Войти снова
+            </a>
+          </div>
+        <% } else { %>
+          <!-- Режим: Обычный 404 -->
+          <div class="error-page-code fw-bold">404</div>
+          <h1 class="error-page-title h2">Страница не найдена</h1>
+          <p class="error-page-subtitle">
+            Кажется, ты заблудился. Эта страница не существует или была перемещена.
+          </p>
+          <div class="error-page-actions">
+            <a class="btn btn-primary btn-lg" href="/">
+              <i class="bi bi-house-door me-2"></i>Вернуться на главную
+            </a>
+          </div>
+        <% } %>
       </section>
     </main>
   </body>

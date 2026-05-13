@@ -105,7 +105,7 @@
                 <a href="/cart" class="text-dark fs-5">
                   <i class="bi bi-cart3"></i>
 
-                  <% if (cart && cart.items && cart.items.length > 0) { %>
+                  <% if (typeof cart !== 'undefined' && cart && cart.items && cart.items.length > 0) { %>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                       <%= cart.items.length %>
                     </span>

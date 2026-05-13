@@ -9,7 +9,7 @@
     </a>
   </div>
 
-  <% if (!cart || !cart.items || cart.items.length === 0) { %>
+  <% if (typeof cart === 'undefined' || !cart || !cart.items || cart.items.length === 0) { %>
   <div class="alert alert-info text-center">
     Корзина пуста
   </div>

@@ -13,7 +13,7 @@
   <div class="mb-4">
     <h4>Ваш заказ:</h4>
 
-    <% if (cart && cart.items && cart.items.length > 0) { %>
+    <% if (typeof cart !== 'undefined' && cart && cart.items && cart.items.length > 0) { %>
 
       <div class="border rounded p-3">
 

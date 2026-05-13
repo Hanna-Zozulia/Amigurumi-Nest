@@ -1,7 +1,7 @@
 // middleware/auth.js
 // Проверка авторизации и роли пользователя
 
-const { isApiRequest } = require('../utils/isApiRequest');
+const isApiRequest = require('../utils/isApiRequest');
 
 function handleUnauthorized(req, res) {
     if (isApiRequest(req)) {
@@ -16,25 +16,59 @@ function handleForbidden(req, res) {
         return res.status(403).json({ message: 'Access denied' });
     }
 
-    return res.status(403).render('error', {
-        message: 'Access denied'
-    });
+    return res.redirect('/login');
 }
+
+// function requireAuth(req, res, next) {
+//     if (!req.session.user) {
+//         return handleUnauthorized(req, res);
+//     }
+//     next();
+// }
+
+// function requireAdmin(req, res, next) {
+//     if (!req.session.user) {
+//         return handleUnauthorized(req, res);
+//     }
+
+//     if (req.session.user.role !== 'admin') {
+//         return handleForbidden(req, res);
+//     }
+
+//     next();
+// }
 
 function requireAuth(req, res, next) {
     if (!req.session.user) {
-        return handleUnauthorized(req, res);
+        return res.redirect('/login');
     }
+
+    if (req.session.__expired) {
+        req.session.destroy(() => {
+            res.clearCookie('connect.sid');
+            return res.redirect('/login?expired=true');
+        });
+        return;
+    }
+
     next();
 }
 
 function requireAdmin(req, res, next) {
     if (!req.session.user) {
-        return handleUnauthorized(req, res);
+        return res.redirect('/login');
+    }
+
+    if (req.session.__expired) {
+        req.session.destroy(() => {
+            res.clearCookie('connect.sid');
+            return res.redirect('/login?expired=true');
+        });
+        return;
     }
 
     if (req.session.user.role !== 'admin') {
-        return handleForbidden(req, res);
+        return res.status(403).render('error', { message: 'Access denied' });
     }
 
     next();

@@ -250,7 +250,7 @@ async function showPage(req, res) {
         });
 
         if (!product) {
-            return res.status(404).render('404');
+            return res.status(404).render('404', { title: '404 - Страница не найдена' });
         }
 
         const reviews = await cached(reviewsKey, 10, async () => {

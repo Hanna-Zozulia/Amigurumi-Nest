@@ -90,7 +90,11 @@ app.use(
 
 // ================= MIDDLEWARE =================
 app.use(sessionIdleTimeout);
-app.use(cartMiddleware);
+
+app.use((req, res, next) => {
+    res.locals.sessionExpired = !!req.session?.__expired;
+    next();
+});
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.session.user || null;
@@ -140,6 +144,9 @@ app.use(async (req, res, next) => {
     next();
 });
 
+// ================= CART MIDDLEWARE =================
+app.use(cartMiddleware);
+
 // ================= ROUTES =================
 app.use('/', webRoutes);
 app.use('/api', apiRoutes);
@@ -149,7 +156,7 @@ app.use('/api/search', searchRoutes);
 const swaggerRouter = require('./swagger/swagger');
 app.use('/api-docs', swaggerRouter);
 
-app.use((req, res) => res.status(404).render('404', { title: '404 - Страница не найдена' }));
+app.use((req, res) => res.status(404).render('404', { title: '404 - Страница не найдена', sessionExpired: false }));
 
 // ================= START SERVER =================
 const port = process.env.PORT || 3000;
