@@ -1,0 +1,56 @@
+.image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 450px;
+  padding-left: 0 !important;
+}
+
+/* ОБЕ КАРТИНКИ */
+.img-main,
+.img-hover {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 350px;
+  height: 450px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: opacity 0.3s ease;
+}
+
+.img-hover {
+  opacity: 0;
+}
+
+.image-wrapper:hover .img-hover {
+  opacity: 1;
+}
+
+.image-wrapper:hover .img-main {
+  opacity: 0;
+}
+
+/* ===== Responsive: Product ===== */
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 768px) {
+  .image-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .img-main,
+  .img-hover {
+    max-height: 380px;
+  }
+}
+
+@media (max-width: 576px) {
+}

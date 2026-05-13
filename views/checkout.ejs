@@ -7,7 +7,7 @@
     <div class="alert alert-success" role="alert">
       <%= successMessage %>
     </div>
-  <% } %>
+  <% } else { %>
 
   <!-- ТОВАРЫ ИЗ КОРЗИНЫ -->
   <div class="mb-4">
@@ -53,7 +53,7 @@
 
     <div class="mb-3">
       <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-control" placeholder="Необязательно">
+      <input type="email" name="email" class="form-control" required>
     </div>
 
     <div class="mb-3">
@@ -74,13 +74,15 @@
     <button class="btn btn-success w-100" data-loading data-loading-text="Оформляем заказ...">
       Оформить заказ
     </button>
-
-    <a href="/catalog" class="btn btn-link w-100 mt-2">
-      ← Вернуться к покупкам
-    </a>
+    <% } %>
+    <div class="text-end mt-2">
+  <a href="/catalog" class="btn btn-link mt-3 no-underline">
+    ← Вернуться к покупкам
+  </a>
+</div>
 
   </form>
-
+  
 </div>
 
 <%- include('partials/footer') %>

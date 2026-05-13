@@ -1,5 +1,4 @@
 // controllers/orderController.js
-// Order/Checkout handling
 
 const { getModels } = require('../models');
 const { loadCheckoutCart, calculateCartTotal, sendOrderEmail } = require('../services/orderService');
@@ -7,7 +6,7 @@ const { loadCheckoutCart, calculateCartTotal, sendOrderEmail } = require('../ser
 async function checkoutPage(req, res) {
     const { Product } = getModels();
     const successMessage = req.query.orderSent === '1'
-        ? 'Ваш заказ отправлен, мы свяжемся с вами в течении 2-3 рабочих дней, для уточнения и обсуждения сроков выготовления'
+        ? 'Ваш заказ отправлен, мы свяжемся с вами в течении 2-3 рабочих дней, для уточнения и обсуждения сроков изготовления.'
         : null;
 
     const cart = await loadCheckoutCart(req, Product);

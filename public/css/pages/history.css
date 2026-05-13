@@ -1,0 +1,105 @@
+/* ===== HISTORY PAGE — PINTEREST STORY STYLE ===== */
+
+.history {
+  margin-top: 2rem;
+}
+
+/* ===== TOP TEXT BLOCK ===== */
+.text-history {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+/* ===== TOP IMAGE GRID (4 картинки 2x2) ===== */
+.img-history {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  padding: 1rem;
+}
+
+.img-history img {
+  width: 100%;
+  height: 220px;
+  border-radius: 14px;
+  object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.img-history img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== HISTORY SECTION ===== */
+
+.history-block {
+  display: flex;
+  /* align-items: center; */
+  width: 100%;
+  margin-top: 30px;
+}
+
+/* ===== IMAGE ===== */
+.history-block img {
+  flex: 1;
+  width: 100%;
+  max-width: 350px;
+  height: 420px;
+  margin: 0px 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.history-block img:hover {
+  transform: scale(1.05);
+}
+
+/* ===== Responsive: History ===== */
+@media (max-width: 1024px) {
+  .history-block img {
+    width: 100%;
+    height: 400px;
+    margin: 40px 20px 10px;
+  }
+  .history-block p {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .img-history {
+    grid-template-columns: 1fr;
+  }
+
+  .img-history-block,
+  .text-history-block {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .img-history img {
+    width: 100%;
+    height: 240px;
+    margin: 6px 0;
+  }
+
+  .img-history-block img {
+    height: 240px;
+  }
+
+  .text-history p,
+  .text-history-block {
+    font-size: 1rem;
+    margin: 5px 0;
+    padding: 4px 0;
+  }
+}

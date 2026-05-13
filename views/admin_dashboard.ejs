@@ -88,7 +88,7 @@
       </div>
       <div class="card-body p-0">
         <% if (!recentOrders || recentOrders.length === 0) { %>
-          <div class="p-3 text-muted small">Пока нет заказов</div>
+          <div class="p-3 small">Пока нет заказов</div>
         <% } else { %>
           <div class="table-responsive">
             <table class="table table-sm mb-0">
@@ -101,7 +101,7 @@
                       </a>
                     </td>
                     <td><%= order.customerName %></td>
-                    <td>
+                    <td class="status-cell">
                       <span class="badge <%= order.status === 'unprocessed' ? 'bg-secondary' : order.status === 'processing' ? 'bg-warning text-dark' : 'bg-success' %>">
                         <%= order.statusLabel %>
                       </span>

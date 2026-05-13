@@ -1,5 +1,4 @@
 <%- include('partials/header', { title: 'Top 3' }) %>
-
 <div class="container">
     <h1 class="mt-5">Топ 3 самых популярных игрушек на сайте</h1>
 
@@ -10,12 +9,14 @@
                 <a href="/product/<%= product.id %>" class="catalog-image-link">
                     <img src="<%= product.image %>" alt="<%= product.name %>">
                     <h2><%= product.name %></h2>
-                    <p>Просмотры: <%= product.views %></p>
+                    
+                        <p>Просмотры: <%= product.views %></p>
+                     
+                    
                 </a>
             </div>
         <% }) %>
 
     </div>
 </div>
-
 <%- include('partials/footer') %>

@@ -1,5 +1,4 @@
 // controllers/productController.js (refactored)
-// Product operations and homepage
 
 const { getModels } = require('../models');
 const fs = require('fs/promises');
@@ -61,23 +60,12 @@ async function listPage(req, res) {
             return await Product.findAll({ where, include: [{ model: Category, as: 'category' }] });
         });
 
-        let cart = null;
-        const userId = req.session.user?.id;
-
-        if (userId) {
-            cart = await Cart.findOne({
-                where: { userId },
-                include: [{ model: CartItem, as: 'items', include: [Product] }]
-            });
-        }
-
         return res.render('catalog', {
             title: 'Catalog',
             products,
             categories: categoriesList,
             selectedCategory: filter.startsWith('cat-') ? filter.replace('cat-', '') : '',
             selectedFilter: filter,
-            cart,
             currentUser: req.session.user || null
         });
     } catch (err) {
@@ -206,7 +194,7 @@ async function remove(req, res) {
 
         if (!product) return res.status(404).send('Not found');
 
-        // 🔥 УДАЛЕНИЕ ФАЙЛА КАРТИНКИ
+        // УДАЛЕНИЕ ФАЙЛА КАРТИНКИ
         if (product.image) {
             const imagePath = path.join(
                 process.cwd(),

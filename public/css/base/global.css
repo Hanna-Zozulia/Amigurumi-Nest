@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+body {
+  background: #FE618D;  
+  width: 100%;
+  font-family: "Playfair Display", serif;
+  font-family: "Nunito", sans-serif;
+  font-weight: 300;
+  /* use rem-based sizing where appropriate; admin overrides below */
+  padding-top: 2.7rem;
+  color: #efeeee;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before { 
+  content: ""; 
+  position: fixed; 
+  inset: 0; 
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25), transparent 40%), 
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.15), transparent 50%), 
+    radial-gradient(circle at 50% 80%, rgba(255,217,225,0.25), transparent 60%); 
+  pointer-events: none; z-index: 0; 
+}
+
+main, nav, footer {
+  position: relative;
+  z-index: 1;
+}
+
+main {
+  flex: 1 0 auto;
+}

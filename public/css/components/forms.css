@@ -1,0 +1,10 @@
+/* textarea */
+textarea.form-control {
+  border-radius: 12px;
+  border: 1px solid rgba(125, 107, 163, 0.25);
+}
+
+textarea.form-control:focus {
+  box-shadow: none !important;
+  border-color: #7D6BA3 !important;
+}

@@ -1,0 +1,26 @@
+/* Cart-specific page styles */
+
+/* ===== Responsive: Cart ===== */
+@media (max-width: 1024px) {
+  .card .card-body .h3{
+    font-size: 1.25rem;
+  }
+
+  .card .card-body table td {
+    font-size: 1rem;
+  }
+
+  .table thead th {
+    font-size: 1rem;
+  }
+
+  .table tbody tr td {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+}
+
+@media (max-width: 576px) {
+}

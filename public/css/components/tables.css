@@ -1,0 +1,75 @@
+/* ===== Cart ===== */
+.table {
+  border-collapse: separate !important;
+  border-spacing: 0 6px;
+}
+
+.table thead {
+  font-size: var(--font-sm);
+}
+
+/* table body: balanced padding + readable size (use tokens) */
+.table tbody td {
+  font-size: var(--font-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* каждая строка как карточка */
+.table tbody tr {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* ячейки */
+.table tbody td {
+  border: none !important;
+  vertical-align: middle;
+}
+
+.table .order_name {
+  padding-left: 30px;
+}
+
+/* товар блок */
+.table tbody td:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* картинка */
+.cart-product-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* кнопки +/- как TEMU */
+.cart-quantity-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% !important;
+  padding: 0;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* количество */
+.cart-quantity-count {
+  min-width: 30px;
+  text-align: center;
+}
+
+/* итог блок */
+tfoot tr {
+  font-size: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  border-radius: 14px;
+}
+
+.admin-cart-hidden {
+  display: none !important;
+}

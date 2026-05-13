@@ -1,65 +1,64 @@
 <%- include('partials/header', { title: 'Amigurumi Nest' }) %>
+  <div class="container">
 
-<div class="container">
+    <!-- Блок 1 -->
+      <div class="row block">
+        <div class="col-md-6 h1">
+          <h1>Amigurumi Nest — это мир мягких вязаных чудес.</h1>
+        </div>
 
-  <!-- Блок 1 -->
-  <div class="row block">
-    <div class="col-md-6 h1">
-      <h1>Amigurumi Nest — это мир мягких вязаных чудес.</h1>
+        <div class="col-md-6 h2">
+          <div class="vertical-slider">
+            <div class="slider-track">
+
+              <% for (let i = 0; i < (products || []).length; i += 1) { %>
+                <div class="toys-item">
+                  <a href="/product/<%= products[i].id %>">
+                    <img src="<%= normalizeImagePath(products[i].image) %>" alt="<%= products[i].name %>">
+                  </a>
+                </div>
+              <% } %>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- Блок 2 (оставляем как есть, это контент) -->
+    <div class="row block_2">
+      <div class="col-md-6 h2">
+        <h2>Почему выбирают наши игрушки?</h2>
+      </div>
+
+      <div class="col-md-6 block_ul">
+        <ul>
+          <li>Каждая игрушка уникальная и сделана с любовью.</li>
+          <li>Мы используем безопасные материалы.</li>
+          <li>Создают уют и тепло.</li>
+          <li>Подходят для подарков.</li>
+        </ul>
+      </div>
     </div>
 
-    <div class="col-md-6 h2">
-      <div class="vertical-slider">
-        <div class="slider-track">
+  <!-- Блок 3 = реальные продукты -->
+    <div class="row block_3">
+        <h2>Тренды сейчас</h2>
 
-          <% for (let i = 0; i < (products || []).length; i += 1) { %>
-            <div class="toys-item">
-              <a href="/product/<%= products[i].id %>">
-                <img src="<%= normalizeImagePath(products[i].image) %>" alt="<%= products[i].name %>">
+        <div class="block_3 toy-row">
+          
+          <% (products || []).forEach(function(product) { %>
+            
+            <div class="toy-item">
+              <a href="/product/<%= product.id %>">
+                <img src="<%= normalizeImagePath(product.image) %>" class="img-fluid mb-2">
+                <p><%= product.name %></p>
               </a>
             </div>
-          <% } %>
+            
+          <% }) %>
 
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Блок 2 (оставляем как есть, это контент) -->
-  <div class="row block_2">
-    <div class="col-md-6 h2">
-      <h2>Почему выбирают наши игрушки?</h2>
-    </div>
-
-    <div class="col-md-6 block_ul">
-      <ul>
-        <li>Каждая игрушка уникальная и сделана с любовью.</li>
-        <li>Мы используем безопасные материалы.</li>
-        <li>Создают уют и тепло.</li>
-        <li>Подходят для подарков.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Блок 3 = реальные продукты -->
-  <div class="row block_3">
-    <h2>Тренды сейчас</h2>
-
-    <div class="block_3 toy-row">
-      
-      <% (products || []).forEach(function(product) { %>
-        
-        <div class="toy-item">
-          <a href="/product/<%= product.id %>">
-            <img src="<%= normalizeImagePath(product.image) %>" class="img-fluid mb-2">
-            <p><%= product.name %></p>
-          </a>
-        </div>
-        
-      <% }) %>
-
-    </div>
-  </div>
 
   <% if (reviews.length > 0) { %>
 
@@ -73,7 +72,11 @@
             <h4><strong><%= review.User.name %></strong></h4>
             <p><%= review.text %></p>
             <p class="date">
-              <%= new Date(review.createdAt).getFullYear() %>
+               <%= new Intl.DateTimeFormat('ru-RU', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                }).format(new Date(review.createdAt)) %>
             </p>
           </div>
         <% }) %>

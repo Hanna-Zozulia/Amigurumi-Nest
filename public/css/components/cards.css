@@ -1,0 +1,69 @@
+/* ===== CARDS (НЕ ТРОГАЕМ РАЗМЕРЫ И СЕТКУ) ===== */
+.info .mb-5 {
+  padding: 2.2rem 1.6rem;
+  margin-bottom: 2.5rem;
+
+  background: rgb(208, 148, 234, 0.25);
+  border-radius: 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  backdrop-filter: blur(12px);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* hover карточек */
+.info .mb-5:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+.card-title,
+.card-text,
+.catalog-card .card-body {
+  color: #111827;
+}
+
+.top3 {
+  max-width: 30%;
+  background-color: #D094EA;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 0px 20px;
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.top3:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18);
+}
+
+/* IMAGE */
+.top3 img {
+  width: 100%;
+  height: 80%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  object-fit: cover;
+
+  transition: transform 0.35s ease;
+}
+
+.top3:hover img {
+  transform: scale(1.04);
+}
+
+/* TEXT */
+.top3 p:hover {
+  text-decoration: none;
+}
+
+/* LINK */
+.top3 a {
+  text-decoration: none;
+  color: inherit;
+}

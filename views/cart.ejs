@@ -4,7 +4,9 @@
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 m-0">Ваша корзина</h1>
-    <a href="/catalog" class="btn btn-outline-primary btn-sm">Вернуться к покупкам</a>
+    <a href="/catalog" class="btn btn-link mt-3 no-underline">
+      ← Вернуться к покупкам
+    </a>
   </div>
 
   <% if (!cart || !cart.items || cart.items.length === 0) { %>
@@ -12,7 +14,6 @@
     Корзина пуста
   </div>
   <% } else { %>
-  
   <div class="table-responsive">
     <table class="table table-hover align-middle shadow-sm">
       <thead class="table-light">
@@ -30,7 +31,7 @@
             <div class="d-flex align-items-center">
               <% if (item.Product) { %>
               <img src="<%= normalizeImagePath(item.Product.image) %>" alt="<%= item.Product.name %>" class="me-2 rounded cart-product-image">
-              <span><%= item.Product.name %></span>
+              <span class="order_name"><%= item.Product.name %></span>
               <% } else { %>
                 <span class="text-muted">Товар недоступен</span>
                 <% } %>
@@ -42,18 +43,18 @@
             <% } else { %>
                 -
             <% } %>
-            </td>
+          </td>
           <td>
             <div class="d-flex align-items-center">
-              <form method="POST" action="/cart/remove" class="me-1">
-                <button class="btn btn-sm btn-danger cart-quantity-button">-</button>
+              <form method="POST" action="/cart/remove">
+                <button class="btn btn-sm btn-outline-secondary cart-quantity-button">-</button>
                 <input type="hidden" name="productId" value="<%= item.productId %>">
               </form>
 
               <span class="px-2 fw-bold text-center cart-quantity-count"><%= item.quantity %></span>
 
               <form method="POST" action="/cart/add" class="ms-1">
-                <button class="btn btn-sm btn-success cart-quantity-button">+</button>
+                <button class="btn btn-sm btn-outline-secondary cart-quantity-button">+</button>
                 <input type="hidden" name="productId" value="<%= item.productId %>">
               </form>
             </div>
@@ -68,7 +69,7 @@
         </tr>
         <% }) %>
       </tbody>
-      <tfoot class="table-light fw-bold">
+      <tfoot class=" fw-bold">
         <tr>
           <td colspan="3" class="text-end">Итого:</td>
           <td>
@@ -86,7 +87,7 @@
           data-confirm-description="Все товары будут удалены из корзины. Это действие нельзя отменить."
           data-confirm-text="Очистить"
           data-confirm-cancel-text="Отмена">
-      <button class="btn btn-danger">Очистить корзину</button>
+      <button class="btn btn-danger cart-clear-btn">Очистить корзину</button>
     </form>
     <a href="/checkout" class="btn btn-success">Оформить заказ</a>
   </div>

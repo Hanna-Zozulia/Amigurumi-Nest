@@ -1,0 +1,88 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 0.5rem 2rem;
+  background-color: rgba(208, 148, 234, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.navbar-brand img {
+  height: 40px; /* размер логотипа */
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+  transform: scale(1.05);
+}
+
+.navbar-nav .nav-link {
+  color: #111827;
+  font-weight: 500;
+  font-size: 1rem;
+  margin-right: 1rem;
+  transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #efeeee;
+}
+
+.navbar-nav .btn-outline-primary {
+  border-color: #efeeee;
+  color: #efeeee;
+  transition: all 0.3s;
+}
+
+.navbar-nav .btn-outline-primary:hover {
+  background-color: #FE618D;
+  color: #efeeee;
+}
+
+#authDropdown {
+    background-color: transparent !important;
+    border-color: #efeeee !important;
+    color: #efeeee !important;
+    box-shadow: none !important;
+
+}
+#authDropdown:hover,
+#authDropdown:active,
+#authDropdown:focus,
+#authDropdown:focus-visible,
+#authDropdown.show {
+    background-color:  #7D6BA3 !important;
+    border-color: #7D6BA3 !important;
+    color: #efeeee !important;
+    box-shadow: none !important;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item:active {
+    background-color: #7D6BA3  !important;
+    color: #efeeee !important;
+}
+
+.nav-user-name {
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+  padding-bottom: 2px;
+}
+
+/* ===== Корзина ===== */
+.navbar-nav .bi-cart3 {
+  font-size: 1.25rem;
+  transition: color 0.3s;
+  color: #111827;
+}
+
+.navbar-nav .bi-cart3:hover {
+  color: #efeeee;
+}
+
+#cart-count {
+  font-size: 0.7rem;
+}

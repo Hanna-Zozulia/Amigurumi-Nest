@@ -90,13 +90,13 @@
 
         <hr>
         <p class="text-muted">
-          Чтобы оставить отзыв, <a href="/login">войдите</a> в аккаунт.
+          Чтобы оставить отзыв, <a href="/login" class="no-underline">войдите</a> в аккаунт.
         </p>
 
       <% } %>
 
       <div class="d-flex justify-content-end">
-        <a href="/catalog" class="btn btn-link mt-3">← Назад в каталог</a>
+        <a href="/catalog" class="btn btn-link mt-3 no-underline">← Назад в каталог</a>
       </div>
 
     </div>
@@ -114,13 +114,13 @@
       <% product.Reviews.forEach(review => { %>
 
         <!-- REVIEW CARD -->
-        <div class="border rounded-4 shadow-sm p-3 position-relative">
+        <div class="review-card border rounded-4 shadow-sm p-3 position-relative">
 
           <!-- HEADER -->
           <div class="d-flex justify-content-between align-items-start mb-2">
 
-            <div>
-              <b class="d-block"><%= review.User.name %></b>
+            <div class="review-header">
+              <b><%= review.User.name %></b>
 
               <small class="text-muted">
                 <%= new Intl.DateTimeFormat('ru-RU', {
@@ -159,7 +159,7 @@
           </div>
 
           <!-- TEXT -->
-          <p id="text-<%= review.id %>" class="mb-2">
+          <p id="text-<%= review.id %>" class="review-text mb-2">
             <%= review.text %>
           </p>
 

@@ -1,0 +1,118 @@
+/* ===== INFO PAGE — FINAL VERSION (NO LAYOUT CHANGES) ===== */
+
+.info {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 1.2rem;
+
+  line-height: 1.8;
+  color: rgba(255, 245, 248, 0.88);
+  
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ===== SOCIAL GRID (3 В РЯД ОСТАЁТСЯ КАК БЫЛО) ===== */
+.info .list-unstyled {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+/* ===== SOCIAL CARD (НЕ МЕНЯЕМ РАЗМЕРЫ) ===== */
+.info .list-unstyled li {
+  border-radius: 16px;
+  padding: 1rem;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s ease;
+}
+
+/* ===== HOVER — КАК FOOTER ===== */
+.info .list-unstyled li:hover {
+  background: #7D6BA3;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(125, 107, 163, 0.35);
+}
+
+/* ===== ICONS ===== */
+.info i.bi {
+  margin-right: 0.5rem;
+  font-size: 1.3rem;
+
+  color: rgba(125, 107, 163, 0.7);
+  transition: 0.3s ease;
+}
+
+/* hover иконок */
+.info .list-unstyled li:hover i.bi,
+.info .list-unstyled li:hover a {
+  color: #efeeee;
+}
+
+/* ===== LINKS ===== */
+.info a {
+  color: rgba(255, 235, 242, 0.9);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.info a:hover {
+  color: #FE618D;
+}
+
+/* ===== Responsive: Info ===== */
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 768px) {
+  .info {
+    padding: 2rem 1rem;
+  }
+
+  .info h1 {
+    font-size: 1.8rem;
+  }
+
+  .info h3 {
+    font-size: 1.3rem;
+  }
+
+  .info p, .info ul li {
+    font-size: 0.95rem;
+  }
+
+  .info ul.list-unstyled li a {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .info .list-unstyled {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .info .list-unstyled li {
+    height: 50px;
+  }
+
+  .info .list-unstyled li a {
+    font-size: 0.95rem;
+  }
+
+  .info .list-unstyled li a i.bi {
+    font-size: 1.3rem;
+  }
+}

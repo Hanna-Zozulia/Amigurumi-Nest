@@ -1,0 +1,45 @@
+/* ===== REVIEWS (ВАУ-СТИЛЬ) ===== */
+
+.border.rounded-4 {
+  border: none !important;
+  border-radius: 18px !important;
+
+  background: #ffffff;
+
+  box-shadow: 0 10px 25px rgba(125, 107, 163, 0.10);
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.border.rounded-4:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(125, 107, 163, 0.18);
+}
+
+/* admin reply */
+.border-start {
+  border-color: #7D6BA3 !important;
+}
+
+.review-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-text {
+  padding-left: 20px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.no-underline {
+  text-decoration: none !important;
+  color: #FFF2F6;
+}
+
+.no-underline:hover {
+  text-decoration: none !important;
+  color: #7D6BA3;
+}

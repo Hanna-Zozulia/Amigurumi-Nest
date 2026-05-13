@@ -1,0 +1,23 @@
+.btn-primary,
+.btn-success {
+  background-color: #7D6BA3 !important;
+  border: none !important;
+  color: #efeeee !important;
+  transition: 0.25s ease;
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  border-radius: var(--btn-radius);
+  font-size: var(--btn-font);
+  height: auto;
+  min-width: 3.5rem;
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+  background-color: rgba(208, 148, 234, 0.85) !important;
+}
+
+.cart-clear-btn{
+  width: 250px;
+  height: 40px;
+  font-size: 18px;
+}

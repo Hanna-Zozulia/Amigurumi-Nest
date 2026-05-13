@@ -1,0 +1,26 @@
+html {
+  height: 100%;
+}
+
+/* Base component / clean defaults */
+html { font-size: 100%; }
+body { font-size: var(--fs-body); }
+
+/* Unified headings */
+h1 { font-size: var(--font-3xl); }
+h2 { font-size: var(--font-2xl); }
+h3 { font-size: var(--font-xl); }
+h4 { font-size: var(--fs-h4); }
+
+/* Base button reset + tokens */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  border-radius: var(--btn-radius);
+  font-size: var(--btn-font);
+  line-height: 1;
+}
+
+/* Use rem-only for text, avoid px (borders may remain 1px) */
