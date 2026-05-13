@@ -28,23 +28,55 @@ document.addEventListener('DOMContentLoaded', function () {
     const track = document.querySelector('.slider-track');
 
     if (track && slider) {
-        const slides = Array.from(track.children);
-        const firstSetHeight = track.scrollHeight;
+            async function loadSliderImages() {
+                try {
+                    const res = await fetch('/api/products');
+                    const products = await res.json();
 
-        slides.forEach((slide) => track.appendChild(slide.cloneNode(true)));
+                    if (!Array.isArray(products)) return;
 
-        let y = 0;
-        const speed = 0.3;
+                    // очищаем текущий контент
+                    track.innerHTML = '';
 
-        function animate() {
-            y += speed;
-            if (y >= firstSetHeight) y = 0;
-            track.style.transform = `translateY(-${y}px)`;
-            requestAnimationFrame(animate);
+                    // добавляем картинки
+                    products.forEach(product => {
+                        if (!product.image) return;
+
+                        const div = document.createElement('div');
+                        div.className = 'toys-item';
+
+                        div.innerHTML = `
+                            <img src="${normalizeImageSrc(product.image)}" alt="${product.name}">
+                        `;
+
+                        track.appendChild(div);
+                    });
+
+                    // дублируем для бесконечной анимации
+                    const slides = Array.from(track.children);
+                    const firstSetHeight = track.scrollHeight;
+
+                    slides.forEach(slide => track.appendChild(slide.cloneNode(true)));
+
+                    let y = 0;
+                    const speed = 0.3;
+
+                    function animate() {
+                        y += speed;
+                        if (y >= firstSetHeight) y = 0;
+                        track.style.transform = `translateY(-${y}px)`;
+                        requestAnimationFrame(animate);
+                    }
+
+                    animate();
+
+                } catch (err) {
+                    console.error('Slider load error:', err);
+                }
+            }
+
+            loadSliderImages();
         }
-
-        animate();
-    }
 
     const searchInput = document.getElementById('searchInput');
     const productsContainer = document.getElementById('productsContainer');
