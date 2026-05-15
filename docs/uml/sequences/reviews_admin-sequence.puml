@@ -1,0 +1,48 @@
+@startuml
+autonumber
+hide footbox
+skinparam sequenceMessageAlign center
+
+actor Customer
+actor Admin
+
+participant "app.js"
+participant "routes/web.js"
+participant "controllers/reviewController.js"
+participant "controllers/adminCommentsController.js"
+participant "controllers/adminProductsController.js"
+participant "controllers/userAdminController.js"
+participant "services/profanityFilter.js"
+participant "services/cacheService.js"
+participant "services/inactiveUsersService.js"
+participant "models/index.js"
+database "MySQL"
+database "Redis"
+
+group Reviews
+  Customer -> "app.js": add/edit/delete review
+
+  "routes/web.js" -> "controllers/reviewController.js": review actions
+  "controllers/reviewController.js" -> "services/profanityFilter.js": check text
+  "controllers/reviewController.js" -> MySQL: Review CRUD
+  "controllers/reviewController.js" -> "services/cacheService.js": invalidate reviews cache
+end
+
+group Admin area
+  Admin -> "app.js": admin actions
+
+  "routes/web.js" -> "controllers/adminCommentsController.js": moderation
+  "routes/web.js" -> "controllers/adminProductsController.js": products CRUD
+  "routes/web.js" -> "controllers/userAdminController.js": users management
+
+  "controllers/adminCommentsController.js" -> MySQL: Review moderation
+  "controllers/adminProductsController.js" -> MySQL: Product CRUD
+  "controllers/userAdminController.js" -> MySQL: User updates
+end
+
+group Background
+  "app.js" -> "services/inactiveUsersService.js": check inactive users
+  "services/inactiveUsersService.js" -> MySQL: find inactive users
+end
+
+@enduml

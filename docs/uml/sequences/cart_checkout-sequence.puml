@@ -1,0 +1,39 @@
+@startuml
+autonumber
+hide footbox
+skinparam sequenceMessageAlign center
+
+actor Customer
+
+participant "app.js"
+participant "routes/web.js"
+participant "controllers/cartWebController.js"
+participant "controllers/orderController.js"
+participant "services/orderService.js"
+participant "services/emailService.js"
+participant "services/cacheService.js"
+participant "models/index.js"
+database "MySQL"
+database "Redis"
+
+group Cart flows
+  Customer -> "app.js": cart actions
+
+  "routes/web.js" -> "controllers/cartWebController.js": cart logic
+  "controllers/cartWebController.js" -> MySQL: Cart/CartItem operations
+  "controllers/cartWebController.js" -> "services/cacheService.js": invalidate cache
+end
+
+group Checkout
+  Customer -> "app.js": POST /order
+
+  "routes/web.js" -> "controllers/orderController.js": createOrder()
+  "controllers/orderController.js" -> "services/orderService.js": load cart
+
+  "services/orderService.js" -> MySQL: Cart/Product queries
+
+  "controllers/orderController.js" -> MySQL: Order + OrderItems create
+  "controllers/orderController.js" -> "services/emailService.js": send order email
+end
+
+@enduml

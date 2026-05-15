@@ -1,0 +1,33 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Entry Point" {
+  component "app.js" as appjs
+}
+
+package "Config" {
+  component "config/database.js" as databasejs
+  component "config/redis.js" as redisjs
+}
+
+package "Routes" {
+  component "routes/web.js" as webjs
+  component "routes/api.js" as apijs
+  component "routes/search.js" as searchjs
+}
+
+package "Swagger" {
+  component "swagger/swagger.js" as swaggerjs
+}
+
+' Core dependencies only
+appjs --> databasejs
+appjs --> redisjs
+appjs --> webjs
+appjs --> apijs
+appjs --> searchjs
+appjs --> swaggerjs
+
+@enduml

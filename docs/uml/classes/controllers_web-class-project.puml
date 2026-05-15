@@ -1,0 +1,32 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Controllers" {
+  component "controllers/authController.js" as authjs
+  component "controllers/productController.js" as productjs
+  component "controllers/cartWebController.js" as cartWebjs
+  component "controllers/orderController.js" as orderjs
+  component "controllers/reviewController.js" as reviewjs
+  component "controllers/adminCommentsController.js" as adminCommentsjs
+  component "controllers/adminDashboardController.js" as adminDashboardjs
+  component "controllers/adminProductsController.js" as adminProductsjs
+  component "controllers/userAdminController.js" as userAdminjs
+}
+
+package "Routes (Web)" {
+  component "routes/web.js" as webjs
+}
+
+webjs --> authjs
+webjs --> productjs
+webjs --> cartWebjs
+webjs --> orderjs
+webjs --> reviewjs
+webjs --> adminCommentsjs
+webjs --> adminDashboardjs
+webjs --> adminProductsjs
+webjs --> userAdminjs
+
+@enduml

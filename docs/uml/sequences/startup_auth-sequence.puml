@@ -1,0 +1,42 @@
+@startuml
+autonumber
+hide footbox
+skinparam sequenceMessageAlign center
+
+actor Visitor
+actor Customer
+
+participant "app.js"
+participant "routes/web.js"
+participant "routes/search.js"
+participant "controllers/authController.js"
+participant "controllers/productController.js"
+participant "models/index.js"
+participant "services/inactiveUsersService.js"
+participant "utils/cache.js"
+participant "utils/cacheKeys.js"
+participant "utils/htmlUtils.js"
+participant "utils/validatePassword.js"
+database "MySQL"
+database "Redis"
+
+group Startup
+  "app.js" -> "models/index.js": initDb()
+  "app.js" -> "services/inactiveUsersService.js": startInactiveUsersMonitor()
+end
+
+group Public browsing
+  Visitor -> "app.js": GET /catalog /product/{id} /search
+
+  "app.js" -> "routes/search.js": search request
+  "routes/search.js" -> MySQL: Product.findAll()
+end
+
+group Auth flows
+  Customer -> "app.js": login/register/logout
+
+  "routes/web.js" -> "controllers/authController.js": auth actions
+  "controllers/authController.js" -> MySQL: User operations
+end
+
+@enduml

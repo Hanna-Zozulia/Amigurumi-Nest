@@ -1,0 +1,27 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Controllers (API)" {
+  component "controllers/productApiController.js" as productApijs
+  component "controllers/cartApiController.js" as cartApijs
+  component "controllers/orderAdminController.js" as orderAdminjs
+}
+
+package "Middleware" {
+  component "middleware/auth.js" as authMiddlewarejs
+  component "middleware/cacheMiddleware.js" as cacheMiddlewarejs
+}
+
+package "Routes (API)" {
+  component "routes/api.js" as apijs
+}
+
+apijs --> authMiddlewarejs
+apijs --> cacheMiddlewarejs
+apijs --> productApijs
+apijs --> cartApijs
+apijs --> orderAdminjs
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Services" {
+  component "services/cacheService.js" as cacheServicejs
+  component "services/emailService.js" as emailServicejs
+  component "services/inactiveUsersService.js" as inactiveUsersServicejs
+  component "services/orderService.js" as orderServicejs
+  component "services/profanityFilter.js" as profanityFilterjs
+}
+
+package "Utils" {
+  component "utils/cache.js" as cachejs
+  component "utils/cacheKeys.js" as cacheKeysjs
+  component "utils/dateFormatter.js" as dateFormatterjs
+  component "utils/htmlUtils.js" as htmlUtilsjs
+  component "utils/imagePath.js" as imagePathjs
+  component "utils/isApiRequest.js" as isApiRequestjs
+  component "utils/validatePassword.js" as validatePasswordjs
+}
+
+package "Models" {
+  component "models/index.js" as modelsjs
+  component "models/User.js" as userjs
+  component "models/Product.js" as productModeljs
+  component "models/Category.js" as categoryjs
+  component "models/Cart.js" as cartjs
+  component "models/CartItem.js" as cartItemjs
+  component "models/Order.js" as orderModeljs
+  component "models/OrderItem.js" as orderItemjs
+  component "models/Review.js" as reviewModeljs
+}
+
+modelsjs --> userjs
+modelsjs --> productModeljs
+modelsjs --> categoryjs
+modelsjs --> cartjs
+modelsjs --> cartItemjs
+modelsjs --> orderModeljs
+modelsjs --> orderItemjs
+modelsjs --> reviewModeljs
+
+orderjs --> orderServicejs
+productjs --> cacheServicejs
+authjs --> validatePasswordjs
+orderServicejs --> emailServicejs
+
+@enduml
