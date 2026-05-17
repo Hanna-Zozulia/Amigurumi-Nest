@@ -62,7 +62,7 @@ async function listPage(req, res) {
 
         return res.render('catalog', {
             title: 'Catalog',
-            products,
+            products: products || [],
             categories: categoriesList,
             selectedCategory: filter.startsWith('cat-') ? filter.replace('cat-', '') : '',
             selectedFilter: filter,
@@ -241,7 +241,7 @@ async function showPage(req, res) {
         const { Product, Review, User, Category } = getModels();
         const { getReviewErrorMessage } = require('../utils/htmlUtils');
         const reviewError = String(req.query.reviewError || '');
-        const productId = req.params.id;
+        const productId = Number(req.params.id);
         const productKey = cacheKeys.product(productId);
         const reviewsKey = cacheKeys.reviews(productId);
 

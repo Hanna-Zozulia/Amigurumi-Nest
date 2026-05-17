@@ -5,6 +5,10 @@ async function listProductsAdmin(req, res) {
     try {
         const { Product } = getModels();
 
+        if (!Product) {
+            throw new Error('Product model is not defined');
+        }
+
         const products = await Product.findAll({
             order: [['id', 'DESC']]
         });
@@ -13,19 +17,22 @@ async function listProductsAdmin(req, res) {
             title: 'Продукты',
             currentUser: req.session.user,
             activeSection: 'products',
-            products: products.map((product) => ({
+            products: (products || []).map((product) => ({
                 id: product.id,
                 name: product.name,
                 category: product.category,
                 price: Number(product.price || 0),
                 image: product.image,
                 createdAt: product.createdAt,
-                createdAtFormatted: formatDateRu(product.createdAt)
+                createdAtFormatted: product.createdAt
+                    ? formatDateRu(product.createdAt)
+                    : ''
             }))
         });
+
     } catch (err) {
-        console.error('adminProducts.listProductsAdmin error:', err.message);
-        return res.status(500).send('Internal server error');
+        console.error('FULL ERROR:', err); // <-- важно
+        return res.status(500).send(err.message);
     }
 }
 

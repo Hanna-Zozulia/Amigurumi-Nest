@@ -43,7 +43,7 @@ async function createOrder(req, res) {
         : await loadCheckoutCart(req, Product);
 
     if (!cart || !cart.items || cart.items.length === 0) {
-        return res.redirect('/checkout');
+        return res.status(400).send('Cart is empty');
     }
 
     const customerName = String(req.body.name || '').trim();

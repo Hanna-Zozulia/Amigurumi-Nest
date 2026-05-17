@@ -135,11 +135,11 @@
             <% if (currentUser && (currentUser.role === 'admin' || (currentUser.id === review.userId && !review.adminReply))) { %>
               <div class="d-flex gap-2">
 
-                <button type="button"
+                <!-- <button type="button"
                         class="btn btn-sm btn-outline-primary"
                         onclick="editReview('<%= review.id %>')">
                   <i class="bi bi-pencil"></i>
-                </button>
+                </button> -->
 
                 <form method="POST"
                       action="/review/delete/<%= review.id %>"

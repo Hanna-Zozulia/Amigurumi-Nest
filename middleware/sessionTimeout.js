@@ -27,6 +27,10 @@ function sessionIdleTimeout(req, res, next) {
 
     if (isExpired) {
         req.session.__expired = true;
+
+        // sync cookie timeout with role
+        req.session.cookie.maxAge = timeout;
+    
         return next();
     }
 

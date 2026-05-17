@@ -68,7 +68,7 @@ function requireAdmin(req, res, next) {
     }
 
     if (req.session.user.role !== 'admin') {
-        return res.status(403).render('error', { message: 'Access denied' });
+        return res.status(403).render('404', { message: 'Access denied' });
     }
 
     next();

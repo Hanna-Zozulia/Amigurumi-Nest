@@ -56,7 +56,7 @@
 
   <!-- Товары -->
   <div class="row g-3" id="productsContainer">
-    <% products.forEach(product => { %>
+    <% (products || []).forEach(product => { %>
 
       <div class="col-12 col-sm-6 col-lg-4">
         <div class="card h-100 shadow-sm">
