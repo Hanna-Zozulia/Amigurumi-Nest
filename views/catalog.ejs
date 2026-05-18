@@ -42,6 +42,7 @@
           </option>
 
           <!-- Категории -->
+          <%# Server-side: render category `<option>` entries for the filter select %>
           <% categories.forEach(category => { %>
             <option class="catalog-option" value="cat-<%= category.id %>"
               <%= selectedFilter === ('cat-' + category.id) ? 'selected' : '' %>>
@@ -56,6 +57,7 @@
 
   <!-- Товары -->
   <div class="row g-3" id="productsContainer">
+    <%# Server-side: render product cards in the catalog grid %>
     <% (products || []).forEach(product => { %>
 
       <div class="col-12 col-sm-6 col-lg-4">

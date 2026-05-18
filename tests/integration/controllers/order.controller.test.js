@@ -1,5 +1,3 @@
-// tests/integration/controllers/order.controller.test.js
-
 jest.mock('../../../models', () => ({
   getModels: require('../../helpers/dbMock').mockGetModels
 }));
@@ -18,6 +16,11 @@ const { mockModels } = require('../../helpers/dbMock');
 const orderService = require('../../../services/orderService');
 const { testOrders, testProducts } = require('../../fixtures/testData');
 
+/**
+ * Create an express app configured for order controller integration tests.
+ * Mounts `/checkout` and `/order` routes and simulates authenticated user
+ * for order creation requests.
+ */
 const createTestApp = () => {
   const app = express();
   app.use(express.urlencoded({ extended: true }));
@@ -34,6 +37,7 @@ const createTestApp = () => {
   const orderController = require('../../../controllers/orderController');
 
   app.get('/checkout', orderController.checkoutPage);
+  // Middleware: simulate authenticated user for order creation
   app.post('/order', (req, res, next) => {
     req.session.user = { id: 1 };
     next();
@@ -153,7 +157,7 @@ describe('Order Controller - Integration Tests', () => {
       const response = await request(app)
         .post('/order')
         .send({
-          name: '',  // missing name
+          name: '',
           email: 'john@example.com',
           phone: '+380123456789',
           address: 'Kyiv, Ukraine'

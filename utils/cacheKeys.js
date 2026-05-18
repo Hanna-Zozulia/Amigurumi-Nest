@@ -1,4 +1,4 @@
-//utils/cacheKeys.js
+// Centralized cache key names and helper generators used across the app.
 const cacheKeys = {
     products: 'products',
     homeProducts: 'home:products',

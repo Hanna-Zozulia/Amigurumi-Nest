@@ -1,3 +1,6 @@
+/**
+ * Returns a valid Date object for a given input or null when invalid.
+ */
 function toValidDate(value) {
     if (!value) return null;
 
@@ -7,6 +10,10 @@ function toValidDate(value) {
     return date;
 }
 
+/**
+ * Formats a value as a Russian locale date string (DD.MM.YYYY).
+ * Returns `fallback` if the value is not a valid date.
+ */
 function formatDateRu(value, fallback = '') {
     const date = toValidDate(value);
     if (!date) return fallback;
@@ -18,6 +25,10 @@ function formatDateRu(value, fallback = '') {
     });
 }
 
+/**
+ * Formats a value as a Russian locale date and time string.
+ * Returns `fallback` if the value is not a valid date.
+ */
 function formatDateTimeRu(value, fallback = '') {
     const date = toValidDate(value);
     if (!date) return fallback;

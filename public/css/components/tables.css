@@ -14,13 +14,12 @@
   padding: var(--space-2) var(--space-3);
 }
 
-/* каждая строка как карточка */
 .table tbody tr {
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   overflow: hidden;
 }
 
-/* ячейки */
+/* cells */
 .table tbody td {
   border: none !important;
   vertical-align: middle;
@@ -30,14 +29,14 @@
   padding-left: 30px;
 }
 
-/* товар блок */
+/* product block */
 .table tbody td:first-child {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* картинка */
+/* picture */
 .cart-product-image {
   width: 150px;
   height: 150px;
@@ -45,7 +44,7 @@
   border-radius: 12px;
 }
 
-/* кнопки +/- как TEMU */
+/* + and – buttons  */
 .cart-quantity-button {
   width: 30px;
   height: 30px;
@@ -57,13 +56,13 @@
   justify-content: center;
 }
 
-/* количество */
+/* number */
 .cart-quantity-count {
   min-width: 30px;
   text-align: center;
 }
 
-/* итог блок */
+/* total block */
 tfoot tr {
   font-size: 20px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);

@@ -1,10 +1,11 @@
-// tests/unit/middleware/auth.test.js
-
 const { requireAuth, requireAdmin, handleUnauthorized, handleForbidden } = require('../../../middleware/auth');
 const { createMockRequest, createMockResponse, createMockNext } = require('../../helpers/testHelpers');
 
 describe('Auth Middleware', () => {
   describe('requireAuth', () => {
+    /**
+     * Test: authenticated session should call `next()` and not redirect.
+     */
     it('should allow authenticated user', () => {
       const req = createMockRequest({
         session: {
@@ -21,6 +22,9 @@ describe('Auth Middleware', () => {
       expect(res.redirect).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: unauthenticated requests should be redirected to `/login`.
+     */
     it('should redirect unauthenticated user to login', () => {
       const req = createMockRequest({
         session: { user: null }
@@ -34,6 +38,10 @@ describe('Auth Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: when session is marked expired middleware should destroy the
+     * session, clear cookie and redirect to login with expired flag.
+     */
     it('should destroy session and redirect when session expired', () => {
       const req = createMockRequest({
         session: {
@@ -54,6 +62,9 @@ describe('Auth Middleware', () => {
   });
 
   describe('requireAdmin', () => {
+    /**
+     * Test: admin users are allowed and `next()` is called.
+     */
     it('should allow admin user', () => {
       const req = createMockRequest({
         session: {
@@ -69,6 +80,9 @@ describe('Auth Middleware', () => {
       expect(next).toHaveBeenCalled();
     });
 
+    /**
+     * Test: regular users receive a 403 and a rendered forbidden page.
+     */
     it('should deny regular user from admin access', () => {
       const req = createMockRequest({
         session: {
@@ -86,6 +100,9 @@ describe('Auth Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: unauthenticated attempts to access admin routes are redirected.
+     */
     it('should redirect unauthenticated user to login', () => {
       const req = createMockRequest({
         session: { user: null }
@@ -99,6 +116,9 @@ describe('Auth Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: expired admin sessions should be destroyed and redirected.
+     */
     it('should destroy session for expired admin', () => {
       const req = createMockRequest({
         session: {
@@ -118,6 +138,9 @@ describe('Auth Middleware', () => {
   });
 
   describe('handleUnauthorized', () => {
+    /**
+     * Test: helper should redirect web requests to the login page.
+     */
     it('should redirect to login for web request', () => {
       const req = createMockRequest();
       const res = createMockResponse();
@@ -129,6 +152,10 @@ describe('Auth Middleware', () => {
   });
 
   describe('handleForbidden', () => {
+    /**
+     * Test: helper should redirect web requests to the login page when access
+     * is forbidden.
+     */
     it('should redirect to login for web request', () => {
       const req = createMockRequest();
       const res = createMockResponse();

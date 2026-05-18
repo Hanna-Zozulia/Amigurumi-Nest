@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <!-- Информация -->
+    <!-- Information -->
     <div class="col-md-6">
       <h2><%= product.name %></h2>
       <% if (product.isNew) { %>
@@ -59,7 +59,7 @@
 
       </div>
 
-      <!-- ОТЗЫВЫ: форма добавления -->
+      <!-- REVIEWS -->
       <% if (currentUser) { %>
 
         <% if (currentUser.role !== 'admin') { %>
@@ -111,6 +111,7 @@
 
     <div class="d-flex flex-column gap-3">
 
+      <%# Server-side: render product reviews list from `product.Reviews` %>
       <% product.Reviews.forEach(review => { %>
 
         <!-- REVIEW CARD -->
@@ -134,12 +135,6 @@
             <!-- ACTIONS -->
             <% if (currentUser && (currentUser.role === 'admin' || (currentUser.id === review.userId && !review.adminReply))) { %>
               <div class="d-flex gap-2">
-
-                <!-- <button type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        onclick="editReview('<%= review.id %>')">
-                  <i class="bi bi-pencil"></i>
-                </button> -->
 
                 <form method="POST"
                       action="/review/delete/<%= review.id %>"

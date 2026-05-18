@@ -1,6 +1,8 @@
-// models/Order.js
 const { DataTypes } = require('sequelize');
 
+/**
+ * Defines the Order model used to store customer orders and checkout metadata.
+ */
 module.exports = (sequelize) => {
   const Order = sequelize.define('Order', {
     id: {

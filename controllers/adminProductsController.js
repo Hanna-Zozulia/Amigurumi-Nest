@@ -1,6 +1,9 @@
 const { getModels } = require('../models');
 const { formatDateRu } = require('../utils/dateFormatter');
 
+/**
+ * Renders the admin product list with formatted creation dates.
+ */
 async function listProductsAdmin(req, res) {
     try {
         const { Product } = getModels();
@@ -31,7 +34,7 @@ async function listProductsAdmin(req, res) {
         });
 
     } catch (err) {
-        console.error('FULL ERROR:', err); // <-- важно
+        console.error('FULL ERROR:', err);
         return res.status(500).send(err.message);
     }
 }

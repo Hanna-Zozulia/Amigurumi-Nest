@@ -1,3 +1,6 @@
+/**
+ * Defines the Review model used to store product comments and moderation state.
+ */
 module.exports = (sequelize, DataTypes) => {
   const Review = sequelize.define('Review', {
     id: {

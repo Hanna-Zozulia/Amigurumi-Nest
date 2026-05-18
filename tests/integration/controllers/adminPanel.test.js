@@ -26,6 +26,8 @@ describe('Admin panel controllers', () => {
       mockModels.Order.count.mockResolvedValue(3);
       mockModels.User.count.mockResolvedValue(4);
       mockModels.Product.count.mockResolvedValue(5);
+      // Mock implementation for `Order.findAll` used to simulate multiple
+      // query shapes (raw sums, grouped counts, and recent order rows).
       mockModels.Order.findAll.mockImplementation(async (options = {}) => {
         if (options.raw) {
           return [{ totalSum: '123.45' }];
@@ -48,6 +50,7 @@ describe('Admin panel controllers', () => {
           }
         ];
       });
+      // Mock implementation for `User.findAll` to simulate grouped status counts
       mockModels.User.findAll.mockImplementation(async () => [
         { status: 'active', count: '3' },
         { status: 'inactive', count: '1' },

@@ -1,8 +1,9 @@
-// controllers/orderController.js
-
 const { getModels } = require('../models');
 const { loadCheckoutCart, calculateCartTotal, sendOrderEmail } = require('../services/orderService');
 
+/**
+ * Renders the checkout page with the current cart totals.
+ */
 async function checkoutPage(req, res) {
     const { Product } = getModels();
     const successMessage = req.query.orderSent === '1'
@@ -30,6 +31,9 @@ async function checkoutPage(req, res) {
     });
 }
 
+/**
+ * Creates an order, persists its items, clears the cart, and triggers the email notification.
+ */
 async function createOrder(req, res) {
     const { Cart, CartItem, Order, OrderItem, Product } = getModels();
 

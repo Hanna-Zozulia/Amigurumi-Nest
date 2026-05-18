@@ -1,4 +1,6 @@
-//Cart.js
+/**
+ * Defines the Cart model used to store one cart per user.
+ */
 module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define("Cart", {
     id: {

@@ -1,4 +1,3 @@
-// models/index.js
 const bcrypt = require('bcryptjs');
 const { DataTypes } = require('sequelize');
 const { createSequelize } = require('../config/database');
@@ -23,6 +22,9 @@ let Order = null;
 let OrderItem = null;
 let Review = null;
 
+/**
+ * Initializes the database connection, defines models, and wires up all associations.
+ */
 async function initDb() {
     try {
         // Подключение к MySQL
@@ -39,7 +41,7 @@ async function initDb() {
         Review = defineReview(sequelize, DataTypes);
 
         // ======================
-        // СВЯЗИ (ВАЖНО)
+        // CONTACTS
         // ======================
 
         // Cart -> CartItem
@@ -54,11 +56,11 @@ async function initDb() {
         Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' });
         Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
 
-        // Cart -> Order (1 к 1)
+        // Cart -> Order 
         Cart.hasOne(Order, { foreignKey: 'cartId' });
         Order.belongsTo(Cart, { foreignKey: 'cartId' });
 
-        // User -> Order (1 ко многим)
+        // User -> Order
         User.hasMany(Order, { foreignKey: 'userId' });
         Order.belongsTo(User, { foreignKey: 'userId' });
 
@@ -70,7 +72,7 @@ async function initDb() {
         Product.hasMany(OrderItem, { foreignKey: 'productId' });
         OrderItem.belongsTo(Product, { foreignKey: 'productId' });
 
-        // User -> Review (1 ко многим)
+        // User -> Review
         User.hasMany(Review, { foreignKey: 'userId' });
         Review.belongsTo(User, { foreignKey: 'userId' });
 
@@ -78,7 +80,7 @@ async function initDb() {
         Review.belongsTo(Product, { foreignKey: 'productId' });
 
         // ======================
-        // СИНХРОНИЗАЦИЯ БД
+        // DATABASE SYNCHRONISATION
         // ======================
         await sequelize.sync();
 
@@ -130,7 +132,7 @@ async function initDb() {
             });
         }
 
-        // Приведение схемы orders к актуальному виду для guest checkout
+        // Updating the orders schema for guest checkout
         const ordersTable = await queryInterface.describeTable('orders');
 
         await queryInterface.changeColumn('orders', 'cartId', {
@@ -237,7 +239,7 @@ async function initDb() {
         );
 
         // ======================
-        // ДЕФОЛТНЫЕ ЮЗЕРЫ
+        // DEFAULT USERS
         // ======================
         const usersCount = await User.count();
 
@@ -275,6 +277,9 @@ async function initDb() {
     }
 }
 
+/**
+ * Returns the initialized Sequelize instance and model constructors.
+ */
 function getModels() {
     if (sequelize && User && Product && Category && Cart && CartItem && Order && OrderItem && Review) {
         return {

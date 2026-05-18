@@ -1,12 +1,14 @@
-// services/orderService.js
-// Order-related business logic
-
 const { getModels } = require('../models');
 const { getMailTransporter, buildInlineImageAttachment, buildProductCardHtml, buildProductLinesText, buildOrderEmailText, buildOrderEmailHtml } = require('./emailService');
 const { getSiteBaseUrl, getAbsoluteImageUrl } = require('../utils/htmlUtils');
 
 const ORDER_RECEIVER_EMAIL = process.env.ORDER_RECEIVER_EMAIL || process.env.MAIL_TO || '';
 
+/**
+ * Loads the checkout cart for the current request.
+ * For authenticated users it reads the persistent cart; for guests it reconstructs
+ * the cart from session data and attaches Product instances when available.
+ */
 async function loadCheckoutCart(req, Product) {
     if (req.session.user) {
         const { Cart, CartItem } = getModels();
@@ -40,6 +42,9 @@ async function loadCheckoutCart(req, Product) {
     };
 }
 
+/**
+ * Calculates the numeric total for a cart by summing line totals.
+ */
 function calculateCartTotal(cart) {
     let total = 0;
     cart.items.forEach(item => {
@@ -48,6 +53,10 @@ function calculateCartTotal(cart) {
     return total;
 }
 
+/**
+ * Prepares and sends an order notification email to the configured recipient.
+ * Returns true on success and false when mail cannot be sent or is misconfigured.
+ */
 async function sendOrderEmail(orderData, req) {
     const transporter = getMailTransporter();
     if (!transporter) {

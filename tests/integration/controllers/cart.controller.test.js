@@ -12,6 +12,11 @@ const session = require('express-session');
 const { mockModels } = require('../../helpers/dbMock');
 const { testCarts } = require('../../fixtures/testData');
 
+/**
+ * Create an express app for cart controller integration tests with session
+ * and a simple render shim. Includes a middleware that ensures a test user
+ * and empty cart are always present to avoid controller errors.
+ */
 const createTestApp = () => {
   const app = express();
 
@@ -32,7 +37,7 @@ const createTestApp = () => {
 
   const cartController = require('../../../controllers/cartWebController');
 
-  // 🔥 FIX 1: единый user + cart (убирает 500)
+  // Middleware: ensure a default test user and empty cart in session
   app.use((req, res, next) => {
     req.session.user = { id: 1, role: 'user' };
     req.session.cart = { items: [] };
@@ -54,7 +59,6 @@ describe('Cart Controller - Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // 🔥 FIX 2: safe defaults для всех сценариев
     mockModels.Cart.findOne.mockResolvedValue({
       ...testCarts.cart1,
       items: []

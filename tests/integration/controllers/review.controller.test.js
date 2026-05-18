@@ -1,5 +1,3 @@
-// tests/integration/controllers/review.controller.test.js
-
 jest.mock('../../../models', () => ({
   getModels: require('../../helpers/dbMock').mockGetModels
 }));
@@ -27,6 +25,11 @@ const { testReviews } = require('../../fixtures/testData');
 
 const reviewController = require('../../../controllers/reviewController');
 
+/**
+ * Create an express app for review controller integration tests. Accepts
+ * optional overrides for the simulated session users used in different
+ * review flows (default, delete, reply users).
+ */
 const createTestApp = ({
   defaultUser = { id: 1, role: 'user' },
   deleteUser = { id: 1, role: 'user' },

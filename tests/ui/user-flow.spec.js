@@ -1,5 +1,10 @@
 const { test, expect } = require('@playwright/test');
 
+/**
+ * UI user flow test: validate a guest user can add a product to the cart,
+ * increment and decrement quantity via backend requests, and see updated
+ * cart UI reflecting those changes.
+ */
 test('cart flow lets a visitor add and adjust product quantity', async ({ page }) => {
   await page.goto('/catalog');
 

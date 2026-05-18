@@ -1,9 +1,10 @@
-// services/cacheService.js
-// Cache invalidation utilities
-
 const { deleteCache, clearCacheByPattern } = require('../utils/cache');
 const { cacheKeys } = require('../utils/cacheKeys');
 
+/**
+ * Invalidates cache entries related to products and catalog pages.
+ * If a `productId` is provided, clears product-specific caches as well.
+ */
 async function invalidateProductCache(productId) {
     await deleteCache(cacheKeys.products);
     await deleteCache(cacheKeys.homeProducts);
@@ -16,6 +17,9 @@ async function invalidateProductCache(productId) {
     }
 }
 
+/**
+ * Invalidates cache entries for reviews of a specific product.
+ */
 async function invalidateReviewsCache(productId) {
     if (!productId) return;
 
@@ -23,6 +27,9 @@ async function invalidateReviewsCache(productId) {
     await deleteCache(cacheKeys.product(productId));
 }
 
+/**
+ * Invalidates the cache entry for a specific user's cart.
+ */
 async function invalidateCartCache(userId) {
     if (!userId) return;
 

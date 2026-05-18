@@ -5,6 +5,7 @@ jest.mock('../../../models', () => ({
 }));
 
 jest.mock('nodemailer', () => ({
+  // Mock transporter for email sending used by the service
   createTransport: jest.fn(() => ({
     sendMail: jest.fn().mockResolvedValue(undefined)
   }))
@@ -18,6 +19,10 @@ describe('inactiveUsersService', () => {
     mockModels.User.findAll.mockReset();
   });
 
+  /**
+   * Test: when models are unavailable the service should exit early and
+   * log that zero users were checked/deactivated.
+   */
   it('returns early when models are missing', async () => {
     const models = require('../../../models');
     models.getModels.mockReturnValueOnce(null);
@@ -29,6 +34,10 @@ describe('inactiveUsersService', () => {
     logSpy.mockRestore();
   });
 
+  /**
+   * Test: eligible users should be deactivated and the action should be
+   * logged; email notifications are simulated by the mocked transporter.
+   */
   it('deactivates eligible users and sends notifications', async () => {
     const user = {
       id: 1,

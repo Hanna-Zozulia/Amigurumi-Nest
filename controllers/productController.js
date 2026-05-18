@@ -1,5 +1,3 @@
-// controllers/productController.js (refactored)
-
 const { getModels } = require('../models');
 const fs = require('fs/promises');
 const path = require('path');
@@ -7,6 +5,9 @@ const { cached } = require('../utils/cache');
 const { cacheKeys } = require('../utils/cacheKeys');
 const { invalidateProductCache } = require('../services/cacheService');
 
+/**
+ * Renders the storefront home page with featured products and recent reviews.
+ */
 async function homePage(req, res) {
     try {
         const { Product, Review, User } = getModels();
@@ -37,6 +38,9 @@ async function homePage(req, res) {
     }
 }
 
+/**
+ * Renders the catalog page and applies the active product filter.
+ */
 async function listPage(req, res) {
     try {
         const { Product, Cart, CartItem, Category } = getModels();
@@ -74,6 +78,9 @@ async function listPage(req, res) {
     }
 }
 
+/**
+ * Renders the top three products page.
+ */
 async function top3Page(req, res) {
     try {
         const { Product } = getModels();
@@ -96,6 +103,9 @@ async function top3Page(req, res) {
     }
 }
 
+/**
+ * Renders the admin form for creating a new product.
+ */
 async function newForm(req, res) {
     const { Category } = getModels();
     const categories = await Category.findAll();
@@ -108,6 +118,9 @@ async function newForm(req, res) {
     });
 }
 
+/**
+ * Creates a new product from the admin form submission.
+ */
 async function create(req, res) {
     try {
         const { Product } = getModels();
@@ -141,6 +154,9 @@ async function create(req, res) {
     }
 }
 
+/**
+ * Renders the admin form for editing an existing product.
+ */
 async function editForm(req, res) {
     const { Product, Category } = getModels();
     const product = await Product.findByPk(req.params.id);
@@ -156,6 +172,9 @@ async function editForm(req, res) {
     });
 }
 
+/**
+ * Updates an existing product from the admin form submission.
+ */
 async function update(req, res) {
     try {
         const { Product } = getModels();
@@ -187,6 +206,9 @@ async function update(req, res) {
     }
 }
 
+/**
+ * Deletes a product, removes uploaded images, and redirects back to the list.
+ */
 async function remove(req, res) {
     try {
         const { Product } = getModels();
@@ -194,7 +216,7 @@ async function remove(req, res) {
 
         if (!product) return res.status(404).send('Not found');
 
-        // УДАЛЕНИЕ ФАЙЛА КАРТИНКИ
+        // Delete the main product image from disk if it exists.
         if (product.image) {
             const imagePath = path.join(
                 process.cwd(),
@@ -209,6 +231,7 @@ async function remove(req, res) {
             }
         }
 
+        // Delete the secondary product image from disk if it exists.
         if (product.image2) {
             const image2Path = path.join(
                 process.cwd(),
@@ -236,6 +259,9 @@ async function remove(req, res) {
     }
 }
 
+/**
+ * Renders the product detail page with cached product and review data.
+ */
 async function showPage(req, res) {
     try {
         const { Product, Review, User, Category } = getModels();

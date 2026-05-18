@@ -1,8 +1,8 @@
-// middleware/auth.js
-// Проверка авторизации и роли пользователя
-
 const isApiRequest = require('../utils/isApiRequest');
 
+/**
+ * Returns the correct unauthorized response for API and web requests.
+ */
 function handleUnauthorized(req, res) {
     if (isApiRequest(req)) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -11,6 +11,9 @@ function handleUnauthorized(req, res) {
     return res.redirect('/login');
 }
 
+/**
+ * Returns the correct forbidden response for API and web requests.
+ */
 function handleForbidden(req, res) {
     if (isApiRequest(req)) {
         return res.status(403).json({ message: 'Access denied' });
@@ -19,25 +22,9 @@ function handleForbidden(req, res) {
     return res.redirect('/login');
 }
 
-// function requireAuth(req, res, next) {
-//     if (!req.session.user) {
-//         return handleUnauthorized(req, res);
-//     }
-//     next();
-// }
-
-// function requireAdmin(req, res, next) {
-//     if (!req.session.user) {
-//         return handleUnauthorized(req, res);
-//     }
-
-//     if (req.session.user.role !== 'admin') {
-//         return handleForbidden(req, res);
-//     }
-
-//     next();
-// }
-
+/**
+ * Requires a logged-in user and redirects unauthenticated requests to login.
+ */
 function requireAuth(req, res, next) {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -54,6 +41,9 @@ function requireAuth(req, res, next) {
     next();
 }
 
+/**
+ * Ensures the current user is authenticated and has admin privileges.
+ */
 function requireAdmin(req, res, next) {
     if (!req.session.user) {
         return res.redirect('/login');

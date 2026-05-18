@@ -38,6 +38,7 @@
         <div class="col-12 col-md-6">
           <label class="form-label" for="category">Категория</label>
           <select class="form-select form-select-lg border border-secondary" id="categoryId" name="categoryId" required>
+            <%# Server-side: render category `<option>` entries for the product form select %>
             <% categories.forEach(category => { %>
               <option value="<%= category.id %>"
                 <%= product && product.categoryId === category.id ? 'selected' : '' %>>

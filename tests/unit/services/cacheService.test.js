@@ -1,5 +1,3 @@
-// tests/unit/services/cacheService.test.js
-
 jest.mock('../../../utils/cache', () => ({
   deleteCache: jest.fn(),
   clearCacheByPattern: jest.fn()
@@ -14,6 +12,10 @@ describe('Cache Service', () => {
     jest.clearAllMocks();
   });
 
+  /**
+   * invalidateProductCache: should clear global product lists and, when a
+   * productId is provided, clear per-product and reviews cache keys.
+   */
   describe('invalidateProductCache', () => {
     it('should invalidate all product-related cache', async () => {
       deleteCache.mockResolvedValue(1);
@@ -45,6 +47,10 @@ describe('Cache Service', () => {
     });
   });
 
+  /**
+   * invalidateReviewsCache: clears product and reviews specific cache when
+   * productId is provided; otherwise does nothing.
+   */
   describe('invalidateReviewsCache', () => {
     it('should invalidate reviews and product cache', async () => {
       deleteCache.mockResolvedValue(1);
@@ -62,6 +68,10 @@ describe('Cache Service', () => {
     });
   });
 
+  /**
+   * invalidateCartCache: clears the cart cache for a user when userId is
+   * provided; otherwise is a no-op.
+   */
   describe('invalidateCartCache', () => {
     it('should invalidate cart cache for user', async () => {
       deleteCache.mockResolvedValue(1);

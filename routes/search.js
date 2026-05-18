@@ -4,12 +4,14 @@ const router = express.Router();
 const { getModels } = require('../models');
 const { Op } = require('sequelize');
 
-router.get('/', async (req, res) => {
-
+/**
+ * Handles catalog search requests with a short query limit.
+ */
+async function searchProducts(req, res) {
     try {
         let query = String(req.query.q || '').trim();
 
-        // Basic validation: require at least 2 chars, limit length
+        // Require at least two characters and cap the query length.
         if (!query || query.length < 2) {
             return res.json([]);
         }
@@ -42,6 +44,8 @@ router.get('/', async (req, res) => {
 
     }
 
-});
+}
+
+router.get('/', searchProducts);
 
 module.exports = router;

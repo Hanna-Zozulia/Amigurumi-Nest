@@ -1,7 +1,9 @@
-// controllers/productApiController.js
 const { getModels } = require('../models');
 const { invalidateProductCache } = require('../services/cacheService');
 
+/**
+ * Returns the full product list as JSON.
+ */
 async function list(req, res) {
     try {
         const { Product } = getModels();
@@ -13,6 +15,9 @@ async function list(req, res) {
     }
 }
 
+/**
+ * Returns a single product by ID as JSON.
+ */
 async function getOne(req, res) {
     try {
         const { Product } = getModels();
@@ -26,6 +31,9 @@ async function getOne(req, res) {
     }
 }
 
+/**
+ * Creates a new product record from API input.
+ */
 async function create(req, res) {
     try {
         const { Product } = getModels();
@@ -51,6 +59,9 @@ async function create(req, res) {
     }
 }
 
+/**
+ * Updates an existing product record from API input.
+ */
 async function update(req, res) {
   try {
     const { Product } = getModels();
@@ -85,6 +96,9 @@ async function update(req, res) {
   }
 }
 
+/**
+ * Deletes a product record and clears its cache entry.
+ */
 async function remove(req, res) {
     try {
         const { Product } = getModels();

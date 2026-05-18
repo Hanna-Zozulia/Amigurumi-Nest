@@ -1,5 +1,8 @@
 const { getModels } = require('../models');
 
+/**
+ * Renders the admin dashboard with summary statistics and recent orders.
+ */
 async function adminDashboard(req, res) {
     try {
         const { Order, OrderItem, User, Product } = getModels();
@@ -40,7 +43,7 @@ async function adminDashboard(req, res) {
             }
         });
 
-        // Статистика по статусам пользователей
+        // User status statistics
         const usersByStatus = await User.findAll({
             attributes: [
                 'status',
@@ -62,7 +65,7 @@ async function adminDashboard(req, res) {
             }
         });
 
-        // Недавние заказы
+        // Recent orders
         const recentOrders = await Order.findAll({
             include: [
                 {
@@ -75,6 +78,9 @@ async function adminDashboard(req, res) {
             limit: 5
         });
 
+        /**
+         * Converts an order record into a compact dashboard summary.
+         */
         const normalizeOrder = (order) => {
             return {
                 id: order.id,

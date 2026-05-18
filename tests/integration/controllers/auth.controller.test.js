@@ -20,8 +20,13 @@ const { mockModels } = require('../../helpers/dbMock');
 const { testUsers } = require('../../fixtures/testData');
 const bcrypt = require('bcryptjs');
 
-// Setup app
+// Setup app for integration tests of auth controller. The helper creates an
+// express instance wired with auth routes and minimal session handling.
 const createTestApp = () => {
+  /**
+   * Returns an express app configured with auth routes (`/login`, `/register`,
+   * `/forgot-password`, `/logout`) and session middleware suitable for tests.
+   */
   const app = express();
 
   app.use(express.urlencoded({ extended: true }));

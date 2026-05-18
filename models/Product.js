@@ -1,6 +1,8 @@
-// Модель товара
 const { DataTypes } = require('sequelize');
 
+/**
+ * Defines the Product model used to store catalog items.
+ */
 module.exports = (sequelize) => {
     const Product = sequelize.define(
         'Product',

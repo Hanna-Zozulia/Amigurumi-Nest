@@ -7,6 +7,10 @@ const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 let monitorTimer = null;
 
+/**
+ * Creates and returns a nodemailer transporter using environment variables.
+ * Returns null when mail credentials are not configured.
+ */
 function getMailTransporter() {
     const host = process.env.MAIL_HOST;
     const port = Number(process.env.MAIL_PORT || 587);
@@ -34,6 +38,10 @@ function getMailTransporter() {
     return null;
 }
 
+/**
+ * Sends an email notification to a user informing them their status was set to inactive.
+ * Returns true when the message was queued/sent, false when mail is not configured.
+ */
 async function sendInactiveStatusNotification(user) {
     const transporter = getMailTransporter();
     const from = process.env.MAIL_FROM || process.env.MAIL_USER;
@@ -69,6 +77,9 @@ async function sendInactiveStatusNotification(user) {
     return true;
 }
 
+/**
+ * Builds a Sequelize WHERE clause that matches users considered inactive relative to cutoffDate.
+ */
 function buildInactivityWhere(cutoffDate) {
     return {
         role: 'user',
@@ -85,6 +96,10 @@ function buildInactivityWhere(cutoffDate) {
     };
 }
 
+/**
+ * Finds eligible users and deactivates those who meet inactivity criteria, sending notifications.
+ * Returns an object with checked and deactivated counts.
+ */
 async function deactivateInactiveUsers() {
     const models = getModels();
     if (!models || !models.User) {
@@ -116,6 +131,9 @@ async function deactivateInactiveUsers() {
     return { checked: candidates.length, deactivated };
 }
 
+/**
+ * Runs a single check cycle for inactive users and logs the result.
+ */
 async function runInactiveUsersCheck(context) {
     try {
         const { checked, deactivated } = await deactivateInactiveUsers();
@@ -126,6 +144,9 @@ async function runInactiveUsersCheck(context) {
     }
 }
 
+/**
+ * Starts a periodic monitor that runs the inactive users check on a daily interval.
+ */
 function startInactiveUsersMonitor() {
     if (monitorTimer) return;
 

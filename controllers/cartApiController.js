@@ -1,8 +1,10 @@
-//cartApiController.js
 const { getModels } = require('../models');
 const { invalidateCartCache } = require('../services/cacheService');
 
 // GET /api/cart
+/**
+ * Returns the current user's cart as JSON.
+ */
 async function getCart(req, res) {
     try {
         const { Cart, CartItem, Product } = getModels();
@@ -31,6 +33,9 @@ async function getCart(req, res) {
 }
 
 // POST /api/cart/add
+/**
+ * Adds one unit of a product to the authenticated user's cart.
+ */
 async function add(req, res) {
     try {
         const { Cart, CartItem } = getModels();
@@ -72,6 +77,9 @@ async function add(req, res) {
 }
 
 // POST /api/cart/remove
+/**
+ * Removes one unit of a product from the authenticated user's cart.
+ */
 async function removeOne(req, res) {
     try {
         const { Cart, CartItem } = getModels();
@@ -109,6 +117,9 @@ async function removeOne(req, res) {
 }
 
 // POST /api/cart/clear
+/**
+ * Clears the authenticated user's cart.
+ */
 async function clear(req, res) {
     try {
         const { Cart, CartItem } = getModels();

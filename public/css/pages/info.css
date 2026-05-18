@@ -1,4 +1,4 @@
-/* ===== INFO PAGE — FINAL VERSION (NO LAYOUT CHANGES) ===== */
+/* ===== INFO PAGE ===== */
 
 .info {
   max-width: 900px;
@@ -12,7 +12,7 @@
   text-rendering: optimizeLegibility;
 }
 
-/* ===== SOCIAL GRID (3 В РЯД ОСТАЁТСЯ КАК БЫЛО) ===== */
+/* ===== SOCIAL GRID ===== */
 .info .list-unstyled {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -22,7 +22,7 @@
   margin-top: 1.5rem;
 }
 
-/* ===== SOCIAL CARD (НЕ МЕНЯЕМ РАЗМЕРЫ) ===== */
+/* ===== SOCIAL CARD ===== */
 .info .list-unstyled li {
   border-radius: 16px;
   padding: 1rem;
@@ -37,7 +37,7 @@
   transition: all 0.3s ease;
 }
 
-/* ===== HOVER — КАК FOOTER ===== */
+/* ===== HOVER ===== */
 .info .list-unstyled li:hover {
   background: #7D6BA3;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -55,7 +55,7 @@
   transition: 0.3s ease;
 }
 
-/* hover иконок */
+/* hover icons */
 .info .list-unstyled li:hover i.bi,
 .info .list-unstyled li:hover a {
   color: #efeeee;
@@ -73,8 +73,6 @@
 }
 
 /* ===== Responsive: Info ===== */
-@media (max-width: 1024px) {
-}
 
 @media (max-width: 768px) {
   .info {

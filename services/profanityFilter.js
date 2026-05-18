@@ -1,9 +1,11 @@
-﻿//profanityFilter.js
-const leo = require('leo-profanity');
+﻿const leo = require('leo-profanity');
 
 leo.loadDictionary('en');
 leo.loadDictionary('ru');
 
+/**
+ * Normalizes free-text for profanity checks by lowercasing and removing whitespace/special chars.
+ */
 function normalizeText(text) {
     return String(text || '')
         .toLowerCase()
@@ -11,6 +13,10 @@ function normalizeText(text) {
         .replace(/[^a-zа-я0-9]/gi, '');
 }
 
+/**
+ * Checks the provided text for profanity, spam links, and advertising keywords.
+ * Returns an object describing whether the text is ok and, if flagged, the reason.
+ */
 function checkProfanity(text) {
     const raw = String(text || '').trim();
 
@@ -20,17 +26,14 @@ function checkProfanity(text) {
 
     const normalized = normalizeText(raw);
 
-    // мат
     if (leo.check(normalized) || leo.check(raw.toLowerCase())) {
         return { ok: false, flagged: true, reason: 'profanity' };
     }
 
-    // ссылки
     if (/(https?:\/\/|www\.|\.com|\.ru|\.net)/i.test(raw)) {
         return { ok: false, flagged: true, reason: 'spam' };
     }
 
-    // реклама
     if (/(telegram|instagram|subscribe|promo|скидк|акци|куп|заказ)/i.test(raw)) {
         return { ok: false, flagged: true, reason: 'advertising' };
     }

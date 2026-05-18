@@ -8,11 +8,17 @@ const STATUS_LABELS = {
     shipped: 'Отправлен'
 };
 
+/**
+ * Parses and validates an order identifier from request input.
+ */
 function parseOrderId(value) {
     const id = Number(value);
     return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+/**
+ * Returns the next order status in the workflow.
+ */
 function getNextStatus(status) {
     const index = ORDER_STATUSES.indexOf(status);
     if (index === -1) {
@@ -22,10 +28,16 @@ function getNextStatus(status) {
     return ORDER_STATUSES[(index + 1) % ORDER_STATUSES.length];
 }
 
+/**
+ * Maps a technical order status to a human-readable label.
+ */
 function mapStatusLabel(status) {
     return STATUS_LABELS[status] || status;
 }
 
+/**
+ * Normalizes an order record into a view-friendly structure.
+ */
 function normalizeOrder(order) {
     const items = Array.isArray(order.items)
         ? order.items.map((item) => ({
@@ -56,6 +68,9 @@ function normalizeOrder(order) {
     };
 }
 
+/**
+ * Loads a single order with its items and related products.
+ */
 async function findOrderById(orderId) {
     const { Order, OrderItem, Product } = getModels();
 
@@ -71,6 +86,9 @@ async function findOrderById(orderId) {
     });
 }
 
+/**
+ * Renders the admin orders list page.
+ */
 async function listOrdersPage(req, res) {
     try {
         const { Order, OrderItem, Product } = getModels();
@@ -99,6 +117,9 @@ async function listOrdersPage(req, res) {
     }
 }
 
+/**
+ * Renders the admin order details page.
+ */
 async function orderDetailsPage(req, res) {
     try {
         const orderId = parseOrderId(req.params.id);
@@ -125,6 +146,9 @@ async function orderDetailsPage(req, res) {
     }
 }
 
+/**
+ * Updates the order status and returns a JSON response.
+ */
 async function updateOrderStatus(req, res) {
     const orderId = parseOrderId(req.params.id);
     if (!orderId) {
@@ -158,6 +182,9 @@ async function updateOrderStatus(req, res) {
     }
 }
 
+/**
+ * Updates the order status and redirects back to the appropriate admin page.
+ */
 async function updateOrderStatusPage(req, res) {
     const orderId = parseOrderId(req.params.id);
     if (!orderId) {
@@ -191,6 +218,9 @@ async function updateOrderStatusPage(req, res) {
     }
 }
 
+/**
+ * Returns the full order list as JSON for admin clients.
+ */
 async function listOrdersApi(req, res) {
     try {
         const { Order, OrderItem, Product } = getModels();
@@ -213,6 +243,9 @@ async function listOrdersApi(req, res) {
     }
 }
 
+/**
+ * Returns a single order as JSON for admin clients.
+ */
 async function orderDetailsApi(req, res) {
     try {
         const orderId = parseOrderId(req.params.id);

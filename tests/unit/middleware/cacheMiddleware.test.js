@@ -1,5 +1,3 @@
-// tests/unit/middleware/cacheMiddleware.test.js
-
 jest.mock('../../../utils/cache', () => ({
   getCache: jest.fn(),
   setCache: jest.fn()
@@ -15,6 +13,9 @@ describe('Cache Middleware', () => {
   });
 
   describe('cacheGet', () => {
+    /**
+     * Test: non-GET requests should bypass cache middleware and call `next()`.
+     */
     it('should skip cache for non-GET requests', async () => {
       const middleware = cacheGet({ keyBuilder: () => 'test-key' });
       const req = createMockRequest({ method: 'POST' });
@@ -27,6 +28,9 @@ describe('Cache Middleware', () => {
       expect(getCache).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: the `skip` predicate option should allow bypassing the cache.
+     */
     it('should skip cache when skip function returns true', async () => {
       const middleware = cacheGet({
         keyBuilder: () => 'test-key',
@@ -42,6 +46,10 @@ describe('Cache Middleware', () => {
       expect(getCache).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: when cached JSON is available middleware should send it and not
+     * call `next()`.
+     */
     it('should return cached JSON data if available', async () => {
       const cachedData = { id: 1, name: 'Test' };
       getCache.mockResolvedValue(cachedData);
@@ -61,6 +69,10 @@ describe('Cache Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test: on cache miss middleware should call `next()` so the handler can
+     * generate fresh content (and later set cache).
+     */
     it('should call next for cache miss', async () => {
       getCache.mockResolvedValue(null);
       setCache.mockResolvedValue(true);
@@ -79,6 +91,10 @@ describe('Cache Middleware', () => {
       expect(next).toHaveBeenCalled();
     });
 
+    /**
+     * Test: verify that successful `res.json()` responses are captured and
+     * stored in cache with the provided TTL.
+     */
     it('should cache successful JSON responses', async () => {
       getCache.mockResolvedValue(null);
       setCache.mockResolvedValue(true);
@@ -101,6 +117,10 @@ describe('Cache Middleware', () => {
       expect(setCache).toHaveBeenCalledWith('test-key', testData, 60);
     });
 
+    /**
+     * Test: cache backend errors should not break the request flow and
+     * middleware should call `next()`.
+     */
     it('should handle cache errors gracefully', async () => {
       getCache.mockRejectedValue(new Error('Cache error'));
 

@@ -1,6 +1,8 @@
-// models/OrderItem.js
 const { DataTypes } = require('sequelize');
 
+/**
+ * Defines the OrderItem model used to store the line items of an order.
+ */
 module.exports = (sequelize) => {
   const OrderItem = sequelize.define('OrderItem', {
     id: {

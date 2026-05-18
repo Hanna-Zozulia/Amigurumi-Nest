@@ -324,7 +324,7 @@ body.admin-page .admin-stat-list {
 
   .btn-primary,
   .btn-success {
-    height: 2.25rem; /* 36px -> 2.25rem */
+    height: 2.25rem;
     font-size: 1rem;
     width: auto;
     padding: 0.375rem 0.75rem;

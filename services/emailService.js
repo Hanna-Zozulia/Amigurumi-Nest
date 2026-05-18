@@ -1,11 +1,12 @@
-// services/emailService.js
-// Email sending utilities
-
 const nodemailer = require('nodemailer');
 const fs = require('fs/promises');
 const path = require('path');
 const { escapeHtml } = require('../utils/htmlUtils');
 
+/**
+ * Builds and returns a nodemailer transporter based on environment configuration.
+ * Returns null when mail settings are not available.
+ */
 function getMailTransporter() {
     const host = process.env.MAIL_HOST;
     const port = Number(process.env.MAIL_PORT || 587);
@@ -41,6 +42,11 @@ function getMailTransporter() {
     return null;
 }
 
+/**
+ * Builds an inline image attachment for use in emails.
+ * Supports data URIs, remote URLs (when fetch is available), and local files.
+ * Returns an object with `attachment` and `src` fields or null on failure.
+ */
 async function buildInlineImageAttachment(imagePath, cidPrefix) {
     const value = String(imagePath || '').trim();
     if (!value) return null;
@@ -119,6 +125,9 @@ async function buildInlineImageAttachment(imagePath, cidPrefix) {
     }
 }
 
+/**
+ * Renders a small HTML card for an order product line to embed into email HTML.
+ */
 function buildProductCardHtml(item) {
     const imageHtml = item.imageCid
         ? `<img src="${item.imageCid}" alt="${escapeHtml(item.name)}" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #e5e7eb;display:block;margin-bottom:8px;" />`
@@ -136,12 +145,18 @@ function buildProductCardHtml(item) {
     `;
 }
 
+/**
+ * Builds a plain-text representation of order product lines for email texts.
+ */
 function buildProductLinesText(items) {
     return items
         .map((item) => `- ${item.name} x${item.quantity} = ${item.lineTotal.toFixed(2)} EUR${item.fallbackImageUrl ? `\n  image: ${item.fallbackImageUrl}` : ''}`)
         .join('\n');
 }
 
+/**
+ * Assembles the plain-text body for an order notification email.
+ */
 function buildOrderEmailText(orderData, productLines) {
     return [
         'Новый заказ с сайта Amigurumi Nest',
@@ -159,6 +174,9 @@ function buildOrderEmailText(orderData, productLines) {
     ].join('\n');
 }
 
+/**
+ * Assembles the HTML body for an order notification email, including product cards.
+ */
 function buildOrderEmailHtml(orderData, productCardsHtml) {
     return `
         <div style="font-family:Arial,sans-serif;color:#111827;line-height:1.5;">

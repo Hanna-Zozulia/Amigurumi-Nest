@@ -1,6 +1,3 @@
-// tests/integration/controllers/cart.edge-cases.test.js
-// Branch coverage tests for cart API controller error/edge cases
-
 jest.mock('../../../models', () => ({
   getModels: require('../../helpers/dbMock').mockGetModels
 }));
@@ -18,6 +15,11 @@ const { mockModels } = require('../../helpers/dbMock');
 const { testUsers } = require('../../fixtures/testData');
 const { invalidateCartCache } = require('../../../services/cacheService');
 
+/**
+ * Create an express app for cart API edge-case integration tests. Routes
+ * call the real API controller functions while session user is pre-set to
+ * `testUsers.regularUser` for each request path.
+ */
 const createTestApp = () => {
   const app = express();
 
@@ -36,6 +38,7 @@ const createTestApp = () => {
 
   const cartController = require('../../../controllers/cartApiController');
 
+  // Routes: simulate authenticated user by injecting `testUsers.regularUser`
   app.get('/api/cart', (req, res, next) => {
     req.session.user = testUsers.regularUser;
     cartController.getCart(req, res, next);
@@ -283,7 +286,7 @@ describe('Cart API Controller - Edge Cases & Error Paths', () => {
   describe('POST /api/cart/clear - Clear all items', () => {
     it('should clear all cart items for user', async () => {
       mockModels.Cart.findOne.mockResolvedValue({ id: 1 });
-      mockModels.CartItem.destroy.mockResolvedValue(2); // 2 items deleted
+      mockModels.CartItem.destroy.mockResolvedValue(2);
 
       const response = await request(app).post('/api/cart/clear');
 

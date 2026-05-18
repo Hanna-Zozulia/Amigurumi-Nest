@@ -17,6 +17,10 @@ const COMMON_WEAK_PASSWORDS = new Set([
     'password123'
 ]);
 
+/**
+ * Validates a password against basic strength rules and a small blacklist.
+ * Returns an object { valid: boolean, errors: string[] } with localized error messages.
+ */
 function validatePassword(password) {
     const value = String(password || '');
     const trimmed = value.trim();

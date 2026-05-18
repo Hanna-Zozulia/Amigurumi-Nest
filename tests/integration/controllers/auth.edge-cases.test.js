@@ -1,6 +1,3 @@
-// tests/integration/controllers/auth.edge-cases.test.js
-// Branch coverage tests for auth controller error paths and edge cases
-
 jest.mock('../../../models', () => ({
   getModels: require('../../helpers/dbMock').mockGetModels
 }));
@@ -28,6 +25,10 @@ const { testUsers } = require('../../fixtures/testData');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 
+/**
+ * Build an express app configured for auth edge-case integration tests. It
+ * mounts auth routes used to exercise error handling and edge branches.
+ */
 const createTestApp = () => {
   const app = express();
 

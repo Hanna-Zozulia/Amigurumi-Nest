@@ -1,3 +1,7 @@
+// Unit tests for `services/profanityFilter` — ensure detection of empty text,
+// profanity (raw and normalized), spam links/advertising and acceptance of
+// clean text. The `leo-profanity` library is mocked to control checks.
+
 jest.mock('leo-profanity', () => ({
   loadDictionary: jest.fn(),
   check: jest.fn((value) => String(value).includes('слово') || String(value).includes('badword'))

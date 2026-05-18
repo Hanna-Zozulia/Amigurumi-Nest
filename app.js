@@ -20,6 +20,11 @@ const { getModels } = require('./models');
 
 const app = express();
 
+/**
+ * Main Express application instance for the Amigurumi Nest server.
+ * This file wires middleware, routes, and initializes background services.
+ */
+
 // SECURITY: require a session secret, fail fast if missing
 if (!process.env.SESSION_SECRET) {
     console.error('FATAL: SESSION_SECRET is not set. Set it in your .env and restart.');
@@ -43,18 +48,22 @@ app.use(
 
                 scriptSrc: [
                     "'self'",
-                    "https://cdn.jsdelivr.net"
+                    "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net",
+                    "https://fonts.googleapis.com"
                 ],
 
                 styleSrc: [
                     "'self'",
                     "'unsafe-inline'",
-                    "https://cdn.jsdelivr.net"
+                    "https://cdn.jsdelivr.net",
+                    "https://fonts.googleapis.com"
                 ],
 
                 fontSrc: [
                     "'self'",
-                    "https://cdn.jsdelivr.net"
+                    "https://cdn.jsdelivr.net",
+                    "https://fonts.gstatic.com"
                 ],
 
                 imgSrc: [
@@ -91,11 +100,19 @@ app.use(
 // ================= MIDDLEWARE =================
 app.use(sessionIdleTimeout);
 
+/**
+ * Middleware: expose a `sessionExpired` flag to views when the session was
+ * marked as expired by server-side session timeout handling.
+ */
 app.use((req, res, next) => {
     res.locals.sessionExpired = !!req.session?.__expired;
     next();
 });
 
+/**
+ * Middleware: expose common view helpers and current user information to
+ * templates via `res.locals` (e.g. `currentUser`, `normalizeImagePath`).
+ */
 app.use((req, res, next) => {
     res.locals.currentUser = req.session.user || null;
     res.locals.normalizeImagePath = normalizeImagePath;
@@ -103,6 +120,11 @@ app.use((req, res, next) => {
     next();
 });
 
+/**
+ * Middleware: when an admin visits admin routes, compute the number of new
+ * reviews since the admin's last visit and expose it as
+ * `res.locals.adminReviewBadgeCount` for the admin UI badge.
+ */
 app.use(async (req, res, next) => {
     if (!req.session.user || req.session.user.role !== 'admin' || !req.originalUrl.startsWith('/admin')) {
         return next();
@@ -145,9 +167,16 @@ app.use(async (req, res, next) => {
 });
 
 // ================= CART MIDDLEWARE =================
+/**
+ * Cart middleware: attaches cart-related helpers and state to the request
+ * (populates `req.cart` / synchronizes session cart state).
+ */
 app.use(cartMiddleware);
 
 // ================= ROUTES =================
+/**
+ * Route mounting: mount web, API and search routers under their prefixes.
+ */
 app.use('/', webRoutes);
 app.use('/api', apiRoutes);
 
@@ -156,11 +185,18 @@ app.use('/api/search', searchRoutes);
 const swaggerRouter = require('./swagger/swagger');
 app.use('/api-docs', swaggerRouter);
 
+/**
+ * 404 handler: render a friendly 404 page for unknown routes.
+ */
 app.use((req, res) => res.status(404).render('404', { title: '404 - Страница не найдена', sessionExpired: false }));
 
 // ================= START SERVER =================
 const port = process.env.PORT || 3000;
 
+/**
+ * Startup sequence: initialize DB and Redis, run one-off inactive-users check,
+ * start the background monitor and then start the HTTP server.
+ */
 Promise.all([initDb(), initRedis()])
     .then(async () => {
         await runInactiveUsersCheck('startup');

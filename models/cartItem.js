@@ -1,4 +1,6 @@
-//cartItem.js
+/**
+ * Defines the CartItem model used to store products and quantities inside a cart.
+ */
 module.exports = (sequelize, DataTypes) => {
   const CartItem = sequelize.define("CartItem", {
     id: {

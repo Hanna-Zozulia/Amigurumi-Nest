@@ -16,18 +16,45 @@ const { reviewRateLimit } = require('../middleware/reviewSecurity');
 const { loginLimiter, registerLimiter } = require('../middleware/rateLimits');
 const { uploadImageAndImage2, handleUploadError } = require('../middleware/uploadMiddleware');
 
-// ===== ГЛАВНАЯ =====
+/**
+ * Renders the public info page.
+ */
+function renderInfoPage(req, res) {
+    return res.render('info');
+}
+
+/**
+ * Renders the public history page.
+ */
+function renderHistoryPage(req, res) {
+    return res.render('history');
+}
+
+/**
+ * Renders the registration form using the shared login view.
+ */
+function renderRegisterPage(req, res) {
+    const errorCode = String(req.query.error || '');
+    return res.render('login', {
+        type: 'register',
+        showError: Boolean(errorCode),
+        errorCode,
+        resetSuccess: false
+    });
+}
+
+// ===== MAIN =====
 router.get('/', productController.homePage);
 
-// ===== СТАТИЧЕСКИЕ СТРАНИЦЫ =====
+// ===== STATIC PAGES =====
 router.get('/info', (req, res) => res.render('info'));
 router.get('/history', (req, res) => res.render('history'));
 
-// ===== КАТАЛОГ =====
+// ===== CATALOG =====
 router.get('/catalog', productController.listPage);
 router.get('/top3', productController.top3Page);
 
-// ===== ОТЗЫВЫ =====
+// ===== REVIEWS =====
 router.post('/review/add', reviewRateLimit, reviewController.addReview);
 router.get('/review/edit/:id', requireAuth, reviewController.editReviewForm);
 router.post('/review/edit/:id', requireAuth, reviewController.updateReview);
@@ -35,7 +62,7 @@ router.post('/review/delete/:id', requireAuth, reviewController.deleteReview);
 router.post('/review/reply/:id', requireAdmin, reviewController.replyReview);
 router.post('/review/reply/delete/:id', requireAdmin, reviewController.deleteReply);
 
-// ===== КОММЕНТАРИИ В АДМИН-ПАНЕЛИ =====
+// ===== ADMIN COMMENTS =====
 router.get('/admin/comments', requireAdmin, adminCommentsController.listCommentsPage);
 router.post('/admin/comments/:id/approve', requireAdmin, adminCommentsController.approveComment);
 router.post('/admin/comments/:id/reply', requireAdmin, adminCommentsController.replyComment);
@@ -43,7 +70,7 @@ router.post('/admin/comments/:id/hide', requireAdmin, adminCommentsController.hi
 router.post('/admin/comments/:id/delete', requireAdmin, adminCommentsController.deleteComment);
 router.post('/admin/comments/:id/restore', requireAdmin, adminCommentsController.restoreComment);
 
-// ===== ПРОДУКТ =====
+// ===== PRODUCT =====
 router.get('/product/:id', productController.showPage);
 router.get('/products/new', requireAdmin, productController.newForm);
 router.post('/products', requireAdmin, uploadImageAndImage2, handleUploadError, productController.create);
@@ -59,7 +86,7 @@ router.post('/admin/orders/:id/status', requireAdmin, orderAdminController.updat
 router.get('/admin/products', requireAdmin, adminProductsController.listProductsAdmin);
 router.get('/admin', requireAdmin, adminDashboardController.adminDashboard);
 
-// ===== ORDERS API (для админа) =====
+// ===== ORDERS API (for admin) =====
 router.get('/orders', requireAdmin, orderAdminController.listOrdersApi);
 router.get('/orders/:id', requireAdmin, orderAdminController.orderDetailsApi);
 router.patch('/orders/:id/status', requireAdmin, orderAdminController.updateOrderStatus);
@@ -74,7 +101,7 @@ router.get('/reset-password/:token', authController.getResetPassword);
 router.post('/reset-password/:token', authController.postResetPassword);
 router.post('/logout', authController.postLogout);
 
-// Регистрация (пока просто форма)
+
 router.get('/register', (req, res) => {
     const errorCode = String(req.query.error || '');
     res.render('login', {
@@ -86,7 +113,7 @@ router.get('/register', (req, res) => {
 });
 router.post('/register', registerLimiter, authController.postRegister);
 
-// ===== КОРЗИНА =====
+// ===== CART =====
 router.get('/cart', cartController.show);
 router.post('/cart/add', cartController.add);
 router.post('/cart/remove', cartController.removeOne);

@@ -101,6 +101,7 @@
                 </tr>
               </thead>
               <tbody>
+                <%# Server-side: render order line items in the order details table %>
                 <% order.items.forEach(item => { %>
                   <tr>
                     <td><%= item.productName %></td>

@@ -20,6 +20,11 @@ const session = require('express-session');
 const { mockModels } = require('../../helpers/dbMock');
 const { testProducts } = require('../../fixtures/testData');
 
+/**
+ * Create an express test app for product controller integration tests. It
+ * ensures a default session user is present and mounts product pages and
+ * admin product management routes for testing.
+ */
 const createTestApp = () => {
   const app = express();
 
@@ -38,7 +43,7 @@ const createTestApp = () => {
     next();
   });
 
-  // 🔥 FIX 1: всегда есть user (иначе showPage падает)
+  // Middleware: ensure a default user is present in session for tests
   app.use((req, res, next) => {
     req.session.user = { id: 1, role: 'user' };
     next();
@@ -89,7 +94,6 @@ describe('Product Controller - Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // 🔥 FIX 2: ВСЕ зависимости, которые используются в controller
     mockModels.Product.findAll.mockResolvedValue([]);
     mockModels.Product.findByPk.mockResolvedValue(testProducts.product1);
     mockModels.Product.increment.mockResolvedValue();
@@ -97,7 +101,6 @@ describe('Product Controller - Integration Tests', () => {
 
     mockModels.Category.findAll.mockResolvedValue([]);
 
-    // 🔥 FIX 3: ВАЖНО — Review используется в homePage/showPage
     mockModels.Review.findAll.mockResolvedValue([]);
 
     mockModels.User.findAll = jest.fn();

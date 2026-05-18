@@ -1,5 +1,8 @@
 const { getCache, setCache } = require('../utils/cache');
 
+/**
+ * Creates a cache middleware that serves GET responses from cache when possible.
+ */
 function cacheGet(options = {}) {
     const {
         keyBuilder,
@@ -8,6 +11,7 @@ function cacheGet(options = {}) {
         skip
     } = options;
 
+    // Handles GET requests by serving cached content or capturing a fresh response.
     return async function cacheGetMiddleware(req, res, next) {
         if (req.method !== 'GET') {
             return next();
@@ -33,6 +37,7 @@ function cacheGet(options = {}) {
             }
 
             if (contentType === 'view') {
+                // Cache successful view responses when res.send is used.
                 const originalSend = res.send.bind(res);
 
                 res.send = (body) => {
@@ -45,6 +50,7 @@ function cacheGet(options = {}) {
                 return next();
             }
 
+            // Cache successful JSON responses when res.json is used.
             const originalJson = res.json.bind(res);
 
             res.json = (body) => {

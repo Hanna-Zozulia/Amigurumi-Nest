@@ -10,6 +10,10 @@ jest.mock('../../../services/cacheService', () => ({
 }));
 
 jest.mock('../../../services/profanityFilter', () => ({
+  /**
+   * Mock profanity checker used in tests. Returns `{ flagged, reason }`
+   * synchronously based on whether the provided value contains 'badword'.
+   */
   checkProfanity: jest.fn((value) => ({
     flagged: String(value).includes('badword'),
     reason: String(value).includes('badword') ? 'profanity' : null
@@ -31,6 +35,10 @@ describe('Admin flows', () => {
   });
 
   describe('adminCommentsController', () => {
+    /**
+     * Test: renders the admin comments page with provided filters and
+     * ensures the rendered view receives structured comment objects.
+     */
     it('renders filtered comments page', async () => {
       mockModels.Review.findAll.mockResolvedValueOnce([
         {
@@ -80,6 +88,10 @@ describe('Admin flows', () => {
       }));
     });
 
+    /**
+     * Test: exercise comment actions (reply, approve, delete, restore)
+     * and verify status codes / redirects for edge-case inputs.
+     */
     it('handles comment actions and edge cases', async () => {
       mockModels.Review.findByPk
         .mockResolvedValueOnce(null)
@@ -178,6 +190,10 @@ describe('Admin flows', () => {
   });
 
   describe('orderAdminController', () => {
+    /**
+     * Test: listOrdersPage, orderDetailsPage and corresponding API endpoints
+     * should return expected view data and JSON structures for valid orders.
+     */
     it('renders order pages and api responses', async () => {
       const order = {
         id: 10,
@@ -235,6 +251,10 @@ describe('Admin flows', () => {
       }));
     });
 
+    /**
+     * Test: invalid and missing order id handling — controllers should
+     * respond with appropriate error status codes and JSON responses.
+     */
     it('handles invalid and missing order ids', async () => {
       const invalidReq = createMockRequest({ session: { user: { id: 2, role: 'admin' } }, params: { id: 'x' } });
       const invalidRes = createMockResponse();

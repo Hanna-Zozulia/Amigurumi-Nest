@@ -1,5 +1,3 @@
-// tests/e2e/api.endpoints.test.js
-
 jest.mock('../../models', () => ({
   getModels: require('../helpers/dbMock').mockGetModels,
   initDb: jest.fn(async () => Promise.resolve())
@@ -21,6 +19,11 @@ const { getModels } = require('../../models');
 const { mockModels } = require('../helpers/dbMock');
 const { testProducts } = require('../fixtures/testData');
 
+/**
+ * Create an express app instance wired with minimal routes used in E2E
+ * tests for the API endpoints. Routes are wired to real controllers, while
+ * authentication is simulated by small middleware that injects `req.session.user`.
+ */
 const createApp = () => {
   const app = express();
   app.use(express.json());
@@ -37,35 +40,42 @@ const createApp = () => {
   // Product API routes
   app.get('/api/products', apiController.list);
   app.get('/api/products/:id', apiController.getOne);
+  // Middleware: simulate an admin session for create/update/delete product routes
   app.post('/api/products', (req, res, next) => {
     req.session.user = { id: 2, role: 'admin' };
     next();
   }, apiController.create);
+  // Middleware: simulate an admin session for create/update/delete product routes
   app.put('/api/products/:id', (req, res, next) => {
     req.session.user = { id: 2, role: 'admin' };
     next();
   }, apiController.update);
+  // Middleware: simulate an admin session for create/update/delete product routes
   app.delete('/api/products/:id', (req, res, next) => {
     req.session.user = { id: 2, role: 'admin' };
     next();
   }, apiController.remove);
 
   // Cart API routes
+  // Middleware: simulate an authenticated user for cart endpoints
   app.get('/api/cart', (req, res, next) => {
     req.session.user = { id: 1 };
     next();
   }, cartController.getCart);
 
+  // Middleware: simulate an authenticated user for cart endpoints
   app.post('/api/cart/add', (req, res, next) => {
     req.session.user = { id: 1 };
     next();
   }, cartController.add);
 
+  // Middleware: simulate an authenticated user for cart endpoints
   app.post('/api/cart/remove', (req, res, next) => {
     req.session.user = { id: 1 };
     next();
   }, cartController.removeOne);
 
+  // Middleware: simulate an authenticated user for cart endpoints
   app.post('/api/cart/clear', (req, res, next) => {
     req.session.user = { id: 1 };
     next();

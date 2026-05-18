@@ -1,6 +1,11 @@
 const { test, expect } = require('@playwright/test');
 const { loginAsAdmin } = require('./uiTestUtils');
 
+/**
+ * Admin access tests: verify that guests are redirected to login when
+ * accessing admin routes, and that an admin user can log in and reach key
+ * admin pages (dashboard, products, comments) with expected UI elements.
+ */
 test('guest users are redirected away from the admin area', async ({ page }) => {
   await page.goto('/admin');
 

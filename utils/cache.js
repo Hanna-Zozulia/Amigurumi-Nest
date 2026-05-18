@@ -1,110 +1,4 @@
-// //utils/cache.js
-// const { getRedisClient } = require('../config/redis');
-
-// function logCacheError(action, key, err) {
-//     console.error(`[CACHE:${action}] ${key} - ${err.message}`);
-// }
-
-// function safeParseJSON(raw, key) {
-//     try {
-//         return { ok: true, value: JSON.parse(raw) };
-//     } catch (err) {
-//         logCacheError('PARSE', key, err);
-//         return { ok: false, value: null };
-//     }
-// }
-
-// async function getCache(key) {
-//     try {
-//         const client = getRedisClient();
-//         const value = await client.get(key);
-//         if (value === null) {
-//             console.log(`CACHE MISS: ${key}`);
-//             return null;
-//         }
-
-//         const parsed = safeParseJSON(value, key);
-//         if (!parsed.ok) {
-//             await deleteCache(key);
-//             console.log(`CACHE MISS: ${key}`);
-//             return null;
-//         }
-
-//         console.log(`CACHE HIT: ${key}`);
-//         return parsed.value;
-//     } catch (err) {
-//         logCacheError('GET', key, err);
-//         return null;
-//     }
-// }
-
-// async function setCache(key, data, ttl = 60) {
-//     try {
-//         const client = getRedisClient();
-//         await client.setEx(key, Number(ttl) || 60, JSON.stringify(data));
-//         return true;
-//     } catch (err) {
-//         logCacheError('SET', key, err);
-//         return false;
-//     }
-// }
-
-// async function deleteCache(key) {
-//     try {
-//         const client = getRedisClient();
-//         return await client.del(key);
-//     } catch (err) {
-//         logCacheError('DEL', key, err);
-//         return 0;
-//     }
-// }
-
-// async function clearCacheByPattern(pattern) {
-//     try {
-//         const client = getRedisClient();
-
-//         let cursor = '0';
-//         let deleted = 0;
-
-//         do {
-//             const result = await client.scan(cursor, {
-//                 MATCH: pattern,
-//                 COUNT: 100
-//             });
-
-//             cursor = result.cursor;
-//             const keys = result.keys || [];
-
-//             if (keys.length > 0) {
-//                 deleted += await client.del(...keys);
-//             }
-//         } while (cursor !== '0');
-
-//         return deleted;
-//     } catch (err) {
-//         logCacheError('CLEAR_PATTERN', pattern, err);
-//         return 0;
-//     }
-// }
-
-// async function cached(key, ttl = 60, loaderFn) {
-//     const cacheValue = await getCache(key);
-//     if (cacheValue !== null) {
-//         return cacheValue;
-//     }
-
-//     const freshData = await loaderFn();
-//     await setCache(key, freshData, ttl);
-//     return freshData;
-// }
-
-// module.exports = {
-//     getCache,
-//     setCache,
-//     deleteCache,
-//     clearCacheByPattern,
-//     cached
-// };
+// Generic Redis-backed cache utilities with TTL support and safe JSON parsing.
 
 const { getRedisClient } = require('../config/redis');
 
@@ -113,7 +7,7 @@ function logCacheError(action, key, err) {
 }
 
 /**
- * Безопасный JSON parse
+ * Safely parse JSON and return an object { ok, value }.
  */
 function safeParseJSON(raw, key) {
     try {
@@ -125,7 +19,8 @@ function safeParseJSON(raw, key) {
 }
 
 /**
- * Безопасный Redis клиент (для тестов и fallback)
+ * Returns a safe Redis client. If Redis is unavailable returns a fallback that
+ * implements the minimal async methods used by the cache utils.
  */
 function safeRedisClient() {
     try {
@@ -154,12 +49,20 @@ function safeRedisClient() {
 }
 
 /**
- * GET CACHE
+ * Retrieves a cached value by key. Returns null on miss or parse error.
  */
 async function getCache(key) {
     try {
         const client = safeRedisClient();
         const value = await client.get(key);
+
+        if (process.env.NODE_ENV !== 'production') {
+            if (value) {
+                console.log('[CACHE HIT]', key);
+            } else {
+                console.log('[CACHE MISS]', key);
+            }
+        }
 
         if (value === null || value === undefined) {
             return null;
@@ -181,7 +84,7 @@ async function getCache(key) {
 }
 
 /**
- * SET CACHE
+ * Stores a JSON-serializable value in the cache for `ttl` seconds.
  */
 async function setCache(key, data, ttl = 60) {
     try {
@@ -204,7 +107,7 @@ async function setCache(key, data, ttl = 60) {
 }
 
 /**
- * DELETE CACHE
+ * Deletes a cache entry by key.
  */
 async function deleteCache(key) {
     try {
@@ -217,7 +120,7 @@ async function deleteCache(key) {
 }
 
 /**
- * CLEAR BY PATTERN
+ * Clears cache entries matching a Redis pattern using SCAN + DEL.
  */
 async function clearCacheByPattern(pattern) {
     try {
@@ -250,7 +153,7 @@ async function clearCacheByPattern(pattern) {
 }
 
 /**
- * CACHE WRAPPER
+ * Caching wrapper: returns cached value or calls loaderFn and caches the result.
  */
 async function cached(key, ttl = 60, loaderFn) {
     try {
@@ -273,7 +176,6 @@ async function cached(key, ttl = 60, loaderFn) {
     } catch (err) {
         console.error(`[CACHE:CACHED] ${key} - ${err.message}`);
 
-        // fallback — никогда не ломаем request
         try {
             return await loaderFn();
         } catch (loaderErr) {

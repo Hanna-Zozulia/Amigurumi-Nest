@@ -1,6 +1,3 @@
-// controllers/reviewController.js
-// Review/Comment handling
-
 const { getModels } = require('../models');
 const { checkProfanity } = require('../services/profanityFilter');
 const { invalidateReviewsCache } = require('../services/cacheService');
@@ -10,6 +7,9 @@ const ORDER_RECEIVER_EMAIL = process.env.ORDER_RECEIVER_EMAIL || process.env.MAI
 let lastReviewEmailAt = 0;
 const EMAIL_COOLDOWN_MS = 5 * 60 * 1000;
 
+/**
+ * Creates a new review, applies moderation, and notifies the admin inbox when needed.
+ */
 async function addReview(req, res) {
     try {
         const { Review } = getModels();
@@ -60,6 +60,9 @@ async function addReview(req, res) {
     }
 }
 
+/**
+ * Renders the review edit form for the review owner.
+ */
 async function editReviewForm(req, res) {
     const { Review } = getModels();
 
@@ -67,7 +70,7 @@ async function editReviewForm(req, res) {
 
     if (!review) return res.status(404).send('Not found');
 
-    // защита: только свой отзыв
+    // Allow only the review owner to edit this review.
     if (review.userId !== req.session.user.id) {
         return res.status(403).send('Forbidden');
     }
@@ -75,6 +78,9 @@ async function editReviewForm(req, res) {
     res.render('edit_review', { review });
 }
 
+/**
+ * Updates a review after verifying ownership and moderation rules.
+ */
 async function updateReview(req, res) {
     const { Review } = getModels();
 
@@ -105,6 +111,9 @@ async function updateReview(req, res) {
     return res.redirect('/product/' + review.productId);
 }
 
+/**
+ * Deletes a review when the caller is allowed to do so.
+ */
 async function deleteReview(req, res) {
     const { Review } = getModels();
 
@@ -141,6 +150,9 @@ async function deleteReview(req, res) {
     return res.redirect('/product/' + review.productId);
 }
 
+/**
+ * Saves an admin reply for a review.
+ */
 async function replyReview(req, res) {
     const { Review } = getModels();
 
@@ -171,6 +183,9 @@ async function replyReview(req, res) {
     res.redirect('/product/' + review.productId);
 }
 
+/**
+ * Removes an admin reply from a review.
+ */
 async function deleteReply(req, res) {
     const { Review } = getModels();
 

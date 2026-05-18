@@ -1,4 +1,5 @@
-// tests/unit/utils/cache.test.js
+// Unit tests for `utils/cache` verifying get/set/delete operations and the
+// cached() wrapper behavior using an in-memory redis mock.
 
 jest.mock('../../../config/redis', () => ({
   getRedisClient: jest.fn()

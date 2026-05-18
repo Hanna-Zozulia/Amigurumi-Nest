@@ -1,5 +1,3 @@
-// tests/e2e/checkout.flow.test.js
-
 jest.mock('../../models', () => ({
   getModels: require('../helpers/dbMock').mockGetModels,
   initDb: jest.fn(async () => Promise.resolve())
@@ -29,6 +27,11 @@ const { mockModels } = require('../helpers/dbMock');
 const orderService = require('../../services/orderService');
 const { testProducts } = require('../fixtures/testData');
 
+/**
+ * Create a minimal express app for checkout E2E tests. Routes use real
+ * controllers while user authentication is simulated by middleware that sets
+ * `req.session.user` when needed.
+ */
 const createApp = () => {
   const app = express();
   app.use(express.urlencoded({ extended: true }));
@@ -46,6 +49,7 @@ const createApp = () => {
   const cartController = require('../../controllers/cartWebController');
   const orderController = require('../../controllers/orderController');
 
+  // Middleware: simulate an authenticated user for cart add action
   app.post('/cart/add', (req, res, next) => {
     req.session.user = { id: 1 };
     next();
@@ -53,6 +57,7 @@ const createApp = () => {
 
   app.get('/checkout', orderController.checkoutPage);
   
+  // Middleware: simulate an authenticated user for order creation
   app.post('/order', (req, res, next) => {
     req.session.user = { id: 1 };
     next();

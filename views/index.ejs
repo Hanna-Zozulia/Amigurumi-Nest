@@ -1,7 +1,7 @@
 <%- include('partials/header', { title: 'Amigurumi Nest' }) %>
   <div class="container">
 
-    <!-- Блок 1 -->
+    <!-- Block 1 -->
       <div class="row block">
         <div class="col-md-6 h1">
           <h1>Amigurumi Nest — это мир мягких вязаных чудес.</h1>
@@ -11,6 +11,7 @@
           <div class="vertical-slider">
             <div class="slider-track">
 
+              <%# Server-side: render slider items by iterating over `products` by index %>
               <% for (let i = 0; i < (products || []).length; i += 1) { %>
                 <div class="toys-item">
                   <a href="/product/<%= products[i].id %>">
@@ -24,7 +25,7 @@
         </div>
       </div>
 
-  <!-- Блок 2 (оставляем как есть, это контент) -->
+  <!-- Block 2 -->
     <div class="row block_2">
       <div class="col-md-6 h2">
         <h2>Почему выбирают наши игрушки?</h2>
@@ -40,12 +41,13 @@
       </div>
     </div>
 
-  <!-- Блок 3 = реальные продукты -->
+  <!-- Block 3 -->
     <div class="row block_3">
         <h2>Тренды сейчас</h2>
 
         <div class="block_3 toy-row">
           
+          <%# Server-side: render product cards for the "Trends" section %>
           <% (products || []).forEach(function(product) { %>
             
             <div class="toy-item">
@@ -67,6 +69,7 @@
 
       <div class="reviews-grid">
 
+        <%# Server-side: render list of recent reviews provided in `reviews` %>
         <% reviews.forEach(review => { %>
           <div class="review-item">
             <h4><strong><%= review.User.name %></strong></h4>

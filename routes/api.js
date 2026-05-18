@@ -9,6 +9,27 @@ const api = require('../controllers/productApiController');
 const cart = require('../controllers/cartApiController');
 const orderAdminController = require('../controllers/orderAdminController');
 
+/**
+ * Returns the cache key for the product list endpoint.
+ */
+function getProductsCacheKey() {
+	return cacheKeys.products;
+}
+
+/**
+ * Returns the cache key for a single product endpoint.
+ */
+function getProductCacheKey(req) {
+	return cacheKeys.product(req.params.id);
+}
+
+/**
+ * Returns the cache key for the current user's cart endpoint.
+ */
+function getCartCacheKey(req) {
+	return cacheKeys.cart(req.session.user?.id || 'guest');
+}
+
 // ================= PRODUCTS =================
 router.get('/products', cacheGet({ keyBuilder: () => cacheKeys.products, ttl: 60 }), api.list);
 router.get('/products/:id', cacheGet({ keyBuilder: (req) => cacheKeys.product(req.params.id), ttl: 60 }), api.getOne);

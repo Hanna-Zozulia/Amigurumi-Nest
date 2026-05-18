@@ -1,6 +1,7 @@
-// utils/htmlUtils.js
-// HTML and URL helper functions
-
+/**
+ * Returns the base URL for the site. Prefers `APP_URL`/`BASE_URL` env vars,
+ * otherwise builds the URL from request protocol and host header.
+ */
 function getSiteBaseUrl(req) {
     const configuredBaseUrl = String(process.env.APP_URL || process.env.BASE_URL || '').trim();
     if (configuredBaseUrl) {
@@ -13,6 +14,10 @@ function getSiteBaseUrl(req) {
     return host ? `${protocol}://${host}` : '';
 }
 
+/**
+ * Converts an image path to an absolute URL using `baseUrl`.
+ * Leaves remote URLs and data URIs unchanged.
+ */
 function getAbsoluteImageUrl(imagePath, baseUrl) {
     const value = String(imagePath || '').trim();
     if (!value) return '';
@@ -28,6 +33,9 @@ function getAbsoluteImageUrl(imagePath, baseUrl) {
     return `${baseUrl.replace(/\/$/, '')}/${value.replace(/^\//, '')}`;
 }
 
+/**
+ * Escapes special HTML characters to prevent injection in rendered markup.
+ */
 function escapeHtml(value) {
     return String(value || '')
         .replace(/&/g, '&amp;')
@@ -37,6 +45,9 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
+/**
+ * Returns a localized message for a given review error code, or null.
+ */
 function getReviewErrorMessage(code) {
     const messages = {
         'empty': 'Комментарий не должен быть пустым.',

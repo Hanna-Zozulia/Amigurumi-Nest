@@ -1,6 +1,8 @@
-// Модель пользователя
 const { DataTypes } = require('sequelize');
 
+/**
+ * Defines the User model used for authentication, roles, and profile data.
+ */
 module.exports = (sequelize) => {
     const User = sequelize.define(
         'User',

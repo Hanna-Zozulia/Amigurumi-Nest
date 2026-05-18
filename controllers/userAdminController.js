@@ -3,6 +3,9 @@ const { formatDateRu } = require('../utils/dateFormatter');
 
 const ALLOWED_STATUSES = new Set(['active', 'inactive', 'suspended']);
 
+/**
+ * Renders the admin user list with formatted date values.
+ */
 async function showInactiveUsers(req, res) {
     const { User } = getModels();
 
@@ -34,6 +37,9 @@ async function showInactiveUsers(req, res) {
     });
 }
 
+/**
+ * Updates the status of a regular user from the admin panel.
+ */
 async function updateUserStatus(req, res) {
     const { User } = getModels();
     const userId = Number(req.params.id);

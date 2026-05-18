@@ -1,5 +1,10 @@
 const { test, expect } = require('@playwright/test');
 
+/**
+ * UI navigation test: ensure the catalog page shows product listings and
+ * that clicking a product link navigates to a product details page with
+ * expected interactive elements (add-to-cart form, back link).
+ */
 test('catalog page lists products and opens a product page', async ({ page }) => {
   await page.goto('/catalog');
 

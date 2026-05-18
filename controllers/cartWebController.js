@@ -1,7 +1,9 @@
-//cartWebController.js
 const { getModels } = require('../models');
 const { invalidateCartCache } = require('../services/cacheService');
 
+/**
+ * Rebuilds a guest cart from session items and attaches product details.
+ */
 async function loadSessionCart(sessionCart, Product) {
     const items = Array.isArray(sessionCart?.items) ? sessionCart.items : [];
 
@@ -22,6 +24,9 @@ async function loadSessionCart(sessionCart, Product) {
     };
 }
 
+/**
+ * Loads the correct cart for the current request, authenticated or guest.
+ */
 async function getCartForRequest(req) {
     const { Cart, CartItem, Product } = getModels();
     const userId = req.session.user?.id;
@@ -38,12 +43,18 @@ async function getCartForRequest(req) {
     return loadSessionCart(req.session.cart, Product);
 }
 
+/**
+ * Renders the cart page for the current user or guest session.
+ */
 async function show(req, res) {
     const cart = await getCartForRequest(req);
 
     res.render('cart', { cart });
 }
 
+/**
+ * Adds a product to the current cart and redirects back to the cart page.
+ */
 async function add(req, res) {
     const { Cart, CartItem } = getModels();
     const { productId } = req.body;
@@ -87,6 +98,9 @@ async function add(req, res) {
     res.redirect("/cart");
 }
 
+/**
+ * Removes one unit of a product from the current cart.
+ */
 async function removeOne(req, res) {
     const { Cart, CartItem } = getModels();
     const { productId } = req.body;
@@ -130,6 +144,9 @@ async function removeOne(req, res) {
     res.redirect("/cart");
 }
 
+/**
+ * Clears the current cart for either an authenticated user or a guest.
+ */
 async function clear(req, res) {
     const { Cart, CartItem } = getModels();
 

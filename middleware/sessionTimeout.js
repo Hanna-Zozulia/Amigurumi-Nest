@@ -1,6 +1,9 @@
 const DEFAULT_USER_TIMEOUT = Number(process.env.SESSION_IDLE_TIMEOUT_MS || 30 * 60 * 1000);
 const ADMIN_TIMEOUT = Number(process.env.ADMIN_SESSION_IDLE_TIMEOUT_MS || 15 * 60 * 1000);
 
+/**
+ * Returns the idle timeout that applies to the current session role.
+ */
 function getSessionTimeout(req) {
     const role = req.session?.user?.role;
 
@@ -11,6 +14,9 @@ function getSessionTimeout(req) {
     return DEFAULT_USER_TIMEOUT;
 }
 
+/**
+ * Marks authenticated sessions as expired after inactivity and refreshes activity timestamps.
+ */
 function sessionIdleTimeout(req, res, next) {
     if (!req.session || !req.session.user) {
 
@@ -28,16 +34,16 @@ function sessionIdleTimeout(req, res, next) {
     if (isExpired) {
         req.session.__expired = true;
 
-        // sync cookie timeout with role
+        // Keep the cookie lifetime aligned with the session timeout.
         req.session.cookie.maxAge = timeout;
     
         return next();
     }
 
-    // обновляем активность
+    // Record the current activity timestamp.
     req.session.lastActivity = now;
 
-    // синхронизация cookie maxAge под роль
+    // Keep the cookie lifetime aligned with the session timeout.
     req.session.cookie.maxAge = timeout;
 
     return next();

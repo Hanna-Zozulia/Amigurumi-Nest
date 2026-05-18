@@ -1,3 +1,6 @@
+/**
+ * Defines the Category model and its product association helper.
+ */
 module.exports = (sequelize, DataTypes) => {
   const Category = sequelize.define("Category", {
     id: {
@@ -15,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true
   });
 
+  /**
+   * Registers the Category -> Product association used by Sequelize.
+   */
   Category.associate = (models) => {
     Category.hasMany(models.Product, {
       foreignKey: "categoryId",

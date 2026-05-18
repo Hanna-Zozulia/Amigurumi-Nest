@@ -1,5 +1,7 @@
-// tests/helpers/testHelpers.js - утилиты для тестов
-
+/**
+ * Create a minimal mock Express `req` object for unit tests.
+ * Accepts an `overrides` object to customize session, body, params, etc.
+ */
 const createMockRequest = (overrides = {}) => ({
   session: {
   user: {
@@ -26,6 +28,11 @@ const createMockRequest = (overrides = {}) => ({
   ...overrides
 });
 
+/**
+ * Create a mock Express `res` object with commonly used response helpers
+ * (`status`, `json`, `send`, `render`, `redirect`, `cookie`, etc.) mocked
+ * via `jest.fn` so tests can assert calls and captured values.
+ */
 const createMockResponse = (overrides = {}) => {
   const res = {
     status: jest.fn(function(code) {
@@ -62,8 +69,15 @@ const createMockResponse = (overrides = {}) => {
   return res;
 };
 
+/**
+ * Create a mock `next` function for middleware tests.
+ */
 const createMockNext = () => jest.fn();
 
+/**
+ * Helper: create a mock request object pre-populated with an authenticated
+ * `session.user`. Accepts an optional `user` override.
+ */
 const createAuthenticatedRequest = (user = null) => {
   return createMockRequest({
     session: {
@@ -80,6 +94,10 @@ const createAuthenticatedRequest = (user = null) => {
   });
 };
 
+/**
+ * Helper: create a mock request object representing an admin user session.
+ * Accepts `overrides` to customize returned object.
+ */
 const createAdminRequest = (overrides = {}) => ({
   session: {
     user: {

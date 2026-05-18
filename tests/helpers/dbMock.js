@@ -1,5 +1,8 @@
-// tests/helpers/dbMock.js - мокирование Sequelize моделей
-
+/**
+ * Create a lightweight mock of a Sequelize-like model exposing commonly used
+ * methods (`findByPk`, `findOne`, `findAll`, `create`, `update`, etc.) mocked
+ * with `jest.fn()` so unit tests can stub behaviors per-test.
+ */
 const createMockModel = (name) => ({
   findByPk: jest.fn(),
   findOne: jest.fn(),

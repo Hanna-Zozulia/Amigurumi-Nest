@@ -5,6 +5,10 @@ const adminCredentials = {
   password: process.env.ADMIN_PASSWORD || '123'
 };
 
+/**
+ * Playwright helper: navigate to the login page and authenticate using the
+ * configured admin credentials. `page` is a Playwright `Page` instance.
+ */
 async function loginAsAdmin(page) {
   await page.goto('/login');
   await page.locator('#email').fill(adminCredentials.email);

@@ -1,5 +1,6 @@
-// tests/fixtures/testData.js - тестовые данные для использования в тестах
-
+/**
+ * Example users used in tests. Contains a regular user and an admin user.
+ */
 const testUsers = {
   regularUser: {
     id: 1,
@@ -21,6 +22,10 @@ const testUsers = {
   }
 };
 
+/**
+ * Example product fixtures. Each product contains minimal fields the app
+ * expects (id, name, desc, price, images, categoryId, views, isNew).
+ */
 const testProducts = {
   product1: {
     id: 1,
@@ -50,6 +55,10 @@ const testProducts = {
   }
 };
 
+/**
+ * Example cart fixtures. Represent user carts with items arrays used in
+ * cart/order related tests.
+ */
 const testCarts = {
   cart1: {
     id: 1,
@@ -60,6 +69,10 @@ const testCarts = {
   }
 };
 
+/**
+ * Example review fixtures. Used to test review creation, moderation and
+ * admin reply flows.
+ */
 const testReviews = {
   review1: {
     id: 1,
@@ -75,6 +88,10 @@ const testReviews = {
   }
 };
 
+/**
+ * Example order fixtures. Represent a completed order payload used in
+ * checkout and order-related tests.
+ */
 const testOrders = {
   order1: {
     id: 1,

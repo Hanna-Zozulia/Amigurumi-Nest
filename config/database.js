@@ -1,6 +1,10 @@
 const mysql = require("mysql2/promise");
 const { Sequelize } = require("sequelize");
 
+/**
+ * Creates and validates the MySQL connection and Sequelize instance.
+ * Ensures the target database exists before the app starts using it.
+ */
 async function createSequelize() {
   try {
     const host = process.env.DB_HOST || "localhost";
@@ -9,7 +13,7 @@ async function createSequelize() {
     const pass = process.env.DB_PASS || "";
     const dbName = process.env.DB_NAME || "toys";
 
-    // 1. Создаём БД если её нет
+    // Create the database if it does not exist yet.
     const connection = await mysql.createConnection({
       host,
       port,
@@ -23,7 +27,7 @@ async function createSequelize() {
 
     await connection.end();
 
-    // 2. Подключаем Sequelize
+    // Initialize Sequelize after the database is ready.
     const sequelize = new Sequelize(dbName, user, pass, {
       host,
       port,
@@ -31,7 +35,7 @@ async function createSequelize() {
       logging: false,
     });
 
-    // 3. Проверка подключения
+    // Verify that Sequelize can connect successfully.
     await sequelize.authenticate();
     console.log("Database connected");
 

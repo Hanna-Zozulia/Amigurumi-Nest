@@ -1,5 +1,3 @@
-// tests/helpers/setupTests.js - инициализация тестовой среды
-
 process.env.NODE_ENV = 'test';
 process.env.SESSION_SECRET = 'test-secret-key';
 process.env.DATABASE_HOST = 'localhost';
@@ -19,7 +17,7 @@ process.env.MAIL_PASS = 'test-password';
 process.env.MAIL_FROM = 'test@gmail.com';
 process.env.ORDER_RECEIVER_EMAIL = 'test@gmail.com';
 
-// Очистка логов в консоли во время тестов
+// Silence console output during tests by replacing common methods with jest mocks
 global.console = {
   ...console,
   log: jest.fn(),
@@ -27,6 +25,9 @@ global.console = {
   warn: jest.fn(),
 };
 
+/**
+ * Reset jest mocks before each test to ensure isolation between tests.
+ */
 beforeEach(() => {
   jest.clearAllMocks();
 });

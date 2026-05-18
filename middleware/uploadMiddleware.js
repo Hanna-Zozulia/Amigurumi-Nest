@@ -3,17 +3,23 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-// Убедимся, что директория uploads существует
+// Ensure the uploads directory exists before any file handling starts.
 const uploadDir = path.join(__dirname, '../public/img/uploads/');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Конфигурация хранилища
+// Configure disk storage for uploaded files.
 const storage = multer.diskStorage({
+    /**
+     * Sends uploaded files to the shared uploads directory.
+     */
     destination: (req, file, cb) => {
         cb(null, uploadDir);
     },
+    /**
+     * Generates a short, normalized filename for each upload.
+     */
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
 
@@ -29,7 +35,7 @@ const storage = multer.diskStorage({
     }
 });
 
-// Фильтр файлов - только изображения
+// Accept images only.
 const fileFilter = (req, file, cb) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     
@@ -40,7 +46,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Создаем upload middleware
+// Create the reusable Multer upload middleware.
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
@@ -49,7 +55,9 @@ const upload = multer({
     }
 });
 
-// Middleware для обработки ошибок multer
+/**
+ * Converts Multer errors into consistent HTTP responses.
+ */
 function handleUploadError(err, req, res, next) {
 
     if (err instanceof multer.MulterError) {

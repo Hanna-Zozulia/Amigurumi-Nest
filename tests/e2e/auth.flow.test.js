@@ -1,5 +1,3 @@
-// tests/e2e/auth.flow.test.js
-
 jest.mock('../../models', () => ({
   getModels: require('../helpers/dbMock').mockGetModels,
   initDb: jest.fn(async () => Promise.resolve())
@@ -23,6 +21,11 @@ const { getModels } = require('../../models');
 const { mockModels } = require('../helpers/dbMock');
 const bcrypt = require('bcryptjs');
 
+/**
+ * Create an express app instance configured with the authentication routes
+ * used by E2E tests. Uses real controllers but keeps sessions/cookies simple
+ * for test isolation.
+ */
 const createApp = () => {
   const app = express();
   app.use(express.urlencoded({ extended: true }));

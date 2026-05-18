@@ -21,7 +21,7 @@
         </div>
         
         <% if (sessionExpired) { %>
-          <!-- Режим: Сессия истекла -->
+          <!-- Status: Session has expired -->
           <div class="error-page-code fw-bold">⏱️</div>
           <h1 class="error-page-title h2">Сессия завершена</h1>
           <p class="error-page-subtitle">
@@ -33,7 +33,7 @@
             </a>
           </div>
         <% } else { %>
-          <!-- Режим: Обычный 404 -->
+          <!-- Status: Regular 404 -->
           <div class="error-page-code fw-bold">404</div>
           <h1 class="error-page-title h2">Страница не найдена</h1>
           <p class="error-page-subtitle">

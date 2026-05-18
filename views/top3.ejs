@@ -4,6 +4,7 @@
 
     <div class="row">
 
+        <%# Server-side: render top-3 product tiles from `products` %>
         <% (products || []).forEach(function(product) { %>
             <div class="col-md-4 top3 mt-4">
                 <a href="/product/<%= product.id %>" class="catalog-image-link">

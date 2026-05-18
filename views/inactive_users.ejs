@@ -37,6 +37,7 @@
           </tr>
         </thead>
         <tbody>
+          <%# Server-side: render the users table rows from `users` array %>
           <% users.forEach(user => { %>
             <tr>
               <td><small>#<%= user.id %></small></td>
@@ -56,6 +57,7 @@
               <td class="text-end">
                 <form method="post" action="/admin/users/<%= user.id %>/status" class="d-flex gap-2 justify-content-end">
                   <select name="status" class="form-select form-select-sm admin-user-status-select">
+                    <%# Server-side: render status `<option>` entries for the user status select %>
                     <% allowedStatuses.forEach(status => { %>
                       <option value="<%= status %>" <%= user.status === status ? 'selected' : '' %>>
                         <%= status %>

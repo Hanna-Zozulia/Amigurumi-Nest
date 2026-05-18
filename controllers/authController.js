@@ -1,4 +1,3 @@
-//authController.js
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
@@ -10,6 +9,9 @@ const { DEFAULT_USER_TIMEOUT, ADMIN_TIMEOUT } = require('../middleware/sessionTi
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
+/**
+ * Creates the mail transporter used for password reset emails.
+ */
 function getMailTransporter() {
     const host = process.env.MAIL_HOST;
     const port = Number(process.env.MAIL_PORT || 587);
@@ -37,6 +39,9 @@ function getMailTransporter() {
     return null;
 }
 
+/**
+ * Sends the password reset email or logs the reset link when mail is not configured.
+ */
 async function sendResetPasswordEmail({ email, resetLink }) {
     const transporter = getMailTransporter();
     const from = process.env.MAIL_FROM || process.env.MAIL_USER;
@@ -72,6 +77,9 @@ async function sendResetPasswordEmail({ email, resetLink }) {
     });
 }
 
+/**
+ * Creates a one-time reset token and stores its hashed value and expiration.
+ */
 function buildResetTokenPayload() {
     const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
@@ -80,10 +88,16 @@ function buildResetTokenPayload() {
     return { rawToken, tokenHash, expiresAt };
 }
 
+/**
+ * Hashes a reset token before comparing it with the stored value.
+ */
 function hashResetToken(token) {
     return crypto.createHash('sha256').update(String(token || '')).digest('hex');
 }
 
+/**
+ * Merges guest cart items from the session into the authenticated user's cart.
+ */
 async function mergeSessionCartIntoUser(req, userId) {
     const { Cart, CartItem } = getModels();
     const sessionItems = Array.isArray(req.session.cart?.items) ? req.session.cart.items : [];
@@ -124,6 +138,9 @@ async function mergeSessionCartIntoUser(req, userId) {
     req.session.cart = { items: [] };
 }
 
+/**
+ * Wraps session regeneration in a promise so auth flows can await it.
+ */
 function regenerateSession(req) {
     return new Promise((resolve, reject) => {
         req.session.regenerate((err) => {
@@ -137,6 +154,9 @@ function regenerateSession(req) {
     });
 }
 
+/**
+ * Stores the authenticated user and session timeout metadata.
+ */
 function startAuthenticatedSession(req, user) {
     const now = Date.now();
     const timeout = user.role === 'admin' ? ADMIN_TIMEOUT : DEFAULT_USER_TIMEOUT;
@@ -153,6 +173,9 @@ function startAuthenticatedSession(req, user) {
 }
 
 // GET /login
+/**
+ * Renders the login page and exposes login-related status flags.
+ */
 async function getLogin(req, res) {
     if (req.session.user) return res.redirect('/');
 
@@ -170,6 +193,9 @@ async function getLogin(req, res) {
 }
 
 // GET /forgot-password
+/**
+ * Renders the password recovery form.
+ */
 async function getForgotPassword(req, res) {
     res.render('forgot_password', {
         title: 'Восстановление пароля',
@@ -178,6 +204,9 @@ async function getForgotPassword(req, res) {
 }
 
 // POST /forgot-password
+/**
+ * Starts the password reset flow and sends a reset link when the user exists.
+ */
 async function postForgotPassword(req, res) {
     const { User } = getModels();
     const normalizedEmail = String(req.body.email || '').trim().toLowerCase();
@@ -211,6 +240,9 @@ async function postForgotPassword(req, res) {
 }
 
 // GET /reset-password/:token
+/**
+ * Renders the password reset form if the provided token is still valid.
+ */
 async function getResetPassword(req, res) {
     const { User } = getModels();
     const token = String(req.params.token || '');
@@ -245,6 +277,9 @@ async function getResetPassword(req, res) {
 }
 
 // POST /reset-password/:token
+/**
+ * Validates the reset token and updates the user's password.
+ */
 async function postResetPassword(req, res) {
     const { User } = getModels();
     const token = String(req.params.token || '');
@@ -300,6 +335,9 @@ async function postResetPassword(req, res) {
 }
 
 // POST /login
+/**
+ * Authenticates the user, restores the session, and merges any guest cart data.
+ */
 async function postLogin(req, res) {
     try {
         const { User } = getModels();
@@ -337,6 +375,9 @@ async function postLogin(req, res) {
 }
 
 // POST /register
+/**
+ * Creates a new user account and starts an authenticated session.
+ */
 async function postRegister(req, res) {
     try {
         const { User } = getModels();
@@ -401,6 +442,9 @@ async function postRegister(req, res) {
 }
 
 // POST /logout
+/**
+ * Destroys the current session and clears the session cookie.
+ */
 async function postLogout(req, res) {
     if (!req.session) {
         return res.redirect('/');

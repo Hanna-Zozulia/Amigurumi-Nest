@@ -30,6 +30,10 @@ describe('orderService', () => {
     mockModels.Product.findAll.mockReset();
   });
 
+  /**
+   * loadCheckoutCart: tests for loading the checkout cart from either the DB
+   * (authenticated users) or session (guest users).
+   */
   describe('loadCheckoutCart', () => {
     it('loads cart for authenticated user and falls back to empty cart', async () => {
       mockModels.Cart.findOne.mockResolvedValueOnce({ id: 1, items: [{ productId: 2, quantity: 3 }] });
@@ -62,6 +66,9 @@ describe('orderService', () => {
     });
   });
 
+  /**
+   * calculateCartTotal: verifies summation of item prices and quantities.
+   */
   describe('calculateCartTotal', () => {
     it('sums cart items', () => {
       expect(orderService.calculateCartTotal({
@@ -73,6 +80,10 @@ describe('orderService', () => {
     });
   });
 
+  /**
+   * sendOrderEmail: ensures the service composes and sends emails when a
+   * transporter is available and handles missing transporter gracefully.
+   */
   describe('sendOrderEmail', () => {
     it('returns false when transport is missing', async () => {
       emailService.getMailTransporter.mockReturnValueOnce(null);

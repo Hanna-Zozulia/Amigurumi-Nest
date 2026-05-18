@@ -11,7 +11,7 @@
   padding-left: 0 !important;
 }
 
-/* ОБЕ КАРТИНКИ */
+/* BOTH PICTURES */
 .img-main,
 .img-hover {
   position: absolute;
@@ -38,8 +38,6 @@
 }
 
 /* ===== Responsive: Product ===== */
-@media (max-width: 1024px) {
-}
 
 @media (max-width: 768px) {
   .image-wrapper {
@@ -52,5 +50,3 @@
   }
 }
 
-@media (max-width: 576px) {
-}

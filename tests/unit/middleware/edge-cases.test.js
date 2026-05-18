@@ -1,6 +1,3 @@
-// tests/unit/middleware/edge-cases.test.js
-// Branch coverage tests for middleware error/edge cases and session handling
-
 jest.mock('express-rate-limit', () => {
   return jest.fn((options) => {
     return (req, res, next) => {
@@ -19,6 +16,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
   });
 
   describe('cartMiddleware - Cart loading with errors', () => {
+    /**
+     * Test: ensure cart middleware is defined and can be required without
+     * throwing; this validates module wiring under test conditions.
+     */
     it('should handle when cart is loaded successfully', () => {
       const cartMiddleware = require('../../../middleware/cartMiddleware');
 
@@ -34,6 +35,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(cartMiddleware).toBeDefined();
     });
 
+    /**
+     * Test: ensure cart middleware gracefully handles requests when user is
+     * not authenticated (no session user present).
+     */
     it('should handle when user is not logged in', () => {
       const cartMiddleware = require('../../../middleware/cartMiddleware');
 
@@ -51,6 +56,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
   });;
 
   describe('sessionTimeout - Session expiration checks', () => {
+    /**
+     * Test: sessionTimeout middleware should be available and not throw when
+     * session is within timeout bounds.
+     */
     it('should not expire session when within timeout', () => {
       const sessionTimeout = require('../../../middleware/sessionTimeout');
 
@@ -67,6 +76,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(sessionTimeout).toBeDefined();
     });
 
+    /**
+     * Test: middleware should exist and support different timeout rules for
+     * admin vs regular users.
+     */
     it('should handle admin vs user timeouts', () => {
       const sessionTimeout = require('../../../middleware/sessionTimeout');
 
@@ -83,6 +96,9 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(sessionTimeout).toBeDefined();
     });
 
+    /**
+     * Test: middleware should not throw if the session object is missing.
+     */
     it('should handle missing session object', () => {
       const sessionTimeout = require('../../../middleware/sessionTimeout');
 
@@ -95,6 +111,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
   });;
 
   describe('uploadMiddleware - File validation edge cases', () => {
+    /**
+     * Test: upload middleware should be present and handle file-size limits
+     * (simulated via `LIMIT_FILE_SIZE` error code).
+     */
     it('should reject file exceeding size limit', () => {
       const uploadMiddleware = require('../../../middleware/uploadMiddleware');
 
@@ -112,6 +132,9 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(uploadMiddleware).toBeDefined();
     });
 
+    /**
+     * Test: fileFilter should reject non-image mimetypes.
+     */
     it('should reject non-image file types', () => {
       const uploadMiddleware = require('../../../middleware/uploadMiddleware');
 
@@ -126,6 +149,9 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(uploadMiddleware).toBeDefined();
     });
 
+    /**
+     * Test: image mimetypes and reasonable sizes should pass validation.
+     */
     it('should accept valid image files', () => {
       const uploadMiddleware = require('../../../middleware/uploadMiddleware');
 
@@ -141,6 +167,9 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(uploadMiddleware).toBeDefined();
     });
 
+    /**
+     * Test: missing file should be handled gracefully by upload middleware.
+     */
     it('should handle missing file gracefully', () => {
       const uploadMiddleware = require('../../../middleware/uploadMiddleware');
 
@@ -152,6 +181,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
   });
 
   describe('rateLimits - Rate limit enforcement', () => {
+    /**
+     * Test: wrapped rateLimit middleware should call next() for requests
+     * that are within the allowed limit.
+     */
     it('should allow requests within rate limit', async () => {
       const rateLimit = require('express-rate-limit');
 
@@ -166,6 +199,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(next).toHaveBeenCalled();
     });
 
+    /**
+     * Test: simulate a request exceeding the limit and assert a 429 status
+     * would be produced by the rate-limit logic.
+     */
     it('should reject requests exceeding rate limit', async () => {
       const req = { rateLimit: { current: 11, limit: 10 } };
       const res = {
@@ -184,6 +221,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
   });
 
   describe('authMiddleware - Auth check edge cases', () => {
+    /**
+     * Test: ensure auth middleware modules are defined and export expected
+     * functions used by the application.
+     */
     it('should define auth middleware', () => {
       const authMiddleware = require('../../../middleware/auth');
 
@@ -192,6 +233,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(authMiddleware.requireAdmin).toBeDefined();
     });
 
+    /**
+     * Test: requireAuth should be present and callable for authenticated
+     * user shapes.
+     */
     it('should allow access when user is authenticated', () => {
       const authMiddleware = require('../../../middleware/auth');
 
@@ -205,6 +250,9 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(authMiddleware.requireAuth).toBeDefined();
     });
 
+    /**
+     * Test: requireAdmin should be present and enforce admin checks.
+     */
     it('should check admin role', () => {
       const authMiddleware = require('../../../middleware/auth');
 
@@ -219,6 +267,9 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
       expect(authMiddleware.requireAdmin).toBeDefined();
     });
 
+    /**
+     * Test: requireAuth should not throw when session object is missing.
+     */
     it('should handle missing session', () => {
       const authMiddleware = require('../../../middleware/auth');
 
@@ -229,6 +280,10 @@ describe('Middleware - Error Paths & Session Edge Cases', () => {
   });
 
   describe('cacheMiddleware - Cache miss/hit branches', () => {
+    /**
+     * Test: cache middleware should be callable and call `next()` when
+     * caching is not applicable.
+     */
     it('should call next when cache functions are not needed', () => {
       const cacheMiddleware = require('../../../middleware/cacheMiddleware');
 

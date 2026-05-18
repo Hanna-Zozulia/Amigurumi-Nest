@@ -2,6 +2,7 @@ let mockCreateTransport;
 let mockReadFile;
 
 jest.mock('nodemailer', () => {
+  // Mock createTransport to capture calls and provide sendMail stub
   mockCreateTransport = jest.fn(() => ({ sendMail: jest.fn() }));
   return { createTransport: mockCreateTransport };
 });
@@ -28,6 +29,11 @@ describe('emailService', () => {
   });
 
   describe('getMailTransporter', () => {
+    /**
+     * getMailTransporter: choose SMTP host-based config when available,
+     * otherwise fallback to service auth (e.g., Gmail). Returns `null` if
+     * credentials are missing.
+     */
     it('uses host credentials when available', () => {
       process.env.MAIL_HOST = 'smtp.test.local';
       process.env.MAIL_USER = 'user@test.local';
@@ -66,6 +72,11 @@ describe('emailService', () => {
     });
   });
 
+  /**
+   * buildInlineImageAttachment: tests behavior for handling data URIs,
+   * remote fetches, and reading local files to produce inline image
+   * attachments suitable for email transport.
+   */
   describe('buildInlineImageAttachment', () => {
     it('returns null for empty input', async () => {
       await expect(emailService.buildInlineImageAttachment('', 'product')).resolves.toBeNull();
@@ -119,6 +130,10 @@ describe('emailService', () => {
     });
   });
 
+  /**
+   * Template helpers: validate that HTML/text builders for product cards,
+   * product lines and order messages produce expected strings.
+   */
   describe('template helpers', () => {
     it('builds product cards, lines, and order messages', () => {
       const item = {

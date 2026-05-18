@@ -1,5 +1,3 @@
-// tests/e2e/review.flow.test.js
-
 jest.mock('../../models', () => ({
   getModels: require('../helpers/dbMock').mockGetModels,
   initDb: jest.fn(async () => Promise.resolve())
@@ -31,6 +29,11 @@ const session = require('express-session');
 const { getModels } = require('../../models');
 const { mockModels } = require('../helpers/dbMock');
 
+/**
+ * Create an express app instance configured for review E2E tests. Routes use
+ * the real review controller while authentication is simulated by small
+ * middleware that injects `req.session.user` to emulate different user roles.
+ */
 const createApp = () => {
   const app = express();
   app.use(express.urlencoded({ extended: true }));
@@ -46,6 +49,7 @@ const createApp = () => {
 
   const reviewController = require('../../controllers/reviewController');
 
+  // Middleware: simulate an authenticated user for adding reviews
   app.post('/review/add', (req, res, next) => {
     req.session.user = { id: 1 };
     next();
@@ -61,6 +65,7 @@ const createApp = () => {
     next();
   }, reviewController.deleteReview);
 
+  // Middleware: simulate an admin user for replying to reviews
   app.post('/review/reply/:id', (req, res, next) => {
     req.session.user = { id: 2, role: 'admin' };
     next();

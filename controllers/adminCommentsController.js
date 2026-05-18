@@ -7,11 +7,17 @@ const { formatDateTimeRu } = require('../utils/dateFormatter');
 const REVIEW_STATUSES = ['all', 'approved', 'hidden', 'blocked', 'deleted'];
 const REVIEW_SORTS = ['newest', 'oldest'];
 
+/**
+ * Parses a review identifier from request input.
+ */
 function parseReviewId(value) {
     const id = Number(value);
     return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+/**
+ * Builds the admin comments return URL from the active filters.
+ */
 function buildReturnToUrl(filters) {
     const params = new URLSearchParams();
 
@@ -24,10 +30,16 @@ function buildReturnToUrl(filters) {
     return queryString ? `/admin/comments?${queryString}` : '/admin/comments';
 }
 
+/**
+ * Normalizes the free-text search input for comment filtering.
+ */
 function normalizeTextSearch(value) {
     return String(value || '').trim();
 }
 
+/**
+ * Maps a review record to the structure expected by the admin view.
+ */
 function mapReview(review) {
     const isDeleted = Boolean(review.deletedAt);
     const status = isDeleted ? 'deleted' : (review.status || 'approved');
@@ -66,6 +78,9 @@ function mapReview(review) {
     };
 }
 
+/**
+ * Renders the admin comments page with filters, counts, and mapped reviews.
+ */
 async function listCommentsPage(req, res) {
     try {
         const { Review, User, Product } = getModels();
@@ -162,6 +177,9 @@ async function listCommentsPage(req, res) {
     }
 }
 
+/**
+ * Returns the active comments redirect target when available.
+ */
 function getReturnTarget(req) {
     const value = String(req.body.returnTo || req.query.returnTo || '').trim();
 
@@ -172,6 +190,9 @@ function getReturnTarget(req) {
     return '/admin/comments';
 }
 
+/**
+ * Stores an admin reply on a comment and returns to the filtered list.
+ */
 async function replyComment(req, res) {
     try {
         const { Review } = getModels();
@@ -202,6 +223,9 @@ async function replyComment(req, res) {
     }
 }
 
+/**
+ * Marks a comment as approved and invalidates cached product reviews.
+ */
 async function approveComment(req, res) {
     try {
         const { Review } = getModels();
@@ -226,6 +250,9 @@ async function approveComment(req, res) {
     }
 }
 
+/**
+ * Hides a comment from public display.
+ */
 async function hideComment(req, res) {
     try {
         const { Review } = getModels();
@@ -250,6 +277,9 @@ async function hideComment(req, res) {
     }
 }
 
+/**
+ * Permanently deletes a comment and invalidates related caches.
+ */
 async function deleteComment(req, res) {
     try {
         const { Review } = getModels();
@@ -275,6 +305,9 @@ async function deleteComment(req, res) {
     }
 }
 
+/**
+ * Restores a previously deleted comment.
+ */
 async function restoreComment(req, res) {
     try {
         const { Review } = getModels();

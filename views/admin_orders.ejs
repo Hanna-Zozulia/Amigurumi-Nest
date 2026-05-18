@@ -23,6 +23,7 @@
           </tr>
         </thead>
         <tbody>
+          <%# Server-side: render admin orders table rows from `orders` %>
           <% orders.forEach(order => { %>
             <tr>
               <td><strong>#<%= order.id %></strong></td>
