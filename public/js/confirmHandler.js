@@ -1,4 +1,9 @@
 (function () {
+  // Global confirm modal handler
+  // - Lazily builds an accessible confirmation dialog overlay
+  // - Exposes `createConfirm(options)` which returns a Promise<boolean>
+  // - Automatically attaches to forms/buttons marked with `data-confirm`
+  // The comments below explain key steps (dialog creation, event wiring, focus restore).
   var ACTIVE_CLASS = 'is-visible';
   var BODY_LOCK_CLASS = 'confirm-modal-open';
   var SKIP_ATTR = 'data-confirm-skip';
@@ -35,7 +40,7 @@
 
   function ensureDialog() {
     if (state.overlay) return;
-
+    // Create overlay and dialog elements only once (lazy construction)
     state.overlay = document.createElement('div');
     state.overlay.className = 'confirm-modal-overlay';
     state.overlay.setAttribute('role', 'presentation');
@@ -80,6 +85,7 @@
     state.overlay.appendChild(state.dialog);
     document.body.appendChild(state.overlay);
 
+    // Clicking the overlay (outside the dialog) cancels the confirmation
     state.overlay.addEventListener('click', function (event) {
       if (event.target === state.overlay) {
         settle(false);
@@ -99,6 +105,7 @@
       settle(true);
     });
 
+    // Keyboard handling when dialog is active: Escape to cancel, Enter to confirm
     document.addEventListener('keydown', function (event) {
       if (!state.active) return;
 
@@ -117,7 +124,7 @@
 
   function open(options) {
     ensureDialog();
-
+    // Populate dialog content and show overlay
     console.log('[confirm] open modal', options);
     state.active = true;
     state.lastFocusedElement = document.activeElement;
@@ -159,6 +166,7 @@
 
     resolve(Boolean(value));
 
+    // Attempt to restore focus to the element that had focus before the dialog opened
     if (state.lastFocusedElement && typeof state.lastFocusedElement.focus === 'function') {
       window.setTimeout(function () {
         try {
@@ -234,6 +242,7 @@
 
     if (!source) return;
 
+    // Prevent default submission and show the confirmation modal
     event.preventDefault();
     event.stopImmediatePropagation();
 

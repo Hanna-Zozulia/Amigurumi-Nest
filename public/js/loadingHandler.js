@@ -1,4 +1,9 @@
 (function () {
+  // Global loading handler
+  // Responsibilities:
+  // - Provide helpers to show per-element loading states and a global overlay
+  // - Preserve original element content/value and restore it after async work
+  // - Expose utilities: `withLoading`, `startLoading`, `stopLoading`, `fetchWithLoading`, `axiosWithLoading`
   var DEFAULT_LOADING_TEXT = 'Загрузка...';
   var ACTIVE_ATTR = 'data-loading-active';
   var FORM_ACTIVE_ATTR = 'data-form-loading-active';
@@ -57,6 +62,7 @@
       overlay.innerHTML =
         '<div class="global-loading-overlay__content">' +
           '<span class="spinner-border text-light" role="status" aria-hidden="true"></span>' +
+          // Overlay text is left in original language for i18n concerns
           '<span class="global-loading-overlay__text">Загрузка...</span>' +
         '</div>';
       document.body.appendChild(overlay);
@@ -98,6 +104,7 @@
       element.disabled = true;
     }
 
+    // Replace element content with spinner + label for buttons/links; for input buttons replace value
     if (element.tagName === 'BUTTON' || element.tagName === 'A') {
       element.setAttribute(ORIGINAL_HTML_ATTR, element.innerHTML);
       element.innerHTML = '';
@@ -127,6 +134,7 @@
       return;
     }
 
+    // Restore original HTML or value saved when loading started
     if (element.hasAttribute(ORIGINAL_HTML_ATTR)) {
       element.innerHTML = element.getAttribute(ORIGINAL_HTML_ATTR);
       element.removeAttribute(ORIGINAL_HTML_ATTR);
@@ -165,6 +173,7 @@
 
     return Promise.resolve()
       .then(function () {
+        // Execute the provided async work while the element shows a loading state
         return asyncCallback();
       })
       .finally(function () {
@@ -177,6 +186,7 @@
 
     if (!event) return null;
 
+    // For form submit events, prefer the actual submitter button if available
     if (event.type === 'submit') {
       var form = event.target;
       if (!(form instanceof HTMLFormElement)) return null;

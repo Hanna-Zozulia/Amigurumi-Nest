@@ -1,3 +1,9 @@
+// Client-side behaviors for the storefront UI:
+// - vertical product slider (auto-scroll)
+// - live search that replaces product grid content
+// - helper utilities (image src normalization, image previews)
+// - edit form toggles for reviews/replies
+// - idle timeout that redirects to login after inactivity
 let isSearchMode = false;
 let searchQuery = '';
 
@@ -35,10 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (!Array.isArray(products)) return;
 
-                    // очищаем текущий контент
+                    // clear current slider content
                     track.innerHTML = '';
 
-                    // добавляем картинки
+                    // append product images to the slider track
                     products.forEach(product => {
                         if (!product.image) return;
 
@@ -57,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         track.appendChild(div);
                     });
 
-                    // дублируем для бесконечной анимации
+                    // duplicate slides for seamless infinite animation
                     const slides = Array.from(track.children);
                     const firstSetHeight = track.scrollHeight;
 
@@ -109,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const products = await response.json();
 
             if (!Array.isArray(products) || products.length === 0) {
+                // no results — show a simple message (text left as is for i18n)
                 productsContainer.textContent = 'Ничего не найдено';
                 return;
             }
@@ -204,10 +211,10 @@ function bindImagePreview(fileInputId, previewImageId) {
     });
 }
 
-// Обработка основного изображения в форме продукта
+// Handle main product image preview: shows selected file in the preview element
 bindImagePreview('image', 'imagePreview');
 
-// Обработка дополнительного изображения в форме продукта
+// Handle secondary product image preview: shows selected file in the second preview
 bindImagePreview('image2', 'imagePreview2');
 
 let idleTimer;
