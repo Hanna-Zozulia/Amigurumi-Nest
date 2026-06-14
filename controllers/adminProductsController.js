@@ -26,6 +26,8 @@ async function listProductsAdmin(req, res) {
                 category: product.category,
                 price: Number(product.price || 0),
                 image: product.image,
+                isNew: Boolean(product.isNew),
+                inStock: Boolean(product.inStock),
                 createdAt: product.createdAt,
                 createdAtFormatted: product.createdAt
                     ? formatDateRu(product.createdAt)

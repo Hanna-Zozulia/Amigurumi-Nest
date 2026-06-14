@@ -76,6 +76,7 @@ router.get('/products/new', requireAdmin, productController.newForm);
 router.post('/products', requireAdmin, uploadImageAndImage2, handleUploadError, productController.create);
 router.get('/products/:id/edit', requireAdmin, productController.editForm);
 router.post('/products/:id', requireAdmin, uploadImageAndImage2, handleUploadError, productController.update);
+router.patch('/products/:id/toggle', requireAdmin, productController.toggleField);
 router.post('/products/:id/delete', requireAdmin, productController.remove);
 router.get('/admin/users', requireAdmin, userAdminController.showInactiveUsers);
 router.get('/admin/users/inactive', requireAdmin, userAdminController.showInactiveUsers);

@@ -10,6 +10,7 @@ module.exports = {
       image2: { type: 'string' },
       categoryId: { type: 'integer' },
       isNew: { type: 'boolean' },
+      inStock: { type: 'boolean' },
       views: { type: 'integer' }
     },
     required: ['id', 'name', 'price']

@@ -5,6 +5,32 @@ const { cached } = require('../utils/cache');
 const { cacheKeys } = require('../utils/cacheKeys');
 const { invalidateProductCache } = require('../services/cacheService');
 
+const ALLOWED_TOGGLE_FIELDS = new Set(['isNew', 'inStock']);
+
+function parseBooleanValue(value) {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'number') {
+        return value !== 0;
+    }
+
+    const normalized = value === null || typeof value === 'undefined'
+        ? ''
+        : String(value).trim().toLowerCase();
+
+    if (['true', '1', 'on', 'yes'].includes(normalized)) {
+        return true;
+    }
+
+    if (['false', '0', 'off', 'no'].includes(normalized)) {
+        return false;
+    }
+
+    return null;
+}
+
 /**
  * Renders the storefront home page with featured products and recent reviews.
  */
@@ -213,6 +239,47 @@ async function update(req, res) {
 }
 
 /**
+ * Toggles a single admin-managed boolean field on a product.
+ */
+async function toggleField(req, res) {
+    try {
+        const { Product } = getModels();
+        const { field, value } = req.body || {};
+
+        if (!ALLOWED_TOGGLE_FIELDS.has(field)) {
+            return res.status(400).json({ error: 'Invalid field' });
+        }
+
+        const nextValue = parseBooleanValue(value);
+
+        if (nextValue === null) {
+            return res.status(400).json({ error: 'Invalid value' });
+        }
+
+        const product = await Product.findByPk(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({ error: 'Not found' });
+        }
+
+        await product.update({
+            [field]: nextValue
+        });
+
+        await invalidateProductCache(product.id);
+
+        return res.json({
+            id: product.id,
+            field,
+            value: nextValue
+        });
+    } catch (err) {
+        console.error('productWeb.toggleField error:', err.message);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+/**
  * Deletes a product, removes uploaded images, and redirects back to the list.
  */
 async function remove(req, res) {
@@ -319,6 +386,7 @@ module.exports = {
     create,
     editForm,
     update,
+    toggleField,
     remove,
     showPage
 };

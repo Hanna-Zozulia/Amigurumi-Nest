@@ -80,6 +80,11 @@ const createTestApp = () => {
     next();
   }, productController.update);
 
+  app.patch('/products/:id/toggle', (req, res, next) => {
+    req.session.user = { id: 2, role: 'admin' };
+    next();
+  }, productController.toggleField);
+
   app.post('/products/:id/delete', (req, res, next) => {
     req.session.user = { id: 2, role: 'admin' };
     next();
@@ -219,6 +224,39 @@ describe('Product Controller - Integration Tests', () => {
 
       expect(response.statusCode).toBe(302);
       expect(product.update).toHaveBeenCalled();
+    });
+  });
+
+  describe('PATCH /products/:id/toggle', () => {
+    it('should toggle allowed product fields', async () => {
+      const product = {
+        ...testProducts.product1,
+        update: jest.fn().mockResolvedValue(true)
+      };
+
+      mockModels.Product.findByPk.mockResolvedValue(product);
+
+      const response = await request(app)
+        .patch('/products/1/toggle')
+        .send({
+          field: 'inStock',
+          value: false
+        });
+
+      expect(response.statusCode).toBe(200);
+      expect(product.update).toHaveBeenCalledWith({ inStock: false });
+    });
+
+    it('should reject unsupported fields', async () => {
+      const response = await request(app)
+        .patch('/products/1/toggle')
+        .send({
+          field: 'views',
+          value: true
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(mockModels.Product.findByPk).not.toHaveBeenCalled();
     });
   });
 

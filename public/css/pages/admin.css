@@ -222,11 +222,11 @@ body.admin-page .admin-stat-list {
 }
 
 .admin-product-image {
-  height: 200px;
+  height: 350px;
 }
 
 .admin-product-placeholder {
-  height: 200px;
+  height: 350px;
 }
 
 .admin-product-placeholder-icon {
@@ -246,6 +246,62 @@ body.admin-page .admin-stat-list {
 
 .admin-order-status-badge {
   font-size: var(--fs-small);
+}
+
+/* Admin Product Toggles */
+.admin-toggle-label {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  user-select: none;
+  color: #6b7280;
+}
+
+.admin-toggle-label:hover {
+  background-color: #eeeff2;
+  border-color: #d1d5db;
+}
+
+.admin-toggle-label.active {
+  background-color: var(--bs-info-bg-subtle);
+  border-color: var(--bs-info-border-subtle);
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.admin-toggle-label .toggle-icon {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.admin-toggle-label.active .toggle-icon {
+  color: #dcfce7;
+}
+
+.admin-toggle-label .form-check-input {
+  cursor: pointer;
+  width: 1.5em;
+  height: 0.85em;
+  margin-top: 0.25em;
+  border-radius: 0.5em;
+  transition: all 0.2s ease;
+}
+
+.admin-toggle-label .form-check-input:not(:checked) {
+  background-color: #d1d5db;
+  border-color: #9ca3af;
+}
+
+.admin-toggle-label.active .form-check-input:checked {
+  background-color: #dcfce7;
+  border-color: #dcfce7;
+  box-shadow: inset 0 0 0 0.25em #10b981;
+}
+
+.admin-toggle-label .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
 }
 
 .admin-order-col-small {

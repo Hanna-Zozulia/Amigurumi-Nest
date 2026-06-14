@@ -89,6 +89,87 @@ document.addEventListener('DOMContentLoaded', function () {
             loadSliderImages();
         }
 
+    const productToggles = document.querySelectorAll('[data-product-toggle]');
+
+    if (productToggles.length > 0) {
+        productToggles.forEach((toggle) => {
+            toggle.addEventListener('change', async () => {
+                const previousValue = !toggle.checked;
+                const productId = toggle.dataset.productId;
+                const field = toggle.dataset.field;
+                const label = toggle.closest('.admin-toggle-label');
+
+                if (!productId || !field) {
+                    toggle.checked = previousValue;
+                    return;
+                }
+
+                toggle.disabled = true;
+
+                // Optimistic update: immediately update UI
+                if (toggle.checked) {
+                    label?.classList.add('active');
+                } else {
+                    label?.classList.remove('active');
+                }
+
+                // Update icon based on field type
+                const icon = label?.querySelector('.toggle-icon');
+                if (icon) {
+                    if (field === 'isNew') {
+                        icon.className = toggle.checked
+                            ? 'bi bi-star-fill toggle-icon'
+                            : 'bi bi-star toggle-icon';
+                    } else if (field === 'inStock') {
+                        icon.className = toggle.checked
+                            ? 'bi bi-check-circle-fill toggle-icon'
+                            : 'bi bi-circle toggle-icon';
+                    }
+                }
+
+                try {
+                    const response = await fetch(`/products/${productId}/toggle`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            field,
+                            value: toggle.checked
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Toggle request failed with status ${response.status}`);
+                    }
+                } catch (err) {
+                    console.error('Product toggle error:', err);
+                    // Rollback on error
+                    toggle.checked = previousValue;
+                    if (previousValue) {
+                        label?.classList.add('active');
+                    } else {
+                        label?.classList.remove('active');
+                    }
+                    // Restore icon
+                    if (icon) {
+                        if (field === 'isNew') {
+                            icon.className = previousValue
+                                ? 'bi bi-star-fill toggle-icon'
+                                : 'bi bi-star toggle-icon';
+                        } else if (field === 'inStock') {
+                            icon.className = previousValue
+                                ? 'bi bi-check-circle-fill toggle-icon'
+                                : 'bi bi-circle toggle-icon';
+                        }
+                    }
+                } finally {
+                    toggle.disabled = false;
+                }
+            });
+        });
+    }
+
     const searchInput = document.getElementById('searchInput');
     const productsContainer = document.getElementById('productsContainer');
     const categoryForm = document.querySelector('form[action="/catalog"]');
@@ -124,11 +205,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-12 col-sm-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
                         <div class="position-relative">
+                           <div class="position-absolute top-0 start-0 m-2 d-flex gap-3">
+
                             ${product.isNew ? `
-                                <span class="position-absolute top-0 start-0 m-2 badge bg-danger px-3 py-2 shadow">
+                                <span class="badge bg-danger px-3 py-2 shadow">
                                     ✨ Новинка
                                 </span>
-                            ` : ''}
+                                ` : ''}
+
+                                ${product.inStock ? `
+                                <span class="badge bg-success px-3 py-2 shadow">
+                                    ✅ В наличии
+                                </span>
+                                ` : ''}
+
+                            </div>
                             <a href="/product/${product.id}" class="catalog-image-link">
                                 <img src="${normalizeImageSrc(product.image)}" class="card-img-top catalog-card-img" alt="${product.name}">
                             </a>
