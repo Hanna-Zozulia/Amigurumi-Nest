@@ -15,6 +15,7 @@ module.exports = (sequelize) => {
             image2: { type: DataTypes.STRING(255), allowNull: false },
             categoryId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
             isNew: { type: DataTypes.BOOLEAN, defaultValue: false },
+            inStock: { type: DataTypes.BOOLEAN, defaultValue: true },
             views: { type: DataTypes.INTEGER, defaultValue: 0 }
         },
         {

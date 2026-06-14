@@ -22,6 +22,12 @@
           ⭐ Новинка
         </div>
       <% } %>
+
+      <% if (product.inStock) { %>
+        <div class="alert alert-success py-1 px-2 d-inline-block">
+          ✅ В наличии
+        </div>
+      <% } %>
       <p class="text-muted mb-1">
         <b>Категория:</b> <%= product.category ? product.category.name : '—' %>
       </p>

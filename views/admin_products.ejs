@@ -7,14 +7,14 @@
       <p>Управление каталогом товаров</p>
     </div>
     <a href="/products/new" class="btn btn-primary btn-sm">
-      <i class="bi bi-plus-circle"></i> Новый
+      <i class="bi bi-plus-circle me-2"></i> Новый
     </a>
   </div>
 </div>
 
 <% if (!products || products.length === 0) { %>
   <div class="alert alert-info text-center">
-    <i class="bi bi-inbox"></i> Пока нет продуктов.
+    <i class="bi bi-inbox me-2"></i> Пока нет продуктов.
     <a href="/products/new" class="alert-link">Добавить первый продукт</a>
   </div>
 <% } else { %>
@@ -45,7 +45,7 @@
           <div class="card-footer bg-white border-top">
             <div class="d-grid gap-2">
               <a href="/products/<%= product.id %>/edit" class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-pencil"></i> Редактировать
+                <i class="bi bi-pencil me-2"></i> Редактировать
               </a>
               <form method="post" action="/products/<%= product.id %>/delete"
                     class="w-100"
@@ -57,7 +57,7 @@
 
                   <input type="hidden" name="redirectTo" value="/admin/products">
                 <button class="btn btn-sm btn-outline-danger w-100" data-loading data-loading-text="Удаляем...">
-                  <i class="bi bi-trash"></i> Удалить
+                  <i class="bi bi-trash me-2"></i> Удалить
                 </button>
               </form>
 

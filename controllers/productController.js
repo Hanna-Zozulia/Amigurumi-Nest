@@ -54,6 +54,10 @@ async function listPage(req, res) {
             where.isNew = true;
         }
 
+        if (filter === 'inStock') {
+            where.inStock = true;
+        }
+
         if (filter.startsWith('cat-')) {
             where.categoryId = filter.replace('cat-', '');
         }
@@ -124,7 +128,7 @@ async function newForm(req, res) {
 async function create(req, res) {
     try {
         const { Product } = getModels();
-        const { name, desc, price, categoryId, isNew } = req.body;
+        const { name, desc, price, categoryId, isNew, inStock } = req.body;
 
         const mainImageFile = req.files && req.files.image && req.files.image[0];
         if (!mainImageFile) {
@@ -142,7 +146,8 @@ async function create(req, res) {
             image: imageVal,
             image2: image2Val,
             categoryId,
-            isNew: isNew === 'on'
+            isNew: isNew === 'on',
+            inStock: inStock === 'on'
         });
 
         await invalidateProductCache(created.id);
@@ -192,6 +197,7 @@ async function update(req, res) {
             name: req.body.name,
             categoryId: req.body.categoryId,
             isNew: req.body.isNew === 'on',
+            inStock: req.body.inStock === 'on',
             desc: req.body.desc,
             price: req.body.price,
             image: imageVal,

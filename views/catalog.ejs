@@ -41,6 +41,10 @@
             ⭐ Новинки
           </option>
 
+          <option value="inStock" <%= selectedFilter === 'inStock' ? 'selected' : '' %>> 
+            ✅ В наличии
+          </option>
+
           <!-- Категории -->
           <%# Server-side: render category `<option>` entries for the filter select %>
           <% categories.forEach(category => { %>
@@ -64,11 +68,21 @@
         <div class="card h-100 shadow-sm">
           <div class="position-relative">
 
-            <% if (product.isNew) { %>
-              <span class="position-absolute top-0 start-0 m-2 badge bg-danger px-3 py-2 shadow">
-                ✨ Новинка
-              </span>
-            <% } %>
+            <div class="position-absolute top-0 m-2 d-flex justify-content-between gap-3">
+
+              <% if (product.isNew) { %>
+                <span class="badge bg-danger px-3 py-2 shadow">
+                  ✨ Новинка
+                </span>
+              <% } %>
+
+              <% if (product.inStock) { %>
+                <span class="badge bg-success px-3 py-2 shadow">
+                  ✅ В наличии
+                </span>
+              <% } %>
+
+            </div>
 
             <a href="/product/<%= product.id %>" class="catalog-image-link">
                 <img src="<%= normalizeImagePath(product.image) %>"
