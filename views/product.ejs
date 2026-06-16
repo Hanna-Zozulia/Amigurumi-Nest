@@ -1,4 +1,4 @@
-<%- include('partials/header', { title: product.name, currentUser: currentUser }) %>
+<%- include('partials/header', { title: title || product.name, currentUser: currentUser }) %>
 
 <div class="container mt-5">
 
@@ -9,7 +9,7 @@
       <div class="image-wrapper">
 
         <img src="<%= normalizeImagePath(product.image) %>" class="img-main img-fluid rounded shadow-sm" alt="<%= product.name %>">
-        <img src="<%= normalizeImagePath(product.image2) %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %>">
+        <img src="<%= normalizeImagePath(product.image2) %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %> - дополнительное фото">
 
       </div>
     </div>

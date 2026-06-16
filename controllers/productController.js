@@ -4,6 +4,8 @@ const path = require('path');
 const { cached } = require('../utils/cache');
 const { cacheKeys } = require('../utils/cacheKeys');
 const { invalidateProductCache } = require('../services/cacheService');
+const { getSiteBaseUrl, getAbsoluteImageUrl } = require('../utils/htmlUtils');
+const { slugify } = require('../utils/slugify');
 
 const ALLOWED_TOGGLE_FIELDS = new Set(['isNew', 'inStock']);
 
@@ -340,7 +342,14 @@ async function showPage(req, res) {
         const { Product, Review, User, Category } = getModels();
         const { getReviewErrorMessage } = require('../utils/htmlUtils');
         const reviewError = String(req.query.reviewError || '');
-        const productId = Number(req.params.id);
+        const rawId = String(req.params.slugAndId || req.params.id || '');
+        const idMatch = rawId.match(/(\d+)$/);
+        const productId = idMatch ? Number(idMatch[1]) : Number(rawId);
+
+        if (!Number.isFinite(productId) || productId <= 0) {
+            return res.status(404).render('404', { title: '404 - Страница не найдена', sessionExpired: false });
+        }
+
         const productKey = cacheKeys.product(productId);
         const reviewsKey = cacheKeys.reviews(productId);
 
@@ -366,11 +375,22 @@ async function showPage(req, res) {
 
         await Product.increment('views', { where: { id: productId } });
 
+        const siteBaseUrl = getSiteBaseUrl(req);
+        const productPath = `/product/${slugify(product.name)}-${product.id}`;
+        const canonicalUrl = siteBaseUrl ? `${siteBaseUrl}${productPath}` : productPath;
+        const metaDescription = `${product.name} - ${product.category ? product.category.name : 'игрушки ручной работы'} от Amigurumi Nest. Цена ${Number(product.price).toFixed(2)} €, описание, фото и отзывы.`;
+
         return res.render('product', {
-            title: product.name,
+            title: `${product.name} | Amigurumi Nest`,
             product,
             currentUser: req.session.user || null,
-            reviewErrorMessage: getReviewErrorMessage(reviewError)
+            reviewErrorMessage: getReviewErrorMessage(reviewError),
+            metaDescription,
+            canonicalUrl,
+            ogType: 'product',
+            ogTitle: product.name,
+            ogDescription: metaDescription,
+            ogImage: getAbsoluteImageUrl(product.image, siteBaseUrl)
         });
     } catch (err) {
         console.error('productWeb.showPage error:', err.message);

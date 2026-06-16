@@ -84,7 +84,7 @@
 
             </div>
 
-            <a href="/product/<%= product.id %>" class="catalog-image-link">
+            <a href="<%= productUrl(product) %>" class="catalog-image-link">
                 <img src="<%= normalizeImagePath(product.image) %>"
                   class="card-img-top catalog-card-img"
                   alt="<%= product.name %>" />

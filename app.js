@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const path = require('path');
+const fs = require('fs/promises');
 const express = require('express');
 const session = require('express-session');
 const helmet = require('helmet');
@@ -16,9 +17,12 @@ const searchRoutes = require('./routes/search');
 const cartMiddleware = require('./middleware/cartMiddleware');
 const { sessionIdleTimeout, DEFAULT_USER_TIMEOUT } = require('./middleware/sessionTimeout');
 const { normalizeImagePath } = require('./utils/imagePath');
+const { getSiteBaseUrl } = require('./utils/htmlUtils');
+const { slugify } = require('./utils/slugify');
 const { getModels } = require('./models');
 
 const app = express();
+const SITE_FALLBACK_URL = 'http://localhost:3000';
 
 /**
  * Main Express application instance for the Amigurumi Nest server.
@@ -116,6 +120,23 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     res.locals.currentUser = req.session.user || null;
     res.locals.normalizeImagePath = normalizeImagePath;
+    res.locals.siteBaseUrl = getSiteBaseUrl(req);
+    res.locals.currentPath = req.path;
+    res.locals.title = res.locals.title || 'Amigurumi Nest';
+    res.locals.metaDescription = res.locals.metaDescription || 'Amigurumi Nest - авторские вязаные игрушки, подарки и уютные handmade изделия.';
+    res.locals.canonicalUrl = res.locals.canonicalUrl || `${res.locals.siteBaseUrl}${req.path}`;
+    res.locals.ogType = res.locals.ogType || 'website';
+    res.locals.ogTitle = res.locals.ogTitle || res.locals.title;
+    res.locals.ogDescription = res.locals.ogDescription || res.locals.metaDescription;
+    res.locals.ogImage = res.locals.ogImage || (res.locals.siteBaseUrl ? `${res.locals.siteBaseUrl}/img/logo.png` : '/img/logo.png');
+    res.locals.slugify = slugify;
+    res.locals.productUrl = (product) => {
+        if (!product || !product.id) {
+            return '/product';
+        }
+
+        return `/product/${slugify(product.name)}-${product.id}`;
+    };
     res.locals.adminReviewBadgeCount = 0;
     next();
 });
@@ -200,6 +221,34 @@ const port = process.env.PORT || 3000;
 Promise.all([initDb(), initRedis()])
     .then(async () => {
         await runInactiveUsersCheck('startup');
+
+        const baseUrl = String(process.env.APP_URL || process.env.BASE_URL || SITE_FALLBACK_URL).replace(/\/$/, '');
+        const models = getModels();
+
+        if (models && models.Product) {
+            const products = await models.Product.findAll({ attributes: ['id', 'name'] });
+            const sitemapUrls = [
+                '/',
+                '/catalog',
+                '/top3',
+                '/history',
+                '/info',
+                '/privacy-policy',
+                ...products.map((product) => `/product/${slugify(product.name)}-${product.id}`)
+            ];
+
+            const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapUrls.map((url) => `  <url>\n    <loc>${baseUrl}${url}</loc>\n  </url>`).join('\n')}
+</urlset>
+`;
+
+            const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+
+            await fs.writeFile(path.join(__dirname, 'public', 'sitemap.xml'), sitemapXml, 'utf8');
+            await fs.writeFile(path.join(__dirname, 'public', 'robots.txt'), robotsTxt, 'utf8');
+        }
+
         startInactiveUsersMonitor();
 
         app.listen(port, () => {

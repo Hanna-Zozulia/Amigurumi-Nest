@@ -31,6 +31,16 @@ function renderHistoryPage(req, res) {
 }
 
 /**
+ * Renders the privacy policy page.
+ */
+function renderPrivacyPolicyPage(req, res) {
+    return res.render('privacy_policy', {
+        title: 'Privacy Policy | Amigurumi Nest',
+        currentUser: req.session.user || null
+    });
+}
+
+/**
  * Renders the registration form using the shared login view.
  */
 function renderRegisterPage(req, res) {
@@ -49,6 +59,7 @@ router.get('/', productController.homePage);
 // ===== STATIC PAGES =====
 router.get('/info', (req, res) => res.render('info'));
 router.get('/history', (req, res) => res.render('history'));
+router.get('/privacy-policy', renderPrivacyPolicyPage);
 
 // ===== CATALOG =====
 router.get('/catalog', productController.listPage);
@@ -71,6 +82,7 @@ router.post('/admin/comments/:id/delete', requireAdmin, adminCommentsController.
 router.post('/admin/comments/:id/restore', requireAdmin, adminCommentsController.restoreComment);
 
 // ===== PRODUCT =====
+router.get('/product/:slugAndId', productController.showPage);
 router.get('/product/:id', productController.showPage);
 router.get('/products/new', requireAdmin, productController.newForm);
 router.post('/products', requireAdmin, uploadImageAndImage2, handleUploadError, productController.create);

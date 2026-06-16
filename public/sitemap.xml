@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://localhost:3000/</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/catalog</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/top3</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/history</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/info</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/privacy-policy</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/product/test-1</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/product/тест-3</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/product/wertyuiop-4</loc>
+  </url>
+</urlset>

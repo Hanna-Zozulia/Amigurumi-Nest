@@ -107,9 +107,9 @@
           <div class="row g-3 mb-3">
             <div class="col-md-5">
               <div class="small text-muted mb-1">Товар</div>
-              <a href="/product/<%= comment.product.id %>" class="fw-semibold text-decoration-none"><%= comment.product.name %></a>
+              <a href="<%= productUrl(comment.product) %>" class="fw-semibold text-decoration-none"><%= comment.product.name %></a>
               <div class="small">
-                <a href="/product/<%= comment.product.id %>" class="text-primary text-decoration-none">Открыть товар</a>
+                <a href="<%= productUrl(comment.product) %>" class="text-primary text-decoration-none">Открыть товар</a>
               </div>
             </div>
             <div class="col-md-7">

@@ -1,0 +1,42 @@
+<%- include('partials/header', {
+  title: title || 'Privacy Policy | Amigurumi Nest',
+  currentUser: currentUser
+}) %>
+
+<div class="container my-5 privacy-policy-page">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h1 class="mb-4">Privacy Policy</h1>
+
+      <p>
+        Amigurumi Nest uses session cookies to keep your login state active, remember your shopping cart,
+        and provide a smoother experience while you browse the store.
+      </p>
+
+      <p>
+        Session cookies are temporary. They are stored in your browser only for the duration of your session
+        or until the session expires. We do not use them for advertising tracking.
+      </p>
+
+      <h2 class="h4 mt-4">What we store in session cookies</h2>
+      <ul>
+        <li>Authentication state for signed-in users</li>
+        <li>Cart data needed to preserve selected items</li>
+        <li>Session timeout information for security purposes</li>
+      </ul>
+
+      <h2 class="h4 mt-4">How we use this data</h2>
+      <ul>
+        <li>To keep you signed in while you continue shopping</li>
+        <li>To restore the cart during the current browsing session</li>
+        <li>To protect the account from unauthorized access after inactivity</li>
+      </ul>
+
+      <p class="mt-4 text-muted">
+        If you clear cookies in your browser, you may be signed out and the current session cart may be reset.
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

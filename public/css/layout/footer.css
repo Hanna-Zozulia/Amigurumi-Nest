@@ -19,3 +19,8 @@ footer::before {
   left: 28px;
   right: 28px;
 }
+
+footer a {
+  color: rgba(239, 238, 238, 0.9);
+  text-decoration: none;
+}
