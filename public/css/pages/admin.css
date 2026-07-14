@@ -248,6 +248,18 @@ body.admin-page .admin-stat-list {
   font-size: var(--fs-small);
 }
 
+.admin-products-filters .form-label {
+  font-weight: 600;
+}
+
+.admin-products-filter-actions {
+  flex-wrap: wrap;
+}
+
+.admin-products-filter-actions .btn {
+  white-space: nowrap;
+}
+
 /* Admin Product Toggles */
 .admin-toggle-label {
   cursor: pointer;
@@ -388,12 +400,16 @@ body.admin-page .admin-stat-list {
 
   body.admin-page .admin-wrapper {
     flex-direction: column;
+    overflow: visible;
   }
 
   body.admin-page .admin-sidebar {
     min-width: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    order: 2;
+    order: 1;
+    position: sticky;
+    top: 0;
+    z-index: 20;
     padding: 15px;
     max-height: 300px;
     overflow-x: auto;
@@ -401,7 +417,6 @@ body.admin-page .admin-stat-list {
 
   body.admin-page .admin-sidebar .nav {
     flex-direction: row;
-    gap: 10px;
   }
 
   body.admin-page .admin-sidebar .nav-link,
@@ -412,8 +427,9 @@ body.admin-page .admin-stat-list {
   }
 
   body.admin-page .admin-content {
-    order: 1;
+    order: 2;
     padding: 15px;
+    overflow-y: visible;
   }
 
   body.admin-page .admin-topbar {
@@ -428,23 +444,161 @@ body.admin-page .admin-stat-list {
     --fs-body: 0.75rem;
   }
 
-  /* tables on small screens: allow horizontal scroll or switch to compact cards */
-  .table {
+  .admin-orders-table {
     display: block;
     width: 100%;
-    overflow-x: auto;
   }
 
-  .table thead,
-  .table tbody,
-  .table tr {
-    display: table;
+  .admin-orders-table thead {
+    display: none;
+  }
+
+  .admin-orders-table tbody {
+    display: block;
+  }
+
+  .admin-orders-table tbody tr {
+    display: block;
+    margin-bottom: 0.85rem;
+    padding: 0.9rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  }
+
+  .admin-orders-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
     width: 100%;
-    table-layout: fixed;
+    padding: 0.45rem 0;
+    border: 0;
+    font-size: var(--fs-body);
+    text-align: left !important;
   }
 
-  .table tbody td {
+  .admin-orders-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 42%;
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  .admin-orders-table tbody td:first-child {
+    padding-top: 0;
+    font-size: 0.95rem;
+  }
+
+  .admin-orders-table tbody td:last-child {
+    padding-bottom: 0;
+  }
+
+  .admin-orders-table tbody td .badge {
+    white-space: nowrap;
+  }
+
+  .admin-order-actions {
+    justify-content: flex-start !important;
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+    width: 100%;
+  }
+
+  .admin-order-actions .btn,
+  .admin-order-actions form {
+    width: 100%;
+  }
+
+  .admin-order-actions .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .admin-users-table {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-users-table thead {
+    display: none;
+  }
+
+  .admin-users-table tbody {
+    display: block;
+  }
+
+  .admin-users-table tbody tr {
+    display: block;
+    margin-bottom: 0.85rem;
+    padding: 0.9rem;
+    /* border: 1px solid #e5e7eb; */
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  }
+
+  .admin-users-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.45rem 0;
+    border: 0;
     font-size: var(--fs-body);
-    padding: 0.4rem 0.5rem;
+    text-align: left !important;
+    align-items: center;
+  }
+
+  .admin-users-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 42%;
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  .admin-users-table tbody td:first-child {
+    padding-top: 0;
+    font-size: 0.95rem;
+  }
+
+  .admin-users-table tbody td:last-child {
+    padding-bottom: 0;
+  }
+
+  .admin-users-table tbody td .badge {
+    white-space: nowrap;
+  }
+
+  .admin-user-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .admin-user-actions .admin-user-status-select,
+  .admin-user-actions .btn {
+    width: 100%;
+    max-width: none;
+  }
+
+  .admin-user-actions .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .admin-products-filters .col-12 {
+    width: 100%;
+  }
+
+  .admin-products-filter-actions {
+    width: 100%;
+  }
+
+  .admin-products-filter-actions .btn,
+  .admin-products-filter-actions a {
+    width: 100%;
   }
 }

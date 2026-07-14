@@ -21,14 +21,14 @@
         <% cart.items.forEach(item => { %>
           <div class="d-flex justify-content-between mb-2">
             <div>
-              <b><%= item.Product.name %></b>
+              <b><%= item.Product ? item.Product.name : 'Товар недоступен' %></b>
               <div class="text-muted small">
                 Кол-во: <%= item.quantity %>
               </div>
             </div>
 
             <div>
-              <%= item.Product.price * item.quantity %> €
+              <%= item.Product ? item.Product.price * item.quantity : '-' %>
             </div>
           </div>
         <% }) %>

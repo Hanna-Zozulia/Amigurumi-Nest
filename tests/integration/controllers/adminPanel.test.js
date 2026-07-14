@@ -15,6 +15,7 @@ describe('Admin panel controllers', () => {
     mockModels.Order.count.mockReset();
     mockModels.User.count.mockReset();
     mockModels.Product.count.mockReset();
+    mockModels.Category.findAll.mockReset();
     mockModels.Order.findAll.mockReset();
     mockModels.User.findAll.mockReset();
     mockModels.User.findByPk.mockReset();
@@ -95,11 +96,14 @@ describe('Admin panel controllers', () => {
 
   describe('adminProductsController', () => {
     it('renders product admin list', async () => {
+      mockModels.Category.findAll.mockResolvedValueOnce([
+        { id: 1, name: 'Animals' }
+      ]);
       mockModels.Product.findAll.mockResolvedValueOnce([
         {
           id: 1,
           name: 'Cat',
-          category: 'Animals',
+          category: { name: 'Animals' },
           price: '12.5',
           image: '/img/uploads/cat.png',
           createdAt: new Date('2024-01-01T00:00:00Z')
@@ -112,11 +116,40 @@ describe('Admin panel controllers', () => {
       await adminProductsController.listProductsAdmin(req, res);
 
       expect(res.render).toHaveBeenCalledWith('admin_products', expect.objectContaining({
+        categories: [expect.objectContaining({ id: 1, name: 'Animals' })],
         products: [expect.objectContaining({
           id: 1,
           name: 'Cat',
-          price: 12.5
+          price: 12.5,
+          categoryName: 'Animals'
         })]
+      }));
+    });
+
+    it('filters products by search and category', async () => {
+      mockModels.Category.findAll.mockResolvedValueOnce([
+        { id: 1, name: 'Animals' },
+        { id: 2, name: 'Mini' }
+      ]);
+      mockModels.Product.findAll.mockResolvedValueOnce([]);
+
+      const req = createMockRequest({
+        session: { user: { id: 2, role: 'admin' } },
+        query: { q: 'cat', categoryId: '1' }
+      });
+      const res = createMockResponse();
+
+      await adminProductsController.listProductsAdmin(req, res);
+
+      expect(mockModels.Product.findAll).toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({
+          name: expect.any(Object),
+          categoryId: '1'
+        })
+      }));
+      expect(res.render).toHaveBeenCalledWith('admin_products', expect.objectContaining({
+        searchTerm: 'cat',
+        selectedCategoryId: '1'
       }));
     });
   });

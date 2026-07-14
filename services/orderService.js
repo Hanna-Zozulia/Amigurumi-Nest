@@ -47,8 +47,8 @@ async function loadCheckoutCart(req, Product) {
  */
 function calculateCartTotal(cart) {
     let total = 0;
-    cart.items.forEach(item => {
-        total += item.Product.price * item.quantity;
+    cart.items.forEach((item) => {
+        total += Number(item?.Product?.price || 0) * Number(item?.quantity || 0);
     });
     return total;
 }

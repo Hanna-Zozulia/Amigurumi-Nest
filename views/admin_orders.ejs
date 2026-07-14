@@ -10,7 +10,7 @@
 <% } else { %>
   <div class="card shadow-sm border-0">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
+      <table class="table table-hover align-middle mb-0 admin-orders-table">
         <thead class="table-light">
           <tr>
             <th>#</th>
@@ -26,18 +26,18 @@
           <%# Server-side: render admin orders table rows from `orders` %>
           <% orders.forEach(order => { %>
             <tr>
-              <td><strong>#<%= order.id %></strong></td>
-              <td><%= order.customerName %></td>
-              <td><%= order.customerPhone %></td>
-              <td><small><%= order.createdAtFormatted %></small></td>
-              <td>
+              <td data-label="#"><strong>#<%= order.id %></strong></td>
+              <td data-label="Клиент"><%= order.customerName %></td>
+              <td data-label="Телефон"><%= order.customerPhone %></td>
+              <td data-label="Дата"><small><%= order.createdAtFormatted %></small></td>
+              <td data-label="Статус">
                 <span class="badge <%= order.status === 'unprocessed' ? 'bg-secondary' : order.status === 'processing' ? 'bg-warning text-dark' : 'bg-success' %>">
                   <%= order.statusLabel %>
                 </span>
               </td>
-              <td><strong><%= order.total.toFixed(2) %> EUR</strong></td>
-              <td class="text-end">
-                <div class="d-flex justify-content-end gap-2">
+              <td data-label="Сумма"><strong><%= order.total.toFixed(2) %> EUR</strong></td>
+              <td data-label="Действия" class="text-end">
+                <div class="d-flex justify-content-end gap-2 admin-order-actions">
                   <a href="/admin/orders/<%= order.id %>" class="btn btn-sm btn-outline-primary">
                     <i class="bi bi-eye"></i> Открыть
                   </a>

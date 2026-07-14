@@ -24,7 +24,7 @@
 <% } else { %>
   <div class="card shadow-sm border-0">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
+      <table class="table table-hover align-middle mb-0 admin-users-table">
         <thead class="table-light">
           <tr>
             <th class="admin-user-col-id">ID</th>
@@ -40,12 +40,12 @@
           <%# Server-side: render the users table rows from `users` array %>
           <% users.forEach(user => { %>
             <tr>
-              <td><small>#<%= user.id %></small></td>
-              <td><strong><%= user.name %></strong></td>
-              <td><small><%= user.email %></small></td>
-              <td><small><%= user.createdAtFormatted %></small></td>
-              <td><small><%= user.lastLoginAtFormatted || '—' %></small></td>
-              <td>
+              <td data-label="ID"><small>#<%= user.id %></small></td>
+              <td data-label="Имя"><strong><%= user.name %></strong></td>
+              <td data-label="Email"><small><%= user.email %></small></td>
+              <td data-label="Дата регистрации"><small><%= user.createdAtFormatted %></small></td>
+              <td data-label="Последний вход"><small><%= user.lastLoginAtFormatted || '—' %></small></td>
+              <td data-label="Статус">
                 <% if (user.status === 'active') { %>
                   <span class="badge bg-success">active</span>
                 <% } else if (user.status === 'inactive') { %>
@@ -54,8 +54,8 @@
                   <span class="badge bg-secondary"><%= user.status %></span>
                 <% } %>
               </td>
-              <td class="text-end">
-                <form method="post" action="/admin/users/<%= user.id %>/status" class="d-flex gap-2 justify-content-end">
+              <td data-label="Действие" class="text-end">
+                <form method="post" action="/admin/users/<%= user.id %>/status" class="d-flex gap-2 justify-content-end admin-user-actions">
                   <select name="status" class="form-select form-select-sm admin-user-status-select">
                     <%# Server-side: render status `<option>` entries for the user status select %>
                     <% allowedStatuses.forEach(status => { %>

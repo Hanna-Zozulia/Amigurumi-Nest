@@ -1,6 +1,6 @@
 <%- include('partials/header', { title: 'Корзина' }) %>
 
-<div class="container mt-5">
+<div class="container mt-5 cart-page">
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 m-0">Ваша корзина</h1>
@@ -14,8 +14,8 @@
     Корзина пуста
   </div>
   <% } else { %>
-  <div class="table-responsive">
-    <table class="table table-hover align-middle shadow-sm">
+  <div class="table-responsive cart-table-wrap">
+    <table class="table table-hover align-middle shadow-sm cart-items-table">
       <thead class="table-light">
         <tr>
           <th>Товар</th>
@@ -28,7 +28,7 @@
         <%# Server-side: iterate over `cart.items` and render each table row %>
         <% cart.items.forEach(item => { %>
         <tr>
-          <td>
+          <td data-label="Товар">
             <div class="d-flex align-items-center">
               <% if (item.Product) { %>
               <img src="<%= normalizeImagePath(item.Product.image) %>" alt="<%= item.Product.name %>" class="me-2 rounded cart-product-image">
@@ -38,14 +38,14 @@
                 <% } %>
             </div>
           </td>
-          <td>
+          <td data-label="Цена">
             <% if (item.Product) { %>
                 <%= Number(item.Product.price).toFixed(2) %> €
             <% } else { %>
                 -
             <% } %>
           </td>
-          <td>
+          <td data-label="Кол-во">
             <div class="d-flex align-items-center">
               <form method="POST" action="/cart/remove">
                 <button class="btn btn-sm btn-outline-secondary cart-quantity-button">-</button>
@@ -60,7 +60,7 @@
               </form>
             </div>
           </td>
-          <td>
+          <td data-label="Сумма">
             <% if (item.Product) { %>
               <%= Number(item.Product.price * item.quantity).toFixed(2) %> €
             <% } else { %>
@@ -70,7 +70,7 @@
         </tr>
         <% }) %>
       </tbody>
-      <tfoot class=" fw-bold">
+      <tfoot class="fw-bold cart-totals">
         <tr>
           <td colspan="3" class="text-end">Итого:</td>
           <td>
@@ -80,7 +80,7 @@
     </table>
   </div>
 
-  <div class="d-flex justify-content-between mt-3">
+  <div class="d-flex justify-content-between mt-3 cart-actions">
     <form method="POST"
           action="/cart/clear"
           data-confirm

@@ -78,6 +78,15 @@ describe('orderService', () => {
         ]
       })).toBe(25.5);
     });
+
+    it('ignores items without Product data', () => {
+      expect(orderService.calculateCartTotal({
+        items: [
+          { quantity: 2, Product: { price: 10 } },
+          { quantity: 1, Product: null }
+        ]
+      })).toBe(20);
+    });
   });
 
   /**
