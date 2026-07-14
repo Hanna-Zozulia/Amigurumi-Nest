@@ -22,6 +22,7 @@ jest.mock('../../../services/profanityFilter', () => ({
 
 const adminCommentsController = require('../../../controllers/adminCommentsController');
 const orderAdminController = require('../../../controllers/orderAdminController');
+const { invalidateReviewsCache } = require('../../../services/cacheService');
 
 describe('Admin flows', () => {
   beforeEach(() => {
@@ -35,6 +36,57 @@ describe('Admin flows', () => {
   });
 
   describe('adminCommentsController', () => {
+    /**
+     * Test: the default admin comments page should normalize empty filters,
+     * query non-deleted reviews, and return the base admin comments URL.
+     */
+    it('renders default comments page with base return url', async () => {
+      mockModels.Review.findAll.mockResolvedValueOnce([
+        {
+          id: 11,
+          text: 'Great product',
+          status: 'approved',
+          adminReply: null,
+          blockedReason: null,
+          createdAt: new Date('2024-02-01T10:00:00Z'),
+          deletedAt: null,
+          userId: 7,
+          User: { id: 7, name: 'Alice', email: 'alice@test.com' },
+          Product: { id: 13, name: 'Rabbit' }
+        }
+      ]);
+      mockModels.Product.findAll.mockResolvedValueOnce([{ id: 13, name: 'Rabbit' }]);
+      mockModels.Review.count
+        .mockResolvedValueOnce(1)
+        .mockResolvedValueOnce(0)
+        .mockResolvedValueOnce(0)
+        .mockResolvedValueOnce(0);
+      mockModels.Review.count.mockResolvedValueOnce(0);
+
+      const req = createMockRequest({
+        session: { user: { id: 2, role: 'admin' } },
+        query: {}
+      });
+      const res = createMockResponse();
+
+      await adminCommentsController.listCommentsPage(req, res);
+
+      expect(mockModels.Review.findAll).toHaveBeenCalledWith(expect.objectContaining({
+        where: {},
+        paranoid: true,
+        order: [['createdAt', 'DESC']]
+      }));
+      expect(res.render).toHaveBeenCalledWith('admin_comments', expect.objectContaining({
+        filters: {
+          status: 'all',
+          sort: 'newest',
+          productId: '',
+          q: ''
+        },
+        returnTo: '/admin/comments'
+      }));
+    });
+
     /**
      * Test: renders the admin comments page with provided filters and
      * ensures the rendered view receives structured comment objects.
@@ -84,6 +136,60 @@ describe('Admin flows', () => {
           hasReply: true,
           author: expect.objectContaining({ name: 'User' }),
           product: expect.objectContaining({ name: 'Cat Toy' })
+        })]
+      }));
+    });
+
+    /**
+     * Test: deleted comment filters should switch the query to paranoid:false
+     * and map deleted comments with the deleted status label.
+     */
+    it('renders deleted comments page with deleted filters', async () => {
+      mockModels.Review.findAll.mockResolvedValueOnce([
+        {
+          id: 21,
+          text: 'Old comment',
+          status: 'hidden',
+          adminReply: '',
+          blockedReason: 'spam',
+          createdAt: new Date('2024-03-01T10:00:00Z'),
+          deletedAt: new Date('2024-04-01T10:00:00Z'),
+          userId: 8,
+          User: { id: 8, name: 'Bob', email: 'bob@test.com' },
+          Product: { id: 14, name: 'Bunny' }
+        }
+      ]);
+      mockModels.Product.findAll.mockResolvedValueOnce([{ id: 14, name: 'Bunny' }]);
+      mockModels.Review.count
+        .mockResolvedValueOnce(0)
+        .mockResolvedValueOnce(1)
+        .mockResolvedValueOnce(0)
+        .mockResolvedValueOnce(0);
+      mockModels.Review.count.mockResolvedValueOnce(1);
+
+      const req = createMockRequest({
+        session: { user: { id: 2, role: 'admin' } },
+        query: { status: 'deleted', sort: 'oldest', productId: '14', q: 'Old' }
+      });
+      const res = createMockResponse();
+
+      await adminCommentsController.listCommentsPage(req, res);
+
+      expect(mockModels.Review.findAll).toHaveBeenCalledWith(expect.objectContaining({
+        paranoid: false,
+        order: [['createdAt', 'ASC']]
+      }));
+      expect(mockModels.Review.findAll.mock.calls[0][0].where).toHaveProperty('deletedAt');
+      expect(res.render).toHaveBeenCalledWith('admin_comments', expect.objectContaining({
+        filters: {
+          status: 'deleted',
+          sort: 'oldest',
+          productId: '14',
+          q: 'Old'
+        },
+        comments: [expect.objectContaining({
+          status: 'deleted',
+          statusLabel: 'Удалён'
         })]
       }));
     });
@@ -186,6 +292,50 @@ describe('Admin flows', () => {
       const restoredRes = createMockResponse();
       await adminCommentsController.restoreComment(restoredReq, restoredRes);
       expect(restoredRes.redirect).toHaveBeenCalledWith('/admin/comments');
+    });
+
+    /**
+     * Test: moderation guards should reject blocked admin replies and apply
+     * the hidden status when a comment is hidden.
+     */
+    it('blocks moderated replies and hides comments', async () => {
+      const replyReview = {
+        id: 7,
+        productId: 10,
+        update: jest.fn().mockResolvedValue({})
+      };
+      const hideReview = {
+        id: 8,
+        productId: 10,
+        update: jest.fn().mockResolvedValue({})
+      };
+
+      mockModels.Review.findByPk
+        .mockResolvedValueOnce(replyReview)
+        .mockResolvedValueOnce(hideReview);
+
+      const blockedReplyReq = createMockRequest({
+        session: { user: { id: 2, role: 'admin' } },
+        params: { id: '7' },
+        body: { adminReply: 'This has badword', returnTo: '/admin/comments?status=blocked' }
+      });
+      const blockedReplyRes = createMockResponse();
+      await adminCommentsController.replyComment(blockedReplyReq, blockedReplyRes);
+      expect(blockedReplyRes.status).toHaveBeenCalledWith(400);
+      expect(replyReview.update).not.toHaveBeenCalled();
+      expect(invalidateReviewsCache).not.toHaveBeenCalled();
+
+      const hideReq = createMockRequest({
+        session: { user: { id: 2, role: 'admin' } },
+        params: { id: '8' },
+        body: { returnTo: '/admin/comments?status=hidden' }
+      });
+      const hideRes = createMockResponse();
+      await adminCommentsController.hideComment(hideReq, hideRes);
+
+      expect(hideReview.update).toHaveBeenCalledWith({ status: 'hidden' });
+      expect(invalidateReviewsCache).toHaveBeenCalledWith(10);
+      expect(hideRes.redirect).toHaveBeenCalledWith('/admin/comments?status=hidden');
     });
   });
 
