@@ -14,18 +14,18 @@ async function createSequelize() {
     const dbName = process.env.DB_NAME || "toys";
 
     // Create the database if it does not exist yet.
-    const connection = await mysql.createConnection({
-      host,
-      port,
-      user,
-      password: pass,
-    });
+    // const connection = await mysql.createConnection({
+    //   host,
+    //   port,
+    //   user,
+    //   password: pass,
+    // });
 
-    await connection.query(
-      `CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8 COLLATE utf8_unicode_ci;`
-    );
+    // await connection.query(
+    //   `CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8 COLLATE utf8_unicode_ci;`
+    // );
 
-    await connection.end();
+    // await connection.end();
 
     // Initialize Sequelize after the database is ready.
     const sequelize = new Sequelize(dbName, user, pass, {
