@@ -1,4 +1,4 @@
 node_modules/
 .env
-// public/img/uploads/*
+# public/img/uploads/*
 coverage/
