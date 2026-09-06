@@ -29,6 +29,15 @@ function normalizeImageSrc(value) {
     return `/img/${raw.replace(/^\/+/, '')}`;
 }
 
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const slider = document.querySelector('.vertical-slider');
     const track = document.querySelector('.slider-track');
@@ -51,14 +60,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         const div = document.createElement('div');
                         div.className = 'toys-item';
 
-                        div.innerHTML = `
-                            <a href="/product/${product.id}" class="text-decoration-none">
-                                <img 
-                                    src="${normalizeImageSrc(product.image)}" 
-                                    alt="${product.name}"
-                                >
-                            </a>
-                        `;
+                        const link = document.createElement('a');
+                        link.href = `/product/${encodeURIComponent(product.id)}`;
+                        link.className = 'text-decoration-none';
+
+                        const image = document.createElement('img');
+                        image.src = normalizeImageSrc(product.image);
+                        image.alt = String(product.name || '');
+
+                        link.appendChild(image);
+                        div.appendChild(link);
 
                         track.appendChild(div);
                     });
@@ -131,7 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     const response = await fetch(`/products/${productId}/toggle`, {
                         method: 'PATCH',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
                         },
                         body: JSON.stringify({
                             field,
@@ -220,14 +232,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 ` : ''}
 
                             </div>
-                            <a href="/product/${product.id}" class="catalog-image-link">
-                                <img src="${normalizeImageSrc(product.image)}" class="card-img-top catalog-card-img" alt="${product.name}">
+                            <a href="/product/${encodeURIComponent(product.id)}" class="catalog-image-link">
+                                <img src="${escapeHtml(normalizeImageSrc(product.image))}" class="card-img-top catalog-card-img" alt="${escapeHtml(product.name)}">
                             </a>
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">${product.name}</h5>
-                            <p class="text-muted mb-1"><b>Категория:</b> ${product.category?.name || ''}</p>
-                            <p class="small text-muted flex-grow-1"><b>Описание:</b> ${product.desc || ''}</p>
+                            <h5 class="card-title">${escapeHtml(product.name)}</h5>
+                            <p class="text-muted mb-1"><b>Категория:</b> ${escapeHtml(product.category?.name || '')}</p>
+                            <p class="small text-muted flex-grow-1"><b>Описание:</b> ${escapeHtml(product.desc || '')}</p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
                                 <span class="fw-bold">${Number(product.price).toFixed(2)} €</span>
                                 <a href="/product/${product.id}" class="btn btn-primary btn-sm">Смотреть</a>
@@ -237,11 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `).join('');
 
-            const safeHtml = (typeof DOMPurify !== 'undefined' && DOMPurify && DOMPurify.sanitize)
-                ? DOMPurify.sanitize(rawHtml)
-                : rawHtml;
-
-            productsContainer.innerHTML = safeHtml;
+            productsContainer.innerHTML = rawHtml;
         } catch (error) {
             console.error('Search error:', error);
         }

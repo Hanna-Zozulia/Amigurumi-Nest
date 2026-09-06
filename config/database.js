@@ -7,11 +7,16 @@ const { Sequelize } = require("sequelize");
  */
 async function createSequelize() {
   try {
-    const host = process.env.DB_HOST || "localhost";
+    const isProduction = process.env.NODE_ENV === 'production';
+    const host = process.env.DB_HOST || (isProduction ? null : "localhost");
     const port = Number(process.env.DB_PORT || 3306);
-    const user = process.env.DB_USER || "root";
-    const pass = process.env.DB_PASS || "";
-    const dbName = process.env.DB_NAME || "toys";
+    const user = process.env.DB_USER || (isProduction ? null : "root");
+    const pass = process.env.DB_PASS || (isProduction ? null : "");
+    const dbName = process.env.DB_NAME || (isProduction ? null : "toys");
+
+    if (!host || !user || !pass || !dbName) {
+      throw new Error('DB_HOST, DB_USER, DB_PASS and DB_NAME are required');
+    }
 
     // Create the database if it does not exist yet.
     // const connection = await mysql.createConnection({

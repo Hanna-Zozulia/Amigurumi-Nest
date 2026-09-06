@@ -46,6 +46,7 @@
 
   <!-- ФОРМА -->
   <form method="POST" action="/order">
+    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
 
     <div class="mb-3">
       <label class="form-label">Имя и фамилия</label>

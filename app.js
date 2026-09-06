@@ -20,6 +20,7 @@ const { normalizeImagePath } = require('./utils/imagePath');
 const { getSiteBaseUrl } = require('./utils/htmlUtils');
 const { slugify } = require('./utils/slugify');
 const { getModels } = require('./models');
+const { csrfProtection } = require('./middleware/csrf');
 
 const app = express();
 const SITE_FALLBACK_URL = 'http://localhost:3000';
@@ -33,6 +34,16 @@ const SITE_FALLBACK_URL = 'http://localhost:3000';
 if (!process.env.SESSION_SECRET) {
     console.error('FATAL: SESSION_SECRET is not set. Set it in your .env and restart.');
     process.exit(1);
+}
+
+if (process.env.NODE_ENV === 'production') {
+    const requiredProductionEnv = ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME', 'APP_URL'];
+    const missingProductionEnv = requiredProductionEnv.filter((name) => !process.env[name]);
+
+    if (missingProductionEnv.length > 0) {
+        console.error(`FATAL: missing production environment variables: ${missingProductionEnv.join(', ')}`);
+        process.exit(1);
+    }
 }
 // ================= VIEW ENGINE =================
 app.set('view engine', 'ejs');
@@ -100,6 +111,8 @@ app.use(
         }
     })
 );
+
+app.use(csrfProtection);
 
 // ================= MIDDLEWARE =================
 app.use(sessionIdleTimeout);

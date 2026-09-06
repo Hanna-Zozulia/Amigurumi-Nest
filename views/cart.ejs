@@ -48,6 +48,7 @@
           <td data-label="Кол-во">
             <div class="d-flex align-items-center">
               <form method="POST" action="/cart/remove">
+                <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                 <button class="btn btn-sm btn-outline-secondary cart-quantity-button">-</button>
                 <input type="hidden" name="productId" value="<%= item.productId %>">
               </form>
@@ -55,6 +56,7 @@
               <span class="px-2 fw-bold text-center cart-quantity-count"><%= item.quantity %></span>
 
               <form method="POST" action="/cart/add" class="ms-1">
+                <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                 <button class="btn btn-sm btn-outline-secondary cart-quantity-button">+</button>
                 <input type="hidden" name="productId" value="<%= item.productId %>">
               </form>
@@ -88,6 +90,7 @@
           data-confirm-description="Все товары будут удалены из корзины. Это действие нельзя отменить."
           data-confirm-text="Очистить"
           data-confirm-cancel-text="Отмена">
+          <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
       <button class="btn btn-danger cart-clear-btn">Очистить корзину</button>
     </form>
     <a href="/checkout" class="btn btn-success">Оформить заказ</a>

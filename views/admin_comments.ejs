@@ -134,6 +134,7 @@
                 <% } %>
 
                 <form method="POST" action="/admin/comments/<%= comment.id %>/reply" class="mt-3">
+                  <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                   <input type="hidden" name="returnTo" value="<%= returnTo %>">
                   <label class="form-label">Ответ</label>
                   <textarea name="adminReply" class="form-control mb-2" rows="3" placeholder="Ответ магазина..." required><%= comment.adminReply %></textarea>
@@ -155,6 +156,7 @@
                 <% if (comment.status === 'deleted') { %>
                   <div class="d-grid gap-2">
                     <form method="POST" action="/admin/comments/<%= comment.id %>/restore">
+                      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                       <input type="hidden" name="returnTo" value="<%= returnTo %>">
                       <button class="btn btn-outline-success w-100">Restore</button>
                     </form>
@@ -162,6 +164,7 @@
                 <% } else if (comment.status === 'approved') { %>
                   <div class="d-grid gap-2">
                     <form method="POST" action="/admin/comments/<%= comment.id %>/hide">
+                      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                       <input type="hidden" name="returnTo" value="<%= returnTo %>">
                       <button class="btn btn-outline-secondary w-100">Скрыть</button>
                     </form>
@@ -173,6 +176,7 @@
                           data-confirm-description="Комментарий будет скрыт через soft-delete. Это действие нельзя отменить."
                           data-confirm-text="Удалить"
                           data-confirm-cancel-text="Отмена">
+                          <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                       <input type="hidden" name="returnTo" value="<%= returnTo %>">
                       <button class="btn btn-outline-danger w-100">Удалить</button>
                     </form>
@@ -180,6 +184,7 @@
                 <% } else { %>
                   <div class="d-grid gap-2">
                     <form method="POST" action="/admin/comments/<%= comment.id %>/approve">
+                      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                       <input type="hidden" name="returnTo" value="<%= returnTo %>">
                       <button class="btn btn-outline-success w-100">Одобрить</button>
                     </form>
@@ -191,6 +196,7 @@
                           data-confirm-description="Комментарий будет скрыт через soft-delete. Это действие нельзя отменить."
                           data-confirm-text="Удалить"
                           data-confirm-cancel-text="Отмена">
+                          <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                       <input type="hidden" name="returnTo" value="<%= returnTo %>">
                       <button class="btn btn-outline-danger w-100">Удалить</button>
                     </form>

@@ -136,6 +136,7 @@
                     data-confirm-description="Товар будет удалён без возможности восстановления."
                     data-confirm-text="Удалить"
                     data-confirm-cancel-text="Отмена">
+                  <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
 
                   <input type="hidden" name="redirectTo" value="/admin/products">
                 <button class="btn btn-sm btn-outline-danger w-100" data-loading data-loading-text="Удаляем...">

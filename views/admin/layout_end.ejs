@@ -6,6 +6,7 @@
 
         <nav class="nav">
           <form method="post" action="/logout" class="m-0 w-100">
+            <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
             <button type="submit" class="logout-button nav-link text-start" data-loading data-loading-text="...">
               <i class="bi bi-box-arrow-right nav-icon"></i>
               <span class="d-none d-lg-inline">Выход</span>

@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="<%= locals.csrfToken || '' %>" />
     <% const pageTitle = typeof title !== 'undefined' && title ? title : 'Amigurumi Nest'; %>
     <% const pageDescription = typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'Amigurumi Nest - авторские вязаные игрушки, подарки и уютные handmade изделия.'; %>
     <% const pageCanonicalUrl = typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : (typeof siteBaseUrl !== 'undefined' && siteBaseUrl ? `${siteBaseUrl}${typeof currentPath !== 'undefined' ? currentPath : ''}` : ''); %>
@@ -117,6 +118,7 @@
 
                 <li class="nav-item ms-2">
                   <form method="post" action="/logout">
+                    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                     <button class="btn btn-outline-danger btn-sm" data-loading data-loading-text="Выходим...">Выйти</button>
                   </form>
                 </li>

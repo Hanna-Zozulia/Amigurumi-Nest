@@ -104,6 +104,7 @@
 
                 <% if (!currentUser || currentUser.role !== 'admin') { %>
                   <form action="/cart/add" method="post">
+                    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                     <input type="hidden" name="productId" value="<%= product.id %>">
                     <button class="btn btn-primary catalog-buy-btn">Купить</button>
                   </form>
@@ -118,6 +119,7 @@
                         data-confirm-description="Это действие нельзя отменить. Товар будет удален из каталога."
                         data-confirm-text="Удалить"
                         data-confirm-cancel-text="Отмена">
+                      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
                         
                         <input type="hidden" name="redirectTo" value="/catalog">
                     <button class="btn btn-outline-danger btn-sm">
