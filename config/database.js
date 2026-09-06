@@ -8,14 +8,23 @@ const { Sequelize } = require("sequelize");
 async function createSequelize() {
   try {
     const isProduction = process.env.NODE_ENV === 'production';
-    const host = process.env.DB_HOST || (isProduction ? null : "localhost");
+    const host = process.env.DB_HOST;
     const port = Number(process.env.DB_PORT || 3306);
-    const user = process.env.DB_USER || (isProduction ? null : "root");
-    const pass = process.env.DB_PASS || (isProduction ? null : "");
-    const dbName = process.env.DB_NAME || (isProduction ? null : "toys");
+    const user = process.env.DB_USER;
+    const pass = process.env.DB_PASS;
+    const dbName = process.env.DB_NAME;
+    const missingVariables = ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME'].filter((name) => {
+      const value = process.env[name];
 
-    if (!host || !user || !pass || !dbName) {
-      throw new Error('DB_HOST, DB_USER, DB_PASS and DB_NAME are required');
+      if (value === undefined) {
+        return true;
+      }
+
+      return isProduction ? value.trim() === '' : ['DB_HOST', 'DB_USER', 'DB_NAME'].includes(name) && value.trim() === '';
+    });
+
+    if (missingVariables.length > 0) {
+      throw new Error(`${missingVariables.join(', ')} are required`);
     }
 
     // Create the database if it does not exist yet.

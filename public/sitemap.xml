@@ -19,15 +19,6 @@
     <loc>http://localhost:3000/privacy-policy</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/product/test-1</loc>
-  </url>
-  <url>
-    <loc>http://localhost:3000/product/тест-3</loc>
-  </url>
-  <url>
-    <loc>http://localhost:3000/product/wertyuiop-4</loc>
-  </url>
-  <url>
     <loc>http://localhost:3000/product/rtyuytrertytr-5</loc>
   </url>
   <url>
@@ -35,5 +26,8 @@
   </url>
   <url>
     <loc>http://localhost:3000/product/lia-7</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/product/sdfghjkl-9</loc>
   </url>
 </urlset>
