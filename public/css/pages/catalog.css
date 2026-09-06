@@ -41,11 +41,14 @@
 @media (max-width: 576px) {
 
   .catalog-image-link {
+    display: block;
     height: 210px;
   }
 
   .catalog-card-img {
+    width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 
   .badge-container {

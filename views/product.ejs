@@ -6,12 +6,39 @@
 
     <!-- Картинка -->
     <div class="col-md-6">
-      <div class="image-wrapper">
+      <div class="image-wrapper desktop-product-gallery <%= product.image2 ? 'has-secondary-image' : '' %>">
 
         <img src="<%= normalizeImagePath(product.image) %>" class="img-main img-fluid rounded shadow-sm" alt="<%= product.name %>">
-        <img src="<%= normalizeImagePath(product.image2) %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %> - дополнительное фото">
+        <% if (product.image2) { %>
+          <img src="<%= normalizeImagePath(product.image2) %>" class="img-hover img-fluid rounded shadow-sm" alt="<%= product.name %> - дополнительное фото">
+        <% } %>
 
       </div>
+
+      <% if (product.image2) { %>
+        <div id="productGallery-<%= product.id %>" class="carousel slide mobile-product-gallery" data-bs-touch="true" data-bs-interval="false">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#productGallery-<%= product.id %>" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Фото 1"></button>
+            <button type="button" data-bs-target="#productGallery-<%= product.id %>" data-bs-slide-to="1" aria-label="Фото 2"></button>
+          </div>
+
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="<%= normalizeImagePath(product.image) %>" class="d-block w-100" alt="<%= product.name %>">
+            </div>
+            <div class="carousel-item">
+              <img src="<%= normalizeImagePath(product.image2) %>" class="d-block w-100" alt="<%= product.name %> - дополнительное фото">
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#productGallery-<%= product.id %>" data-bs-slide="prev" aria-label="Предыдущее фото">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#productGallery-<%= product.id %>" data-bs-slide="next" aria-label="Следующее фото">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      <% } %>
     </div>
 
     <!-- Information -->
