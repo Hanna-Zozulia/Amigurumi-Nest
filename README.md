@@ -1,6 +1,6 @@
 # Amigurumi Nest
 
-A full-featured handmade toys e-commerce platform built with **Node.js + Express.js + Sequelize**, featuring authentication, shopping cart, order management, admin dashboard, and product reviews.
+A handmade toys e-commerce platform built with **Node.js + Express.js + Sequelize**, featuring authentication, shopping cart, order management, admin dashboard, product reviews, and product image uploads.
 
 ---
 
@@ -48,7 +48,7 @@ Amigurumi-Nest/
 * Express.js
 * Sequelize ORM
 * MySQL
-* Redis
+* Redis (application cache)
 * express-session
 
 ### Frontend
@@ -63,6 +63,7 @@ Amigurumi-Nest/
 * Helmet.js
 * express-rate-limit
 * leo-profanity
+* validator
 
 ### Tools
 
@@ -98,12 +99,13 @@ Amigurumi-Nest/
 
 * Password hashing (bcrypt)
 * Session-based authentication
-* Protected routes middleware
+* Protected routes and role-based access control
 * Rate limiting
-* Helmet & CSP headers
-* File upload validation (MIME types)
+* Helmet and Content Security Policy (CSP) headers
+* CSRF protection for state-changing requests
+* Password reset tokens with expiration
+* File upload validation for supported image MIME types
 * Profanity filtering
-* Secure password reset tokens
 
 ---
 
@@ -139,18 +141,20 @@ Cart is merged after login.
 * Delete own reviews
 * Admin moderation
 * Admin replies
-* Statuses: pending / approved / blocked
+* Statuses: approved / hidden / blocked, with soft deletion for removed reviews
 
 ---
 
 ## Caching
 
-Redis is used to improve performance:
+Redis is used as an application cache to improve performance for:
 
 * Products
 * Product pages
 * Cart data
 * Reviews
+
+User sessions are managed by `express-session` and are not stored in Redis.
 
 ---
 
@@ -159,7 +163,7 @@ Redis is used to improve performance:
 * REST API for products, cart, and orders
 * Swagger documentation:
 
-```
+```text
 http://localhost:3000/api-docs
 ```
 
@@ -180,17 +184,35 @@ PORT=3000
 NODE_ENV=development
 
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASS=your_password
 DB_NAME=toys
 
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
+# Alternatively, configure REDIS_URL for a managed Redis service.
 
 SESSION_SECRET=your_secret
+SESSION_SECURE=false
+APP_URL=http://localhost:3000
+
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=change_this_password
+USER_EMAIL=user@example.com
+USER_PASSWORD=change_this_password
+
+MAIL_SERVICE=gmail
+MAIL_HOST=
+MAIL_PORT=587
+MAIL_SECURE=false
 MAIL_USER=your_email@gmail.com
 MAIL_PASS=your_password
+MAIL_FROM=your_email@gmail.com
+ORDER_RECEIVER_EMAIL=your_email@gmail.com
 ```
+
+Do not commit `.env` or real credentials to the repository. For production, configure these variables with production values, a production MySQL database, a strong `SESSION_SECRET`, and the required Redis and mail services.
 
 ---
 
@@ -207,6 +229,8 @@ npm run dev
 ```bash
 npm start
 ```
+
+Production deployment requires `NODE_ENV=production`, an explicit `PORT`, production database credentials, a public `APP_URL`, a strong `SESSION_SECRET`, and any Redis or mail settings required by the enabled features.
 
 ---
 
@@ -227,5 +251,7 @@ npm start
 ---
 
 ## Author
+
+Hanna Zozulia
 
 Amigurumi Nest — educational e-commerce project built with Node.js.
